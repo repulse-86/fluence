@@ -137,7 +137,6 @@ namespace Fluence.ViewModels
                     SelectedCategory.Name = CategoryName;
                     await _categoryService.UpdateCategoryAsync(SelectedCategory);
                     
-                    // Reset to save mode
                     SelectedCategory = null;
                 }
                 CategoryName = string.Empty;
@@ -145,6 +144,33 @@ namespace Fluence.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = "Failed to save: " + ex.Message;
+                throw;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public async Task DeleteCategoryAsync(Category category)
+        {
+            if (IsBusy) return;
+            IsBusy = true;
+
+            try
+            {
+                await _categoryService.DeleteCategoryAsync(category);
+                Categories.Remove(category);
+
+                if (SelectedCategory == category)
+                {
+                    SelectedCategory = null;
+                    CategoryName = string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Failed to delete: " + ex.Message;
                 throw;
             }
             finally

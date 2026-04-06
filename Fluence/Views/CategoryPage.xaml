@@ -63,6 +63,7 @@
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Text="edit" Click="EditCategory_Click" />
+                                <MenuFlyoutItem Text="delete" Click="DeleteCategory_Click" />
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
                         <TextBlock Text="{Binding Name}" FontSize="28" />

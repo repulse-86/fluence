@@ -66,6 +66,8 @@ namespace Fluence.Views
             try
             {
                 await _viewModel.SaveCategoryAsync();
+                
+                CategoryTextBox.Focus(FocusState.Programmatic);
             }
             catch (Exception)
             {
@@ -97,6 +99,36 @@ namespace Fluence.Views
                     CategoryTextBox.Focus(FocusState.Programmatic);
                     CategoryTextBox.SelectAll();
                 });
+            }
+        }
+
+        private async void DeleteCategory_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuFlyoutItem;
+            Category category = menuItem.DataContext as Category;
+
+            if (category != null)
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog(
+                    $"Are you sure you want to delete '{category.Name}'?", "confirm delete");
+
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("delete") { Id = 0 });
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
+                dialog.DefaultCommandIndex = 1;
+
+                var result = await dialog.ShowAsync();
+                if ((int)result.Id == 0)
+                {
+                    try
+                    {
+                        await _viewModel.DeleteCategoryAsync(category);
+                        CategoryTextBox.Focus(FocusState.Programmatic);
+                    }
+                    catch (Exception)
+                    {
+                        // Error handled by ViewModel ErrorMessage state
+                    }
+                }
             }
         }
 
