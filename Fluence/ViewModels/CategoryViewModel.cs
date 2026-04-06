@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Fluence.ViewModels
 {
@@ -63,9 +64,42 @@ namespace Fluence.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task<bool> SaveCategoryAsync()
+        public async Task LoadCategoriesAsync()
         {
-            if (string.IsNullOrWhiteSpace(CategoryName) || IsBusy) return false;
+            if (IsBusy) return;
+
+            IsBusy = true;
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                var categories = await _categoryService.GetCategoriesAsync();
+                Categories.Clear();
+                foreach (var category in categories)
+                {
+                    Categories.Add(category);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Failed to load categories: " + ex.Message;
+                throw;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public async Task SaveCategoryAsync()
+        {
+            if (string.IsNullOrWhiteSpace(CategoryName))
+            {
+                ErrorMessage = "Category name is required.";
+                throw new ArgumentException("Category name is required.");
+            }
+
+            if (IsBusy) return;
 
             IsBusy = true;
             ErrorMessage = string.Empty;
@@ -76,16 +110,11 @@ namespace Fluence.ViewModels
                 await _categoryService.AddCategoryAsync(newCategory);
                 Categories.Add(newCategory);
                 CategoryName = string.Empty;
-                return true;
             }
             catch (Exception ex)
             {
                 ErrorMessage = "Failed to save: " + ex.Message;
-                if (ex.InnerException != null)
-                {
-                    ErrorMessage += " -> " + ex.InnerException.Message;
-                }
-                return false;
+                throw;
             }
             finally
             {

@@ -1,4 +1,5 @@
 using Fluence.Common;
+using Fluence.Models;
 using Fluence.ViewModels;
 using System;
 using Windows.UI.Xaml;
@@ -36,9 +37,18 @@ namespace Fluence.Views
         {
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
+
+            try
+            {
+                await _viewModel.LoadCategoriesAsync();
+            }
+            catch (Exception)
+            {
+                // Error handled by ViewModel ErrorMessage state
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -48,18 +58,21 @@ namespace Fluence.Views
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (await _viewModel.SaveCategoryAsync())
+            if (_viewModel.IsBusy) return;
+
+            try
             {
-                if (this.Frame.CanGoBack)
-                {
-                    this.Frame.GoBack();
-                }
+                await _viewModel.SaveCategoryAsync();
+            }
+            catch (Exception)
+            {
+                // Error handled by ViewModel ErrorMessage state
             }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.Frame.CanGoBack)
+            if (this.Frame != null && this.Frame.CanGoBack)
             {
                 this.Frame.GoBack();
             }

@@ -15,14 +15,46 @@
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid Margin="19,2,19,0">
-        <StackPanel>
-            <TextBlock Text="manage category" Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,0,0,20" />
+    <Grid Margin="0,2,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="19,0,19,0">
+            <TextBlock Text="manage category" Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,0,0,20" Padding="0,0,0,6" />
             
             <TextBlock Text="category name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
             <TextBox Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. Transportation" />
             
             <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" />
+
         </StackPanel>
+
+        <ListView Grid.Row="1" 
+                  ItemsSource="{Binding Categories}" 
+                  HorizontalContentAlignment="Stretch" 
+                  ShowsScrollingPlaceholders="False"
+                  Margin="19,0,19,8"
+                  >
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Gray" 
+                            BorderThickness="0,0,0,0.5" 
+                            Padding="0,14,0,14"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="{Binding Name}" FontSize="28" Padding="0" />
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>
