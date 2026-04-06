@@ -67,11 +67,18 @@ namespace Fluence.Views
             {
                 await _viewModel.SaveCategoryAsync();
                 
-                CategoryTextBox.Focus(FocusState.Programmatic);
+                CategoryTextBox.IsEnabled = false;
+                this.Focus(FocusState.Programmatic);
+                
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    CategoryTextBox.IsEnabled = true;
+                    Windows.UI.ViewManagement.InputPane.GetForCurrentView().TryHide();
+                });
             }
             catch (Exception)
             {
-                // Error handled by ViewModel ErrorMessage state
+                // Handle error
             }
         }
 
@@ -121,12 +128,22 @@ namespace Fluence.Views
                 {
                     try
                     {
+                        CategoryTextBox.IsReadOnly = true;
+                        CategoryTextBox.IsEnabled = false;
+
                         await _viewModel.DeleteCategoryAsync(category);
-                        CategoryTextBox.Focus(FocusState.Programmatic);
+
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            this.Focus(FocusState.Programmatic);
+                            CategoryTextBox.IsEnabled = true;
+                            CategoryTextBox.IsReadOnly = false;
+                        });
                     }
                     catch (Exception)
                     {
-                        // Error handled by ViewModel ErrorMessage state
+                        CategoryTextBox.IsEnabled = true;
+                        CategoryTextBox.IsReadOnly = false;
                     }
                 }
             }
