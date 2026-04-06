@@ -10,7 +10,13 @@
 
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton x:Name="SaveCategoryButton" Icon="Save" Label="save" Click="SaveButton_Click"/>
+            <AppBarButton x:Name="SaveCategoryButton" 
+                          Label="{Binding SaveButtonLabel}" 
+                          Click="SaveButton_Click">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="{Binding SaveButtonSymbol}" />
+                </AppBarButton.Icon>
+            </AppBarButton>
             <AppBarButton x:Name="CancelCategoryButton" Icon="Cancel" Label="cancel" Click="CancelButton_Click"/>
         </CommandBar>
     </Page.BottomAppBar>
@@ -25,14 +31,14 @@
             <TextBlock Text="manage category" Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,0,0,20" Padding="0,0,0,6" />
             
             <TextBlock Text="category name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-            <TextBox Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. Transportation" />
+            <TextBox x:Name="CategoryTextBox" Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. Transportation" />
             
             <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" />
 
         </StackPanel>
 
         <ListView Grid.Row="1" 
-                  ItemsSource="{Binding Categories}" 
+                  ItemsSource="{Binding Categories}"
                   HorizontalContentAlignment="Stretch" 
                   ShowsScrollingPlaceholders="False"
                   Margin="19,0,19,8"
@@ -47,11 +53,19 @@
             
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="Gray" 
-                            BorderThickness="0,0,0,0.5" 
+                    <Border BorderBrush="Gray"
+                            BorderThickness="0,0,0,0.5"
                             Padding="0,14,0,14"
-                            HorizontalAlignment="Stretch">
-                        <TextBlock Text="{Binding Name}" FontSize="28" Padding="0" />
+                            HorizontalAlignment="Stretch"
+                            Background="Transparent"
+                            Tapped="CategoryBorder_Tapped"
+                            >
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="edit" Click="EditCategory_Click" />
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                        <TextBlock Text="{Binding Name}" FontSize="28" />
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>

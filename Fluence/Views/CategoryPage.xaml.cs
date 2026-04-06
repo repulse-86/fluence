@@ -2,8 +2,11 @@ using Fluence.Common;
 using Fluence.Models;
 using Fluence.ViewModels;
 using System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Fluence.Views
@@ -67,6 +70,33 @@ namespace Fluence.Views
             catch (Exception)
             {
                 // Error handled by ViewModel ErrorMessage state
+            }
+        }
+
+        private void CategoryBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                FlyoutBase.ShowAttachedFlyout(element);
+            }
+        }
+
+        private async void EditCategory_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuFlyoutItem;
+            Category category = menuItem.DataContext as Category;
+
+            if (category != null)
+            {
+                _viewModel.SelectedCategory = category;
+                _viewModel.CategoryName = category.Name;
+
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    CategoryTextBox.Focus(FocusState.Programmatic);
+                    CategoryTextBox.SelectAll();
+                });
             }
         }
 

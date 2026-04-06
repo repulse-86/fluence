@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Windows.UI.Xaml.Controls;
 
 namespace Fluence.ViewModels
 {
@@ -13,12 +14,31 @@ namespace Fluence.ViewModels
     {
         private readonly CategoryService _categoryService = new CategoryService();
         private bool _isBusy;
+        private Category _selectedCategory;
         private string _categoryName;
         private string _errorMessage;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<Category> Categories { get; set; } = new ObservableCollection<Category>();
+
+        public Category SelectedCategory
+        {
+            get { return _selectedCategory; }
+            set 
+            { 
+                if (_selectedCategory != value)
+                {
+                    _selectedCategory = value; 
+                    OnPropertyChanged(); 
+                    OnPropertyChanged("SaveButtonLabel"); 
+                    OnPropertyChanged("SaveButtonSymbol");
+                }
+            }
+        }
+
+        public string SaveButtonLabel => SelectedCategory == null ? "save" : "update";
+        public Symbol SaveButtonSymbol => SelectedCategory == null ? Symbol.Save : Symbol.Edit;
 
         public bool IsBusy
         {
@@ -106,9 +126,20 @@ namespace Fluence.ViewModels
 
             try
             {
-                Category newCategory = new Category { Name = CategoryName };
-                await _categoryService.AddCategoryAsync(newCategory);
-                Categories.Add(newCategory);
+                if (SelectedCategory == null)
+                {
+                    Category newCategory = new Category { Name = CategoryName };
+                    await _categoryService.AddCategoryAsync(newCategory);
+                    Categories.Add(newCategory);
+                }
+                else
+                {
+                    SelectedCategory.Name = CategoryName;
+                    await _categoryService.UpdateCategoryAsync(SelectedCategory);
+                    
+                    // Reset to save mode
+                    SelectedCategory = null;
+                }
                 CategoryName = string.Empty;
             }
             catch (Exception ex)
