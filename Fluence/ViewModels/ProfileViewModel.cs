@@ -1,0 +1,313 @@
+﻿using Fluence.Services;
+using Fluence.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
+namespace Fluence.ViewModels
+{
+    public class ProfileViewModel : INotifyPropertyChanged
+    {
+        private string _initialBalanceText;
+        private string _initialBalanceErrorMessage;
+
+        private string _monthlyIncomeText;
+        private string _monthlyIncomeErrorMessage;
+
+        private string _monthlyLimitText;
+        private string _monthlyLimitErrorMessage;
+
+        private DateTimeOffset _payday = DateTimeOffset.Now;
+        private string _paydayErrorMessage;
+
+        private bool _isBusy;
+        private bool _isEditing;
+
+        private readonly ProfileService _profileService = new ProfileService();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsEditing
+        {
+            get { return _isEditing; }
+            set
+            {
+                if (_isEditing != value)
+                {
+                    _isEditing = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SaveButtonLabel));
+                    OnPropertyChanged(nameof(SaveButtonSymbol));
+                    OnPropertyChanged(nameof(ViewVisibility));
+                    OnPropertyChanged(nameof(EditVisibility));
+                }
+            }
+        }
+
+        public Visibility ViewVisibility => IsEditing ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility EditVisibility => IsEditing ? Visibility.Visible : Visibility.Collapsed;
+
+        public string SaveButtonLabel => IsEditing ? "save" : "edit";
+        public Symbol SaveButtonSymbol => IsEditing ? Symbol.Save : Symbol.Edit;
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string InitialBalanceText
+        {
+            get { return _initialBalanceText; }
+            set
+            {
+                if (_initialBalanceText != value)
+                {
+                    _initialBalanceText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string InitialBalanceErrorMessage
+        {
+            get { return _initialBalanceErrorMessage; }
+            set
+            {
+                if (_initialBalanceErrorMessage != value)
+                {
+                    _initialBalanceErrorMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string MonthlyIncomeText
+        {
+            get { return _monthlyIncomeText; }
+            set
+            {
+                if (_monthlyIncomeText != value)
+                {
+                    _monthlyIncomeText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string MonthlyIncomeErrorMessage
+        {
+            get { return _monthlyIncomeErrorMessage; }
+            set
+            {
+                if (_monthlyIncomeErrorMessage != value)
+                {
+                    _monthlyIncomeErrorMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string MonthlyLimitText
+        {
+            get { return _monthlyLimitText; }
+            set
+            {
+                if (_monthlyLimitText != value)
+                {
+                    _monthlyLimitText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string MonthlyLimitErrorMessage
+        {
+            get { return _monthlyLimitErrorMessage; }
+            set
+            {
+                if (_monthlyLimitErrorMessage != value)
+                {
+                    _monthlyLimitErrorMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public DateTimeOffset Payday
+        {
+            get { return _payday; }
+            set
+            {
+                if (_payday != value)
+                {
+                    _payday = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PaydayFormatted));
+                }
+            }
+        }
+
+        public string PaydayFormatted => Payday.ToString("MMMM dd");
+
+        public string PaydayErrorMessage
+        {
+            get { return _paydayErrorMessage; }
+            set
+            {
+                if (_paydayErrorMessage != value)
+                {
+                    _paydayErrorMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string _debugData;
+        private Windows.UI.Xaml.Media.Brush _debugColor = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Gray);
+
+        public string DebugData
+        {
+            get { return _debugData; }
+            set
+            {
+                if (_debugData != value)
+                {
+                    _debugData = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Windows.UI.Xaml.Media.Brush DebugColor
+        {
+            get { return _debugColor; }
+            set
+            {
+                if (_debugColor != value)
+                {
+                    _debugColor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public async Task LoadProfileDetailsAsync()
+        {
+            if (IsBusy) return;
+            IsBusy = true;
+            try
+            {
+                var data = await _profileService.GetProfileAsync();
+                if (data != null)
+                {
+                    InitialBalanceText = data.InitialBalance.ToString();
+                    MonthlyIncomeText = data.MonthlyIncome.ToString();
+                    MonthlyLimitText = data.MonthlyLimit.ToString();
+                    Payday = data.Payday;
+                    IsEditing = false;
+                    DebugData = string.Empty;
+                }
+                else
+                {
+                    IsEditing = true;
+                    DebugData = string.Empty;
+                }
+                
+                OnPropertyChanged(string.Empty);
+            }
+            catch (Exception)
+            {
+                DebugData = "error loading profile";
+                DebugColor = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Red);
+            }
+            finally { IsBusy = false; }
+        }
+
+        public async Task<bool> SaveProfileDetailsAsync()
+        {
+            InitialBalanceErrorMessage = string.Empty;
+            MonthlyIncomeErrorMessage = string.Empty;
+            MonthlyLimitErrorMessage = string.Empty;
+            PaydayErrorMessage = string.Empty;
+            DebugData = string.Empty;
+
+            bool hasError = false;
+
+            double initialBalance;
+            if (!double.TryParse(InitialBalanceText, out initialBalance) || initialBalance < 0)
+            {
+                InitialBalanceErrorMessage = "Initial balance must be a positive number.";
+                hasError = true;
+            }
+
+            double monthlyIncome;
+            if (!double.TryParse(MonthlyIncomeText, out monthlyIncome) || monthlyIncome < 0)
+            {
+                MonthlyIncomeErrorMessage = "Monthly income must be a positive number.";
+                hasError = true;
+            }
+
+            double monthlyLimit;
+            if (!double.TryParse(MonthlyLimitText, out monthlyLimit) || monthlyLimit < 0)
+            {
+                MonthlyLimitErrorMessage = "Monthly limit must be a positive number.";
+                hasError = true;
+            }
+
+            if (Payday == DateTimeOffset.MinValue)
+            {
+                PaydayErrorMessage = "Please select a valid payday.";
+                hasError = true;
+            }
+
+            if (hasError) return false;
+
+            if (IsBusy) return false;
+            IsBusy = true;
+
+            try
+            {
+                var data = new Profile
+                {
+                    InitialBalance = initialBalance,
+                    MonthlyIncome = monthlyIncome,
+                    MonthlyLimit = monthlyLimit,
+                    Payday = this.Payday.DateTime
+                };
+                await _profileService.SaveProfileAsync(data);
+                
+                DebugData = "saved successfully";
+                DebugColor = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Green);
+                
+                return true;
+            }
+            catch (Exception)
+            {
+                DebugData = "error saving profile";
+                DebugColor = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Red);
+                return false;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+    }
+}
