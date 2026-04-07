@@ -56,7 +56,9 @@
                 <DataTemplate>
                     <Grid>
                         <ListView ItemsSource="{Binding Source={StaticResource GroupedTransactionsSource}}"
-                                  HorizontalContentAlignment="Stretch">
+                                  HorizontalContentAlignment="Stretch"
+                                  IsItemClickEnabled="True"
+                                  ItemClick="TransactionList_ItemClick">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -82,6 +84,7 @@
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -102,6 +105,12 @@
                                                        FontSize="20" FontWeight="Thin"
                                                        VerticalAlignment="Center" 
                                                        Margin="10,0,0,0" />
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding Note}" 
+                                                       FontSize="16" Opacity="0.8" Margin="0,8,0,0"
+                                                       Visibility="{Binding NoteVisibility}" 
+                                                       TextWrapping="Wrap" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

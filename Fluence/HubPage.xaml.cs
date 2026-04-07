@@ -77,6 +77,15 @@ namespace Fluence
             }
         }
 
+        private void TransactionList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem as TransactionDisplayItem;
+            if (item != null)
+            {
+                item.IsExpanded = !item.IsExpanded;
+            }
+        }
+
         private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
         {
             if (!Frame.Navigate(typeof(ProfilePage)))
