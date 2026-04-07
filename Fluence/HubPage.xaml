@@ -41,9 +41,55 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <TextBlock Text="overview dummy text" Style="{ThemeResource ListViewItemContentTextBlockStyle}" FontSize="14" Opacity="0.6" />
-                    </Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="0,0,10,16" DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}">
+                            
+                            <TextBlock Text="current balance" FontSize="18" Opacity="0.6" Margin="0,0,0,5" />
+                            <TextBlock Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="72" FontWeight="Bold" Margin="0,0,0,20" />
+
+                            <TextBlock Text="budget health" FontSize="18" Opacity="0.6" Margin="0,0,0,5" />
+                            <ProgressBar Value="{Binding BudgetPercent}" Foreground="{Binding BudgetBrush}" Height="10" Margin="0,0,0,30" />
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="150" />
+                                    <RowDefinition Height="150" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Row="0" Grid.Column="0" Background="#1AFFFFFF" Margin="0,0,5,5" Padding="15">
+                                    <Grid>
+                                        <TextBlock Text="daily allowance" FontSize="14" Opacity="0.6" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                        <TextBlock Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="0" Grid.Column="1" Background="#1AFFFFFF" Margin="5,0,0,5" Padding="15">
+                                    <Grid>
+                                        <TextBlock Text="spent today" FontSize="14" Opacity="0.6" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                        <TextBlock Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="1" Grid.Column="0" Background="#1AFFFFFF" Margin="0,5,5,0" Padding="15">
+                                    <Grid>
+                                        <TextBlock Text="weekly total" FontSize="14" Opacity="0.6" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                        <TextBlock Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Row="1" Grid.Column="1" Background="#1AFFFFFF" Margin="5,5,0,0" Padding="15">
+                                    <Grid>
+                                        <TextBlock Text="top category" FontSize="14" Opacity="0.6" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                        <TextBlock Text="{Binding TopCategory}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
                 </DataTemplate>
             </HubSection>
 
