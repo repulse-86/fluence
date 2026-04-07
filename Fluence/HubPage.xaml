@@ -126,7 +126,7 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="Gray" BorderThickness="0,0,0,0.5" Padding="0,0,0,10" Margin="0,0,0,10"
-                                            Background="Transparent" Tapped="TransactionBorder_Tapped">
+                                            Background="Transparent" Holding="TransactionBorder_Holding">
                                         <FlyoutBase.AttachedFlyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem Text="edit" Click="EditTransaction_Click" />

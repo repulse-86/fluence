@@ -3,6 +3,7 @@ using Fluence.Models;
 using Fluence.ViewModels;
 using System;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -82,12 +83,15 @@ namespace Fluence.Views
             }
         }
 
-        private void CategoryBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        private void CategoryBorder_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            FrameworkElement element = sender as FrameworkElement;
-            if (element != null)
+            if (e.HoldingState == HoldingState.Started)
             {
-                FlyoutBase.ShowAttachedFlyout(element);
+                FrameworkElement element = sender as FrameworkElement;
+                if (element != null)
+                {
+                    FlyoutBase.ShowAttachedFlyout(element);
+                }
             }
         }
 

@@ -10,6 +10,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -88,13 +89,16 @@ namespace Fluence
             }
         }
 
-        private void TransactionBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        private void TransactionBorder_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            FrameworkElement element = sender as FrameworkElement;
-            if (element != null)
+            if (e.HoldingState == HoldingState.Started)
             {
-                FlyoutBase.ShowAttachedFlyout(element);
-                e.Handled = true;
+                FrameworkElement element = sender as FrameworkElement;
+                if (element != null)
+                {
+                    FlyoutBase.ShowAttachedFlyout(element);
+                    e.Handled = true;
+                }
             }
         }
 

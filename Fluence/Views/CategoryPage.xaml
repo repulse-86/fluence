@@ -59,7 +59,7 @@
                             Padding="0,14,0,14"
                             HorizontalAlignment="Stretch"
                             Background="Transparent"
-                            Tapped="CategoryBorder_Tapped"
+                            Holding="CategoryBorder_Holding"
                             >
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout>
