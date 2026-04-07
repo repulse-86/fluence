@@ -26,6 +26,7 @@ namespace Fluence
         private readonly ObservableDictionary defaultViewModel = new ObservableDictionary();
         private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("Resources");
         private readonly CategoryViewModel categoryViewModel = new CategoryViewModel();
+        private readonly HubViewModel hubViewModel = new HubViewModel();
 
         public HubPage()
         {
@@ -38,6 +39,7 @@ namespace Fluence
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
 
             this.DefaultViewModel["CategoryViewModel"] = this.categoryViewModel;
+            this.DefaultViewModel["HubViewModel"] = this.hubViewModel;
         }
 
         public NavigationHelper NavigationHelper
@@ -50,8 +52,9 @@ namespace Fluence
             get { return this.defaultViewModel; }
         }
 
-        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            await this.hubViewModel.LoadHistoryAsync();
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
