@@ -130,6 +130,7 @@
                                         <FlyoutBase.AttachedFlyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem Text="edit" Click="EditTransaction_Click" />
+                                                <MenuFlyoutItem Text="delete" Click="DeleteTransaction_Click" />
                                             </MenuFlyout>
                                         </FlyoutBase.AttachedFlyout>
                                         <Grid>
