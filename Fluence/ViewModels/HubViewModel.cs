@@ -34,12 +34,24 @@ namespace Fluence.ViewModels
                 _isExpanded = value;
                 OnPropertyChanged();
                 OnPropertyChanged("NoteVisibility");
+                OnPropertyChanged("NoteWrapping");
+                OnPropertyChanged("NoteTrimming");
             }
         }
 
         public Visibility NoteVisibility
         {
-            get { return _isExpanded ? Visibility.Visible : Visibility.Collapsed; }
+            get { return string.IsNullOrEmpty(Note) ? Visibility.Collapsed : Visibility.Visible; }
+        }
+
+        public TextWrapping NoteWrapping
+        {
+            get { return _isExpanded ? TextWrapping.Wrap : TextWrapping.NoWrap; }
+        }
+
+        public TextTrimming NoteTrimming
+        {
+            get { return _isExpanded ? TextTrimming.None : TextTrimming.CharacterEllipsis; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
