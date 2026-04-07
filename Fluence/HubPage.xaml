@@ -83,8 +83,8 @@
 
                                 <Border Grid.Row="1" Grid.Column="1" Background="#1AFFFFFF" Margin="5,5,0,0" Padding="15">
                                     <Grid>
-                                        <TextBlock Text="top category" FontSize="14" Opacity="0.6" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                                        <TextBlock Text="{Binding TopCategory}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                                        <TextBlock Text="top category" FontSize="14" Opacity="0.6" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                        <TextBlock Text="{Binding TopCategory}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" />
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -150,7 +150,8 @@
 
                                             <TextBlock Grid.Row="1" Grid.Column="0" 
                                                        Text="{Binding CategoryName}" 
-                                                       FontSize="24" FontWeight="SemiBold" />
+                                                       FontSize="24" FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis" />
 
                                             <TextBlock Grid.Row="1" Grid.Column="1" 
                                                        Text="{Binding DisplayAmount}" 
@@ -163,7 +164,7 @@
                                                        Text="{Binding Note}" 
                                                        FontSize="16" Opacity="0.8" Margin="0,8,0,0"
                                                        Visibility="{Binding NoteVisibility}" 
-                                                       TextWrapping="Wrap" />
+                                                       TextTrimming="CharacterEllipsis" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -235,8 +236,12 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid Margin="0,0,0,10">
-                                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                                                             <TextBlock Text="+" FontSize="14" Opacity="0.6" Margin="0,2,2,0" />
                                                             <TextBlock Text="{Binding Trend, ConverterParameter='N0'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
                                                             <TextBlock Text="%" FontSize="12" Opacity="0.6" Margin="2,5,0,0" />
@@ -278,7 +283,7 @@
                                                             <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
                                                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                                            <TextBlock Text="{Binding Name}" FontSize="16" />
+                                                            <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" MaxWidth="200" />
                                                             <TextBlock Text="{Binding TransactionCount}" FontSize="12" Opacity="0.4" Margin="10,3,0,0" />
                                                         </StackPanel>
                                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />
@@ -352,8 +357,12 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid Margin="0,0,0,10">
-                                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                                                             <TextBlock Text="+" FontSize="14" Opacity="0.6" Margin="0,2,2,0" />
                                                             <TextBlock Text="{Binding Trend, ConverterParameter='N0'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
                                                             <TextBlock Text="%" FontSize="12" Opacity="0.6" Margin="2,5,0,0" />
@@ -408,7 +417,7 @@
                                                             <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
                                                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                                            <TextBlock Text="{Binding Name}" FontSize="16" />
+                                                            <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" MaxWidth="200" />
                                                             <TextBlock Text="{Binding TransactionCount}" FontSize="12" Opacity="0.4" Margin="10,3,0,0" />
                                                         </StackPanel>
                                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />
@@ -485,8 +494,12 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid Margin="0,0,0,10">
-                                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                                                             <TextBlock Text="+" FontSize="14" Opacity="0.6" Margin="0,2,2,0" />
                                                             <TextBlock Text="{Binding Trend, ConverterParameter='N0'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
                                                             <TextBlock Text="%" FontSize="12" Opacity="0.6" Margin="2,5,0,0" />
@@ -541,7 +554,7 @@
                                                             <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
                                                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                                            <TextBlock Text="{Binding Name}" FontSize="16" />
+                                                            <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" MaxWidth="200" />
                                                             <TextBlock Text="{Binding TransactionCount}" FontSize="12" Opacity="0.4" Margin="10,3,0,0" />
                                                         </StackPanel>
                                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />

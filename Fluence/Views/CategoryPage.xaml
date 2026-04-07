@@ -67,7 +67,7 @@
                                 <MenuFlyoutItem Text="delete" Click="DeleteCategory_Click" />
                             </MenuFlyout>
                         </FlyoutBase.AttachedFlyout>
-                        <TextBlock Text="{Binding Name}" FontSize="28" />
+                        <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" />
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
