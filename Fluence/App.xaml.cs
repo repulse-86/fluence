@@ -123,6 +123,8 @@ namespace Fluence
 
             // Ensure the current window is active.
             Window.Current.Activate();
+
+            await Windows.UI.ViewManagement.StatusBar.GetForCurrentView().HideAsync();
         }
 
         /// <summary>

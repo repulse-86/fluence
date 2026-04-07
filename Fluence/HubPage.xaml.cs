@@ -2,21 +2,9 @@ using Fluence.Common;
 using Fluence.ViewModels;
 using Fluence.Views;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Resources;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Fluence
@@ -80,61 +68,11 @@ namespace Fluence
             }
         }
 
-        private void TransactionList_ItemClick(object sender, ItemClickEventArgs e)
+        private async void HistoryControl_TransactionDeleted(object sender, EventArgs e)
         {
-            var item = e.ClickedItem as TransactionDisplayItem;
-            if (item != null)
-            {
-                item.IsExpanded = !item.IsExpanded;
-            }
-        }
-
-        private void TransactionBorder_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            if (e.HoldingState == HoldingState.Started)
-            {
-                FrameworkElement element = sender as FrameworkElement;
-                if (element != null)
-                {
-                    FlyoutBase.ShowAttachedFlyout(element);
-                    e.Handled = true;
-                }
-            }
-        }
-
-        private void EditTransaction_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuFlyoutItem;
-            var displayItem = menuItem.DataContext as TransactionDisplayItem;
-            if (displayItem != null)
-            {
-                this.Frame.Navigate(typeof(QuickAddPage), displayItem.Id);
-            }
-        }
-
-        private async void DeleteTransaction_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuFlyoutItem;
-            var displayItem = menuItem.DataContext as TransactionDisplayItem;
-            if (displayItem != null)
-            {
-                var dialog = new Windows.UI.Popups.MessageDialog("are you sure you want to delete this transaction?", "confirm delete");
-                dialog.Commands.Add(new Windows.UI.Popups.UICommand("delete") { Id = 0 });
-                dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
-                dialog.DefaultCommandIndex = 1;
-
-                var result = await dialog.ShowAsync();
-                if ((int)result.Id == 0)
-                {
-                    var transactionViewModel = new TransactionViewModel();
-                    if (await transactionViewModel.DeleteTransactionAsync(displayItem.Id))
-                    {
-                        await this.hubViewModel.LoadOverviewAsync();
-                        await this.hubViewModel.LoadHistoryAsync();
-                        await this.hubViewModel.LoadReportAsync();
-                    }
-                }
-            }
+            await this.hubViewModel.LoadOverviewAsync();
+            await this.hubViewModel.LoadHistoryAsync();
+            await this.hubViewModel.LoadReportAsync();
         }
 
         private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
