@@ -19,10 +19,15 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="19,0,19,20">
                 <TextBlock Text="amount" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                <TextBox x:Name="AmountTextBox" Text="{Binding AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" />
+                <TextBox x:Name="AmountTextBox" Text="{Binding AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
                 
                 <TextBlock Text="note" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" />
-                <TextBox x:Name="NoteTextBox" Text="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox x:Name="NoteTextBox" 
+                         Text="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         AcceptsReturn="True" 
+                         TextWrapping="Wrap" 
+                         Height="120" 
+                         VerticalAlignment="Top" />
 
                 <TextBlock Text="category" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" />
                 <ComboBox x:Name="CategoryComboBox" 

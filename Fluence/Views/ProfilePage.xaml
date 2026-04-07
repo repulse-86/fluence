@@ -42,15 +42,15 @@
 
                 <StackPanel Visibility="{Binding EditVisibility}">
                     <TextBlock Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,-0.333,5" />
-                    <TextBox x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" />
+                    <TextBox x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
                     <TextBlock Text="{Binding InitialBalanceErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
 
                     <TextBlock Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                    <TextBox x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" />
+                    <TextBox x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
                     <TextBlock Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
 
                     <TextBlock Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                    <TextBox x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" />
+                    <TextBox x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
                     <TextBlock Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
 
                     <TextBlock Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
