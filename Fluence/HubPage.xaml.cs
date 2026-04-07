@@ -141,7 +141,15 @@ namespace Fluence
         {
             if (!Frame.Navigate(typeof(ProfilePage)))
             {
-                throw new Exception("Failed to navigate to category form.");
+                throw new Exception("Failed to navigate to profile form.");
+            }
+        }
+
+        private void AboutAppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Frame.Navigate(typeof(AboutPage)))
+            {
+                throw new Exception("Failed to navigate to about page.");
             }
         }
 

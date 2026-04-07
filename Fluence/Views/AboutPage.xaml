@@ -1,0 +1,62 @@
+<Page
+    x:Class="Fluence.Views.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Fluence.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="0,2,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="19,0,19,0">
+            <TextBlock Text="about" Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,0,0,20" Padding="0,0,0,6" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="19,0,19,0">
+                <TextBlock Text="fluence" FontSize="92" FontWeight="Bold" Margin="0,0,0,10" />
+                <TextBlock 
+                    Text="version" 
+                    FontSize="18" 
+                    FontWeight="SemiBold"
+                    Margin="0,0,0,5" 
+                    Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+                <TextBlock 
+                    Text="1.0.0.0" 
+                    FontSize="18" 
+                    Margin="0,0,0,30" />
+
+                <TextBlock Text="description" 
+                           FontSize="18" 
+                           FontWeight="SemiBold" 
+                           Foreground="{ThemeResource SystemColorControlAccentBrush}" 
+                           Margin="0,0,0,5" />
+                <TextBlock Text="fluence is a lightweight personal finance tracker designed for simplicity and speed. manage your daily expenses and monitor your budget health with ease." 
+                           FontSize="18" 
+                           TextWrapping="Wrap" 
+                           Margin="0,0,0,30" 
+                           Opacity="0.8" />
+
+                <TextBlock Text="platform" 
+                           FontSize="18" 
+                           FontWeight="SemiBold" 
+                           Foreground="{ThemeResource SystemColorControlAccentBrush}" 
+                           Margin="0,0,0,5" />
+                <TextBlock Text="windows phone 8.1" FontSize="18" Margin="0,0,0,30" Opacity="0.6" />
+
+                <TextBlock Text="created by" 
+                           FontSize="18" 
+                           FontWeight="SemiBold" 
+                           Foreground="{ThemeResource SystemColorControlAccentBrush}" 
+                           Margin="0,0,0,5" />
+                <TextBlock Text="repulse" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,10" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
