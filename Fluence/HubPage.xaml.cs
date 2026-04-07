@@ -56,6 +56,7 @@ namespace Fluence
         {
             await this.hubViewModel.LoadOverviewAsync();
             await this.hubViewModel.LoadHistoryAsync();
+            await this.hubViewModel.LoadReportAsync();
         }
 
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)

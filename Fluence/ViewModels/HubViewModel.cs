@@ -58,7 +58,15 @@ namespace Fluence.ViewModels
         public string Name { get; set; }
         public double Amount { get; set; }
         public double Percentage { get; set; }
+        public int TransactionCount { get; set; }
+        public double Trend { get; set; } 
         public Brush Color { get; set; }
+    }
+
+    public class IntensityItem
+    {
+        public double Intensity { get; set; } 
+        public string Label { get; set; }
     }
 
     public class PeriodReport : INotifyPropertyChanged
@@ -75,7 +83,24 @@ namespace Fluence.ViewModels
         private double _flowOutPercent;
         public double FlowOutPercent { get { return _flowOutPercent; } set { _flowOutPercent = value; OnPropertyChanged(); } }
 
+        private double _savingsRate;
+        public double SavingsRate { get { return _savingsRate; } set { _savingsRate = value; OnPropertyChanged(); } }
+
+        private double _trendPercent;
+        public double TrendPercent { get { return _trendPercent; } set { _trendPercent = value; OnPropertyChanged(); } }
+
+        private string _trendDirection = "none";
+        public string TrendDirection { get { return _trendDirection; } set { _trendDirection = value; OnPropertyChanged(); } }
+
+        private double _dailyAverage;
+        public double DailyAverage { get { return _dailyAverage; } set { _dailyAverage = value; OnPropertyChanged(); } }
+
+        private double _projectedTotal;
+        public double ProjectedTotal { get { return _projectedTotal; } set { _projectedTotal = value; OnPropertyChanged(); } }
+
         public ObservableCollection<ReportCategoryItem> Distribution { get; set; } = new ObservableCollection<ReportCategoryItem>();
+        public ObservableCollection<ReportCategoryItem> BudgetBurners { get; set; } = new ObservableCollection<ReportCategoryItem>();
+        public ObservableCollection<IntensityItem> IntensityMap { get; set; } = new ObservableCollection<IntensityItem>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -207,15 +232,39 @@ namespace Fluence.ViewModels
 
             DateTime now = DateTime.Now;
 
-            await PopulatePeriodReport(DayReport, transactions.Where(t => t.Date.Date == now.Date), categoryMap);
-            await PopulatePeriodReport(MonthReport, transactions.Where(t => t.Date.Month == now.Month && t.Date.Year == now.Year), categoryMap);
-            await PopulatePeriodReport(YearReport, transactions.Where(t => t.Date.Year == now.Year), categoryMap);
+            DateTime today = now.Date;
+            DateTime yesterday = today.AddDays(-1);
+            await PopulatePeriodReport(DayReport, 
+                transactions.Where(t => t.Date.Date == today), 
+                transactions.Where(t => t.Date.Date == yesterday),
+                categoryMap, "day");
+
+            DateTime startOfMonth = new DateTime(now.Year, now.Month, 1);
+            DateTime startOfLastMonth = startOfMonth.AddMonths(-1);
+            DateTime sameDayLastMonth = now.AddMonths(-1);
+
+            await PopulatePeriodReport(MonthReport, 
+                transactions.Where(t => t.Date >= startOfMonth && t.Date <= now),
+                transactions.Where(t => t.Date >= startOfLastMonth && t.Date <= sameDayLastMonth),
+                categoryMap, "month");
+
+            DateTime startOfYear = new DateTime(now.Year, 1, 1);
+            DateTime startOfLastYear = new DateTime(now.Year - 1, 1, 1);
+            DateTime sameDayLastYear = now.AddYears(-1);
+
+            await PopulatePeriodReport(YearReport, 
+                transactions.Where(t => t.Date >= startOfYear && t.Date <= now),
+                transactions.Where(t => t.Date >= startOfLastYear && t.Date <= sameDayLastYear),
+                categoryMap, "year");
         }
 
-        private async Task PopulatePeriodReport(PeriodReport report, IEnumerable<Transaction> filtered, Dictionary<int, string> categoryMap)
+        private async Task PopulatePeriodReport(PeriodReport report, IEnumerable<Transaction> current, IEnumerable<Transaction> previous, Dictionary<int, string> categoryMap, string type)
         {
-            report.FlowIn = filtered.Where(t => t.Type == "Income").Sum(t => t.Amount);
-            report.FlowOut = filtered.Where(t => t.Type == "Expense").Sum(t => t.Amount);
+            var currentList = current.ToList();
+            var previousList = previous.ToList();
+
+            report.FlowIn = currentList.Where(t => t.Type == "Income").Sum(t => t.Amount);
+            report.FlowOut = currentList.Where(t => t.Type == "Expense").Sum(t => t.Amount);
 
             double totalFlow = report.FlowIn + report.FlowOut;
             if (totalFlow > 0)
@@ -225,13 +274,88 @@ namespace Fluence.ViewModels
             }
             else { report.FlowInPercent = report.FlowOutPercent = 0; }
 
-            report.Distribution.Clear();
-            var expenses = filtered.Where(t => t.Type == "Expense").ToList();
-            if (expenses.Any())
+            if (report.FlowIn > 0)
             {
-                double totalExpenses = expenses.Sum(t => t.Amount);
-                var grouped = expenses.GroupBy(t => t.CategoryId)
+                report.SavingsRate = Math.Max(0, (report.FlowIn - report.FlowOut) / report.FlowIn * 100);
+            }
+            else { report.SavingsRate = 0; }
+
+            double prevOut = previousList.Where(t => t.Type == "Expense").Sum(t => t.Amount);
+            if (prevOut > 0)
+            {
+                report.TrendPercent = Math.Abs((report.FlowOut - prevOut) / prevOut * 100);
+                report.TrendDirection = report.FlowOut > prevOut ? "up" : (report.FlowOut < prevOut ? "down" : "same");
+            }
+            else 
+            { 
+                report.TrendPercent = report.FlowOut > 0 ? 100 : 0; 
+                report.TrendDirection = report.FlowOut > 0 ? "up" : "none"; 
+            }
+
+            DateTime now = DateTime.Now;
+            if (type == "month")
+            {
+                int daysPassed = now.Day;
+                int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                report.DailyAverage = report.FlowOut / daysPassed;
+                report.ProjectedTotal = report.DailyAverage * daysInMonth;
+            }
+            else if (type == "year")
+            {
+                int monthsPassed = now.Month;
+                report.DailyAverage = report.FlowOut / monthsPassed; 
+                report.ProjectedTotal = report.DailyAverage * 12;
+            }
+
+            report.IntensityMap.Clear();
+            if (type == "month")
+            {
+                var dailySpending = currentList.Where(t => t.Type == "Expense")
+                    .GroupBy(t => t.Date.Day)
+                    .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+                
+                double maxDaily = dailySpending.Values.Count > 0 ? dailySpending.Values.Max() : 0;
+                int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                
+                for (int d = 1; d <= daysInMonth; d++)
+                {
+                    double amt = dailySpending.ContainsKey(d) ? dailySpending[d] : 0;
+                    report.IntensityMap.Add(new IntensityItem { 
+                        Intensity = maxDaily > 0 ? Math.Max(0.1, amt / maxDaily) : 0.05,
+                        Label = d.ToString()
+                    });
+                }
+            }
+            else if (type == "year")
+            {
+                var monthlySpending = currentList.Where(t => t.Type == "Expense")
+                    .GroupBy(t => t.Date.Month)
+                    .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+
+                double maxMonthly = monthlySpending.Values.Count > 0 ? monthlySpending.Values.Max() : 0;
+                for (int m = 1; m <= 12; m++)
+                {
+                    double amt = monthlySpending.ContainsKey(m) ? monthlySpending[m] : 0;
+                    report.IntensityMap.Add(new IntensityItem { 
+                        Intensity = maxMonthly > 0 ? Math.Max(0.1, amt / maxMonthly) : 0.05,
+                        Label = new DateTime(2000, m, 1).ToString("MMM").ToLower().Substring(0, 1)
+                    });
+                }
+            }
+
+            report.Distribution.Clear();
+            report.BudgetBurners.Clear();
+            var currentExpenses = currentList.Where(t => t.Type == "Expense").ToList();
+            var prevExpenses = previousList.Where(t => t.Type == "Expense").ToList();
+
+            if (currentExpenses.Any())
+            {
+                double totalExpenses = currentExpenses.Sum(t => t.Amount);
+                var grouped = currentExpenses.GroupBy(t => t.CategoryId)
                     .OrderByDescending(g => g.Sum(t => t.Amount));
+
+                var prevGrouped = prevExpenses.GroupBy(t => t.CategoryId)
+                    .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
 
                 Color[] palette = {
                     Color.FromArgb(255, 52, 152, 219), Color.FromArgb(255, 155, 89, 182),
@@ -240,18 +364,30 @@ namespace Fluence.ViewModels
                 };
 
                 int i = 0;
+                var allItems = new List<ReportCategoryItem>();
                 foreach (var g in grouped)
                 {
                     double amt = g.Sum(t => t.Amount);
-                    report.Distribution.Add(new ReportCategoryItem
+                    double prevAmt = prevGrouped.ContainsKey(g.Key) ? prevGrouped[g.Key] : 0;
+                    
+                    double catTrend = prevAmt > 0 ? (amt - prevAmt) / prevAmt * 100 : 100;
+
+                    var item = new ReportCategoryItem
                     {
                         Name = categoryMap.ContainsKey(g.Key) ? categoryMap[g.Key].ToLower() : "unknown",
                         Amount = amt,
                         Percentage = (amt / totalExpenses) * 100,
+                        TransactionCount = g.Count(),
+                        Trend = catTrend,
                         Color = new SolidColorBrush(palette[i % palette.Length])
-                    });
+                    };
+                    report.Distribution.Add(item);
+                    allItems.Add(item);
                     i++;
                 }
+
+                var burners = allItems.Where(x => x.Trend > 0).OrderByDescending(item => item.Trend).Take(3);
+                foreach (var b in burners) report.BudgetBurners.Add(b);
             }
         }
 
