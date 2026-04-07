@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.UI;
@@ -56,9 +57,61 @@ namespace Fluence.ViewModels
     {
         private readonly TransactionService _transactionService = new TransactionService();
         private readonly CategoryService _categoryService = new CategoryService();
+        private readonly ProfileService _profileService = new ProfileService();
 
         public ObservableCollection<TransactionGroup> GroupedTransactions { get; set; } = new ObservableCollection<TransactionGroup>();
-        public ObservableCollection<TransactionDisplayItem> Transactions { get; set; } = new ObservableCollection<TransactionDisplayItem>();
+        
+        private double _currentBalance;
+        public double CurrentBalance
+        {
+            get { return _currentBalance; }
+            set { _currentBalance = value; OnPropertyChanged(); }
+        }
+
+        private double _budgetPercent;
+        public double BudgetPercent
+        {
+            get { return _budgetPercent; }
+            set { _budgetPercent = value; OnPropertyChanged(); OnPropertyChanged("BudgetBrush"); }
+        }
+
+        public Brush BudgetBrush
+        {
+            get
+            {
+                if (_budgetPercent < 50) return new SolidColorBrush(Color.FromArgb(255, 46, 204, 113));
+                if (_budgetPercent < 80) return new SolidColorBrush(Color.FromArgb(255, 241, 196, 15));
+                return new SolidColorBrush(Color.FromArgb(255, 231, 76, 60));
+            }
+        }
+
+        private double _dailyAllowance;
+        public double DailyAllowance
+        {
+            get { return _dailyAllowance; }
+            set { _dailyAllowance = value; OnPropertyChanged(); }
+        }
+
+        private double _spentToday;
+        public double SpentToday
+        {
+            get { return _spentToday; }
+            set { _spentToday = value; OnPropertyChanged(); }
+        }
+
+        private double _weeklyTotal;
+        public double WeeklyTotal
+        {
+            get { return _weeklyTotal; }
+            set { _weeklyTotal = value; OnPropertyChanged(); }
+        }
+
+        private string _topCategory = "none";
+        public string TopCategory
+        {
+            get { return _topCategory; }
+            set { _topCategory = value; OnPropertyChanged(); }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,17 +120,56 @@ namespace Fluence.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public async Task LoadOverviewAsync()
+        {
+            var transactions = await _transactionService.GetTransactionsAsync();
+            var profile = await _profileService.GetProfileAsync();
+            
+            double totalIncome = transactions.Where(t => t.Type == "Income").Sum(t => t.Amount);
+            double totalExpense = transactions.Where(t => t.Type == "Expense").Sum(t => t.Amount);
+            CurrentBalance = totalIncome - totalExpense;
+
+            if (profile != null && profile.MonthlyLimit > 0)
+            {
+                double monthlySpent = transactions
+                    .Where(t => t.Type == "Expense" && t.Date.Month == DateTime.Now.Month && t.Date.Year == DateTime.Now.Year)
+                    .Sum(t => t.Amount);
+                BudgetPercent = Math.Min(100, (monthlySpent / profile.MonthlyLimit) * 100);
+
+                int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+                int daysRemaining = daysInMonth - DateTime.Now.Day + 1;
+                DailyAllowance = Math.Max(0, (profile.MonthlyLimit - monthlySpent) / daysRemaining);
+            }
+
+            DateTime today = DateTime.Today;
+            SpentToday = transactions
+                .Where(t => t.Type == "Expense" && t.Date.Date == today)
+                .Sum(t => t.Amount);
+
+            DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
+            WeeklyTotal = transactions
+                .Where(t => t.Type == "Expense" && t.Date.Date >= startOfWeek)
+                .Sum(t => t.Amount);
+
+            var topCat = transactions
+                .Where(t => t.Type == "Expense")
+                .GroupBy(t => t.CategoryId)
+                .OrderByDescending(g => g.Sum(t => t.Amount))
+                .FirstOrDefault();
+
+            if (topCat != null)
+            {
+                var cat = await _categoryService.GetCategoryByIdAsync(topCat.Key);
+                TopCategory = cat?.Name?.ToLower() ?? "unknown";
+            }
+        }
+
         public async Task LoadHistoryAsync()
         {
             var transactions = await _transactionService.GetTransactionsAsync();
             var categories = await _categoryService.GetCategoriesAsync();
-            var categoryMap = new Dictionary<int, string>();
-            foreach (var category in categories)
-            {
-                categoryMap[category.Id] = category.Name;
-            }
+            var categoryMap = categories.ToDictionary(c => c.Id, c => c.Name);
 
-            Transactions.Clear();
             GroupedTransactions.Clear();
 
             TransactionGroup currentGroup = null;
@@ -100,8 +192,6 @@ namespace Fluence.ViewModels
                     TypeBrush = t.Type == "Income" ? new SolidColorBrush(Color.FromArgb(255, 46, 204, 113)) : new SolidColorBrush(Color.FromArgb(255, 231, 76, 60)),
                     IsExpanded = false
                 };
-
-                Transactions.Add(displayItem);
 
                 if (currentDateKey != dateKey)
                 {
