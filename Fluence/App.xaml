@@ -7,6 +7,7 @@
 
     <Application.Resources>
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <converters:WidthConverter x:Key="WidthConverter" />
     </Application.Resources>
 
 </Application>
