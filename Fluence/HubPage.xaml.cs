@@ -66,6 +66,14 @@ namespace Fluence
             }
         }
 
+        private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Frame.Navigate(typeof(ProfilePage)))
+            {
+                throw new Exception("Failed to navigate to category form.");
+            }
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
