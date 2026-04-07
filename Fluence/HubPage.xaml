@@ -100,7 +100,7 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Margin="0,-8,0,0">
                         <ListView ItemsSource="{Binding Source={StaticResource GroupedTransactionsSource}}"
                                   HorizontalContentAlignment="Stretch"
                                   IsItemClickEnabled="True"
@@ -184,8 +184,8 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <Pivot x:Name="ReportsPivot" Margin="-10,0,0,0">
+                    <Grid Margin="0,-12,0,0">
+                        <Pivot x:Name="ReportsPivot">
                             <Pivot.HeaderTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding}" FontSize="24" FontWeight="SemiBold" Margin="0,0,20,0" />
