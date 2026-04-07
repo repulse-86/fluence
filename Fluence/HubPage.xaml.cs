@@ -66,6 +66,14 @@ namespace Fluence
             }
         }
 
+        private void QuickAddAppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Frame.Navigate(typeof(QuickAddPage)))
+            {
+                throw new Exception("Failed to navigate to quick add page.");
+            }
+        }
+
         private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
         {
             if (!Frame.Navigate(typeof(ProfilePage)))

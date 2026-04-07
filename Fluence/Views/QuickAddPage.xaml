@@ -1,0 +1,53 @@
+<Page
+    x:Class="Fluence.Views.QuickAddPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Fluence.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="0,2,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="quick add" Style="{ThemeResource HeaderTextBlockStyle}" Margin="19,0,-100,20" Padding="0,0,0,6" TextWrapping="NoWrap" />
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="19,0,19,20">
+                <TextBlock Text="amount" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
+                <TextBox x:Name="AmountTextBox" Text="{Binding AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" />
+                
+                <TextBlock Text="note" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" />
+                <TextBox x:Name="NoteTextBox" Text="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="category" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" />
+                <ComboBox x:Name="CategoryComboBox" 
+                          ItemsSource="{Binding Categories}" 
+                          DisplayMemberPath="Name" 
+                          SelectedValuePath="Id" 
+                          SelectedValue="{Binding CategoryId, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch" />
+
+                <TextBlock Text="type" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" />
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="Expense" IsChecked="{Binding Type, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Expense, Mode=TwoWay}" GroupName="Type" />
+                    <RadioButton Content="Income" IsChecked="{Binding Type, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Income, Mode=TwoWay}" GroupName="Type" Margin="20,0,0,0" />
+                </StackPanel>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,20,0,0" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding DebugData}" Foreground="{Binding DebugColor}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center" FontWeight="SemiBold" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="SaveTransactionAppBarButton" Icon="Save" Label="save" Click="SaveTransactionAppBarButton_Click" />
+            <AppBarButton x:Name="CancelAppBarButton" Icon="Cancel" Label="cancel" Click="CancelAppBarButton_Click" />
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>
