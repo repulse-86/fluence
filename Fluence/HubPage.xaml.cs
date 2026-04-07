@@ -66,7 +66,7 @@ namespace Fluence
 
         private void AddCategoryAppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Frame.Navigate(typeof(CategoryPage)))
+            if (!Frame.Navigate(typeof(SettingsPage), "category"))
             {
                 throw new Exception("Failed to navigate to category form.");
             }
@@ -139,7 +139,7 @@ namespace Fluence
 
         private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Frame.Navigate(typeof(ProfilePage)))
+            if (!Frame.Navigate(typeof(SettingsPage), "profile"))
             {
                 throw new Exception("Failed to navigate to profile form.");
             }

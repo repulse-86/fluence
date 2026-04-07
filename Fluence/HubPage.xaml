@@ -580,7 +580,7 @@
         <CommandBar>
             <AppBarButton x:Name="AddCategoryAppBarButton" Label="category" Icon="Bookmarks" Click="AddCategoryAppBarButton_Click" />
             <AppBarButton x:Name="QuickAddAppBarButton" Label="quick add" Icon="Add" Click="QuickAddAppBarButton_Click" />
-            <AppBarButton x:Name="EditProfileAppBarButton" Label="profile" Icon="Account" Click="EditProfileAppBarButton_Click" />
+            <AppBarButton x:Name="EditProfileAppBarButton" Label="profile" Icon="Contact" Click="EditProfileAppBarButton_Click" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Name="AboutAppBarButton" Label="about" Click="AboutAppBarButton_Click" />
             </CommandBar.SecondaryCommands>

@@ -1,3 +1,4 @@
+using Fluence.Common;
 using Fluence.ViewModels;
 using System;
 using System.Linq;
@@ -11,16 +12,35 @@ namespace Fluence.Views
     public sealed partial class QuickAddPage : Page
     {
         private TransactionViewModel _viewModel;
+        private readonly NavigationHelper navigationHelper;
 
         public QuickAddPage()
         {
             this.InitializeComponent();
             _viewModel = new TransactionViewModel();
             this.DataContext = _viewModel;
+
+            this.navigationHelper = new NavigationHelper(this);
+            this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
+            this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+        }
+
+        public NavigationHelper NavigationHelper
+        {
+            get { return this.navigationHelper; }
+        }
+
+        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        {
+        }
+
+        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
+        {
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            this.navigationHelper.OnNavigatedTo(e);
             await _viewModel.LoadCategoriesAsync();
 
             if (e.Parameter is int)
@@ -32,6 +52,11 @@ namespace Fluence.Views
                     _viewModel.SelectedTransaction = transaction;
                 }
             }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            this.navigationHelper.OnNavigatedFrom(e);
         }
 
         private async void SaveTransactionAppBarButton_Click(object sender, RoutedEventArgs e)

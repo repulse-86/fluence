@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Fluence.ViewModels
 {
-    class CategoryViewModel : INotifyPropertyChanged
+    public class CategoryViewModel : INotifyPropertyChanged
     {
         private readonly CategoryService _categoryService = new CategoryService();
         private bool _isBusy;
