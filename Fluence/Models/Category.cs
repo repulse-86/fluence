@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Fluence.Models
 {
-    class Category : INotifyPropertyChanged
+    public class Category : INotifyPropertyChanged
     {
         private string _name;
 

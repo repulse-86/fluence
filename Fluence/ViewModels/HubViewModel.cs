@@ -16,6 +16,7 @@ namespace Fluence.ViewModels
     public class TransactionDisplayItem : INotifyPropertyChanged
     {
         private bool _isExpanded;
+        public int Id { get; set; }
         public string CategoryName { get; set; }
         public string Note { get; set; }
         public string Type { get; set; }
@@ -409,6 +410,7 @@ namespace Fluence.ViewModels
 
                 var displayItem = new TransactionDisplayItem
                 {
+                    Id = t.Id,
                     CategoryName = categoryName.ToLower(),
                     Note = t.Note?.ToLower(),
                     Type = t.Type,

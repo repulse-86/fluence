@@ -14,7 +14,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="quick add" Style="{ThemeResource HeaderTextBlockStyle}" Margin="19,0,-100,20" Padding="0,0,0,6" TextWrapping="NoWrap" />
+        <TextBlock Grid.Row="0" Text="{Binding HeaderTitle}" Style="{ThemeResource HeaderTextBlockStyle}" Margin="19,0,-100,20" Padding="0,0,0,6" TextWrapping="NoWrap" />
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="19,0,19,20">

@@ -27,6 +27,22 @@ namespace Fluence.Services
             await _db.UpdateAsync(transaction);
         }
 
+        public async Task<Transaction> GetTransactionByIdAsync(int id)
+        {
+            await InitializeDatabaseAsync();
+            return await _db.Table<Transaction>().Where(t => t.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task DeleteTransactionAsync(int id)
+        {
+            await InitializeDatabaseAsync();
+            var transaction = await GetTransactionByIdAsync(id);
+            if (transaction != null)
+            {
+                await _db.DeleteAsync(transaction);
+            }
+        }
+
         public async Task DeleteTransactionAsync(Transaction transaction)
         {
             await InitializeDatabaseAsync();

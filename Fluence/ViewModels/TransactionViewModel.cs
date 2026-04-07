@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Fluence.ViewModels
 {
-    class TransactionViewModel : INotifyPropertyChanged
+    public class TransactionViewModel : INotifyPropertyChanged
     {
         private readonly TransactionService _transactionService = new TransactionService();
         private readonly CategoryService _categoryService = new CategoryService();
@@ -22,6 +22,8 @@ namespace Fluence.ViewModels
         private string _type;
         private string _errorMessage;
         private string _debugData;
+        private string _headerTitle = "quick add";
+        private Transaction _selectedTransaction;
         private Windows.UI.Xaml.Media.Brush _debugColor = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Gray);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -120,6 +122,45 @@ namespace Fluence.ViewModels
             }
         }
 
+        public string HeaderTitle
+        {
+            get { return _headerTitle; }
+            set
+            {
+                if (_headerTitle != value)
+                {
+                    _headerTitle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Transaction SelectedTransaction
+        {
+            get { return _selectedTransaction; }
+            set
+            {
+                _selectedTransaction = value;
+                if (_selectedTransaction != null)
+                {
+                    HeaderTitle = "edit transaction";
+                    AmountText = _selectedTransaction.Amount.ToString();
+                    Note = _selectedTransaction.Note;
+                    CategoryId = _selectedTransaction.CategoryId;
+                    Type = _selectedTransaction.Type;
+                }
+                else
+                {
+                    HeaderTitle = "quick add";
+                    AmountText = string.Empty;
+                    Note = string.Empty;
+                    CategoryId = 0;
+                    Type = "Expense";
+                }
+                OnPropertyChanged();
+            }
+        }
+
         public Windows.UI.Xaml.Media.Brush DebugColor
         {
             get { return _debugColor; }
@@ -151,7 +192,7 @@ namespace Fluence.ViewModels
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Failed to load categories: " + ex.Message;
+                ErrorMessage = "failed to load categories: " + ex.Message.ToLower();
             }
         }
 
@@ -170,31 +211,36 @@ namespace Fluence.ViewModels
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Failed to load transactions: " + ex.Message;
+                ErrorMessage = "failed to load transactions: " + ex.Message.ToLower();
             }
             finally { IsBusy = false; }
         }
 
-        public async Task<bool> AddTransactionAsync()
+        public async Task<Transaction> GetTransactionByIdAsync(int id)
+        {
+            return await _transactionService.GetTransactionByIdAsync(id);
+        }
+
+        public async Task<bool> SaveTransactionAsync()
         {
             ErrorMessage = string.Empty;
 
             double amount;
             if (!double.TryParse(AmountText, out amount) || amount <= 0)
             {
-                ErrorMessage = "Amount must be a positive number.";
+                ErrorMessage = "amount must be a positive number";
                 return false;
             }
 
             if (CategoryId == 0)
             {
-                ErrorMessage = "Please select a category.";
+                ErrorMessage = "please select a category";
                 return false;
             }
 
             if (string.IsNullOrEmpty(Type))
             {
-                ErrorMessage = "Please select a transaction type.";
+                ErrorMessage = "please select a transaction type";
                 return false;
             }
 
@@ -203,30 +249,54 @@ namespace Fluence.ViewModels
 
             try
             {
-                var transaction = new Transaction
+                if (SelectedTransaction == null)
                 {
-                    Amount = amount,
-                    Note = Note,
-                    CategoryId = CategoryId,
-                    Type = Type,
-                    Date = DateTime.Now
-                };
+                    var transaction = new Transaction
+                    {
+                        Amount = amount,
+                        Note = Note,
+                        CategoryId = CategoryId,
+                        Type = Type,
+                        Date = DateTime.Now
+                    };
 
-                await _transactionService.AddTransactionAsync(transaction);
-                Transactions.Insert(0, transaction);
+                    await _transactionService.AddTransactionAsync(transaction);
+                    DebugData = "saved successfully";
+                }
+                else
+                {
+                    SelectedTransaction.Amount = amount;
+                    SelectedTransaction.Note = Note;
+                    SelectedTransaction.CategoryId = CategoryId;
+                    SelectedTransaction.Type = Type;
+
+                    await _transactionService.UpdateTransactionAsync(SelectedTransaction);
+                    DebugData = "updated successfully";
+                }
                 
-                DebugData = "saved successfully";
                 DebugColor = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Green);
-
-                // Clear inputs
-                AmountText = string.Empty;
-                Note = string.Empty;
-                
                 return true;
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Failed to save transaction: " + ex.Message;
+                ErrorMessage = "failed to save transaction: " + ex.Message.ToLower();
+                return false;
+            }
+            finally { IsBusy = false; }
+        }
+
+        public async Task<bool> DeleteTransactionAsync(int id)
+        {
+            if (IsBusy) return false;
+            IsBusy = true;
+            try
+            {
+                await _transactionService.DeleteTransactionAsync(id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "failed to delete transaction: " + ex.Message.ToLower();
                 return false;
             }
             finally { IsBusy = false; }

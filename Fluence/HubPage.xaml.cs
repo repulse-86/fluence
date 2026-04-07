@@ -88,6 +88,26 @@ namespace Fluence
             }
         }
 
+        private void TransactionBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                FlyoutBase.ShowAttachedFlyout(element);
+                e.Handled = true;
+            }
+        }
+
+        private void EditTransaction_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuFlyoutItem;
+            var displayItem = menuItem.DataContext as TransactionDisplayItem;
+            if (displayItem != null)
+            {
+                this.Frame.Navigate(typeof(QuickAddPage), displayItem.Id);
+            }
+        }
+
         private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
         {
             if (!Frame.Navigate(typeof(ProfilePage)))
