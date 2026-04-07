@@ -199,7 +199,7 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="savings rate" FontSize="12" Opacity="0.6" />
-                                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N0'}" FontSize="28" FontWeight="Bold">
+                                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
                                                     <Run Text="%" FontSize="14" />
                                                 </TextBlock>
                                                 <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,20,0" />
@@ -208,7 +208,7 @@
                                                 <TextBlock Text="vs yesterday" FontSize="12" Opacity="0.6" HorizontalAlignment="Right" />
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                     <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,5,5,0" />
-                                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N0'}" FontSize="28" FontWeight="Bold">
+                                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
                                                         <Run Text="%" FontSize="14" />
                                                     </TextBlock>
                                                 </StackPanel>
@@ -243,7 +243,7 @@
                                                         <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                                                             <TextBlock Text="+" FontSize="14" Opacity="0.6" Margin="0,2,2,0" />
-                                                            <TextBlock Text="{Binding Trend, ConverterParameter='N0'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
+                                                            <TextBlock Text="{Binding Trend, ConverterParameter='N2'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
                                                             <TextBlock Text="%" FontSize="12" Opacity="0.6" Margin="2,5,0,0" />
                                                         </StackPanel>
                                                     </Grid>
@@ -306,7 +306,7 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="savings rate" FontSize="12" Opacity="0.6" />
-                                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N0'}" FontSize="28" FontWeight="Bold">
+                                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
                                                     <Run Text="%" FontSize="14" />
                                                 </TextBlock>
                                                 <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,20,0" />
@@ -315,7 +315,7 @@
                                                 <TextBlock Text="vs last month" FontSize="12" Opacity="0.6" HorizontalAlignment="Right" />
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                     <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,5,5,0" />
-                                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N0'}" FontSize="28" FontWeight="Bold">
+                                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
                                                         <Run Text="%" FontSize="14" />
                                                     </TextBlock>
                                                 </StackPanel>
@@ -364,7 +364,7 @@
                                                         <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                                                             <TextBlock Text="+" FontSize="14" Opacity="0.6" Margin="0,2,2,0" />
-                                                            <TextBlock Text="{Binding Trend, ConverterParameter='N0'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
+                                                            <TextBlock Text="{Binding Trend, ConverterParameter='N2'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
                                                             <TextBlock Text="%" FontSize="12" Opacity="0.6" Margin="2,5,0,0" />
                                                         </StackPanel>
                                                     </Grid>
@@ -440,7 +440,7 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="savings rate" FontSize="12" Opacity="0.6" />
-                                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N0'}" FontSize="28" FontWeight="Bold">
+                                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
                                                     <Run Text="%" FontSize="14" />
                                                 </TextBlock>
                                                 <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,20,0" />
@@ -449,7 +449,7 @@
                                                 <TextBlock Text="vs last year" FontSize="12" Opacity="0.6" HorizontalAlignment="Right" />
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                     <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,5,5,0" />
-                                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N0'}" FontSize="28" FontWeight="Bold">
+                                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
                                                         <Run Text="%" FontSize="14" />
                                                     </TextBlock>
                                                 </StackPanel>
@@ -501,7 +501,7 @@
                                                         <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                                                             <TextBlock Text="+" FontSize="14" Opacity="0.6" Margin="0,2,2,0" />
-                                                            <TextBlock Text="{Binding Trend, ConverterParameter='N0'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
+                                                            <TextBlock Text="{Binding Trend, ConverterParameter='N2'}" FontSize="18" FontWeight="Bold" Foreground="#E74C3C" />
                                                             <TextBlock Text="%" FontSize="12" Opacity="0.6" Margin="2,5,0,0" />
                                                         </StackPanel>
                                                     </Grid>

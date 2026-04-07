@@ -217,9 +217,9 @@ namespace Fluence.ViewModels
                 var data = await _profileService.GetProfileAsync();
                 if (data != null)
                 {
-                    InitialBalanceText = data.InitialBalance.ToString();
-                    MonthlyIncomeText = data.MonthlyIncome.ToString();
-                    MonthlyLimitText = data.MonthlyLimit.ToString();
+                    InitialBalanceText = data.InitialBalance.ToString("N2");
+                    MonthlyIncomeText = data.MonthlyIncome.ToString("N2");
+                    MonthlyLimitText = data.MonthlyLimit.ToString("N2");
                     Payday = data.Payday;
                     IsEditing = false;
                     DebugData = string.Empty;

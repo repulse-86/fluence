@@ -20,17 +20,17 @@
             <StackPanel Margin="19,0,19,20">
                 <StackPanel Visibility="{Binding ViewVisibility}">
                     <TextBlock Text="current balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" />
-                    <TextBlock Text="{Binding InitialBalanceText}" FontSize="72" FontWeight="Thin" Margin="0,-10,0,30" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding InitialBalanceText, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" Margin="0,-10,0,30" TextWrapping="Wrap" />
 
                     <StackPanel>
                         <StackPanel Margin="0,0,0,25">
                             <TextBlock Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Opacity="0.6" FontSize="20" TextWrapping="Wrap" />
-                            <TextBlock Text="{Binding MonthlyIncomeText}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
                         </StackPanel>
 
                         <StackPanel Margin="0,0,0,25">
                             <TextBlock Text="monthly limit" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Opacity="0.6" FontSize="20" TextWrapping="Wrap" />
-                            <TextBlock Text="{Binding MonthlyLimitText}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding MonthlyLimitText, ConverterParameter='N2'}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
                         </StackPanel>
 
                         <StackPanel Margin="0,0,0,25">

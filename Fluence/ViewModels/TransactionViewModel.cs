@@ -144,7 +144,7 @@ namespace Fluence.ViewModels
                 if (_selectedTransaction != null)
                 {
                     HeaderTitle = "edit transaction";
-                    AmountText = _selectedTransaction.Amount.ToString();
+                    AmountText = _selectedTransaction.Amount.ToString("N2");
                     Note = _selectedTransaction.Note;
                     CategoryId = _selectedTransaction.CategoryId;
                     Type = _selectedTransaction.Type;
