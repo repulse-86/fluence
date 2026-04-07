@@ -23,6 +23,7 @@ namespace Fluence.Services
             _db = new SQLiteAsyncConnection(path);
 
             await _db.CreateTableAsync<Category>();
+            await _db.CreateTableAsync<Transaction>();
         }
     }
 }

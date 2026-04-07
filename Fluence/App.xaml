@@ -2,6 +2,11 @@
     x:Class="Fluence.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Fluence">
+    xmlns:local="using:Fluence"
+    xmlns:converters="using:Fluence.Converters">
+
+    <Application.Resources>
+        <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+    </Application.Resources>
 
 </Application>
