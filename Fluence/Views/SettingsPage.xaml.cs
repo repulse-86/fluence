@@ -237,9 +237,20 @@ namespace Fluence.Views
             var result = await dialog.ShowAsync();
             if ((int)result.Id == 0)
             {
+                var categoryService = new CategoryService();
+                await categoryService.InitializeDatabaseSync();
+
                 var transactionService = new TransactionService();
                 await transactionService.SeedTransactionsAsync();
-                await new Windows.UI.Popups.MessageDialog("mock data activated. navigate back to see the changes.", "success").ShowAsync();
+
+                var profileService = new ProfileService();
+                await profileService.SeedProfileAsync();
+
+                await _categoryViewModel.LoadCategoriesAsync();
+                await _profileViewModel.LoadProfileDetailsAsync();
+                UpdateAppBar();
+
+                await new Windows.UI.Popups.MessageDialog("mock data activated successfully.", "success").ShowAsync();
             }
         }
 
@@ -259,7 +270,11 @@ namespace Fluence.Views
                 var profileService = new ProfileService();
                 await profileService.ClearProfileAsync();
 
-                await new Windows.UI.Popups.MessageDialog("all data cleared successfully. please restart the app to complete the reset.", "success").ShowAsync();
+                await _categoryViewModel.LoadCategoriesAsync();
+                await _profileViewModel.LoadProfileDetailsAsync();
+                UpdateAppBar();
+
+                await new Windows.UI.Popups.MessageDialog("all data cleared successfully.", "success").ShowAsync();
             }
         }
     }

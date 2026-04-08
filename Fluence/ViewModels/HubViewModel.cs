@@ -204,6 +204,9 @@ namespace Fluence.ViewModels
             var transactions = await _transactionService.GetTransactionsAsync();
             var profile = await _profileService.GetProfileAsync();
             
+            BudgetPercent = 0;
+            DailyAllowance = 0;
+
             double totalIncome = transactions.Where(t => t.Type == "Income").Sum(t => t.Amount);
             double totalExpense = transactions.Where(t => t.Type == "Expense").Sum(t => t.Amount);
             CurrentBalance = totalIncome - totalExpense;

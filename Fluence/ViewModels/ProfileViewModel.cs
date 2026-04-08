@@ -226,6 +226,10 @@ namespace Fluence.ViewModels
                 }
                 else
                 {
+                    InitialBalanceText = "0.00";
+                    MonthlyIncomeText = "0.00";
+                    MonthlyLimitText = "0.00";
+                    Payday = DateTimeOffset.Now;
                     IsEditing = true;
                     DebugData = string.Empty;
                 }
