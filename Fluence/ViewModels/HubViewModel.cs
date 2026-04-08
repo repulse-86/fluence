@@ -412,12 +412,7 @@ namespace Fluence.ViewModels
                 var prevGrouped = prevExpenses.GroupBy(t => t.CategoryId)
                     .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
 
-                Color[] palette = {
-                    Color.FromArgb(255, 52, 152, 219), Color.FromArgb(255, 155, 89, 182),
-                    Color.FromArgb(255, 26, 188, 156), Color.FromArgb(255, 241, 196, 15),
-                    Color.FromArgb(255, 230, 126, 34), Color.FromArgb(255, 231, 76, 60)
-                };
-
+                int totalCategories = grouped.Count();
                 int i = 0;
                 var allItems = new List<ReportCategoryItem>();
                 foreach (var g in grouped)
@@ -427,6 +422,10 @@ namespace Fluence.ViewModels
                     
                     double catTrend = prevAmt > 0 ? (amt - prevAmt) / prevAmt * 100 : 100;
 
+                    // Generate color from HSL spectrum (0 to 360 degrees)
+                    double hue = (360.0 * i) / totalCategories;
+                    var color = ColorFromHsl(hue, 0.65, 0.55);
+
                     var item = new ReportCategoryItem
                     {
                         Name = categoryMap.ContainsKey(g.Key) ? categoryMap[g.Key].ToLower() : "unknown",
@@ -434,7 +433,7 @@ namespace Fluence.ViewModels
                         Percentage = (amt / totalExpenses) * 100,
                         TransactionCount = g.Count(),
                         Trend = catTrend,
-                        Color = new SolidColorBrush(palette[i % palette.Length])
+                        Color = new SolidColorBrush(color)
                     };
                     newDistribution.Add(item);
                     allItems.Add(item);
@@ -446,6 +445,34 @@ namespace Fluence.ViewModels
             }
             report.Distribution = newDistribution;
             report.BudgetBurners = newBudgetBurners;
+        }
+
+        private Color ColorFromHsl(double h, double s, double l)
+        {
+            double r = 0, g = 0, b = 0;
+            if (s == 0)
+            {
+                r = g = b = l;
+            }
+            else
+            {
+                double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                double p = 2 * l - q;
+                r = HueToRgb(p, q, h / 360.0 + 1.0 / 3.0);
+                g = HueToRgb(p, q, h / 360.0);
+                b = HueToRgb(p, q, h / 360.0 - 1.0 / 3.0);
+            }
+            return Color.FromArgb(255, (byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
+        }
+
+        private double HueToRgb(double p, double q, double t)
+        {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1.0 / 6.0) return p + (q - p) * 6 * t;
+            if (t < 1.0 / 2.0) return q;
+            if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6;
+            return p;
         }
 
         public async Task LoadHistoryAsync()
