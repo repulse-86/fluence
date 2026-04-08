@@ -16,8 +16,6 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="0,0,10,16">
-            <TextBlock Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="42" FontWeight="Bold" />
-            <TextBlock Text="current balance" FontSize="12" Opacity="0.6" Margin="0,-8,0,20" />
 
             <Border Height="30" Background="#1AFFFFFF" Margin="0,0,0,5">
                 <Grid>
@@ -33,19 +31,22 @@
                     </Rectangle>
                 </Grid>
             </Border>
-            <TextBlock Text="monthly budget health" FontSize="12" Opacity="0.6" Margin="0,0,0,20" />
+            <TextBlock Text="monthly budget health" FontSize="16" Opacity="0.6" Margin="0,0,0,20" />
+            
+            <TextBlock Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="34" FontWeight="Bold" />
+            <TextBlock Text="current balance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="16" Margin="0,-2,0,20" />
 
-            <TextBlock Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" />
-            <TextBlock Text="daily allowance" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
+            <TextBlock Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="34" FontWeight="Bold" />
+            <TextBlock Text="daily allowance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="16" Margin="0,-2,0,18" />
 
-            <TextBlock Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" />
-            <TextBlock Text="spent today" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
+            <TextBlock Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="34" FontWeight="Bold" />
+            <TextBlock Text="spent today" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="16" Margin="0,-2,0,18" />
 
-            <TextBlock Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" />
-            <TextBlock Text="weekly total" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
+            <TextBlock Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="34" FontWeight="Bold" />
+            <TextBlock Text="weekly total" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="16" Margin="0,-2,0,18" />
 
-            <TextBlock Text="{Binding TopCategory}" FontSize="24" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
-            <TextBlock Text="top category" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
+            <TextBlock Text="{Binding TopCategory}" FontSize="34" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="top category" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="16" Margin="0,-2,0,18" />
             
         </StackPanel>
     </ScrollViewer>

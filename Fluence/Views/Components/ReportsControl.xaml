@@ -25,7 +25,7 @@
             <PivotItem Header="day" DataContext="{Binding DayReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
                     <StackPanel>
-                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -39,7 +39,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="comparison" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <Grid Margin="0,0,0,30">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="100" />
@@ -97,7 +97,7 @@
                             </Border>
                         </Grid>
 
-                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding BudgetBurners}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -117,7 +117,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -147,7 +147,7 @@
             <PivotItem Header="month" DataContext="{Binding MonthReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
                     <StackPanel Margin="0,0,0,30">
-                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -161,7 +161,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="spending intensity" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="spending intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding IntensityMap}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -175,7 +175,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="comparison" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <Grid Margin="0,0,0,30">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="100" />
@@ -244,7 +244,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding BudgetBurners}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -264,7 +264,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -294,7 +294,7 @@
             <PivotItem Header="year" DataContext="{Binding YearReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
                     <StackPanel Margin="0,0,0,30">
-                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -308,7 +308,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="monthly intensity" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="monthly intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding IntensityMap}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -325,7 +325,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="comparison" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <Grid Margin="0,0,0,30">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="100" />
@@ -394,7 +394,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding BudgetBurners}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -414,7 +414,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>

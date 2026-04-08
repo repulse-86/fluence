@@ -22,7 +22,25 @@
     </Page.Transitions>
 
     <Grid x:Name="LayoutRoot">
-        <Hub x:Name="hub" Header="fluence" Background="Transparent">
+        <Rectangle x:Name="BackgroundRectangle">
+            <Rectangle.Fill>
+                <ImageBrush x:Name="BackgroundImageBrush" 
+                    Stretch="UniformToFill" 
+                    AlignmentX="Left">
+                    <ImageBrush.RelativeTransform>
+                        <CompositeTransform x:Name="BackgroundTransform" 
+                                    ScaleX="1.5" ScaleY="1.5" 
+                                    CenterX="0.5" CenterY="0.5" />
+                    </ImageBrush.RelativeTransform>
+                </ImageBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle x:Name="BackgroundDimmer" 
+                   Fill="Black" 
+                   Opacity="0.6" 
+                   IsHitTestVisible="False" />
+        <Hub x:Name="hub" Header="fluence" Background="Transparent" Loaded="hub_Loaded">
             <Hub.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="120" Margin="0,0,0,20"/>
@@ -65,7 +83,10 @@
     </Grid>
 
     <Page.BottomAppBar>
-        <CommandBar Background="#AA000000" ClosedDisplayMode="Minimal">
+        <CommandBar x:Name="BottomCommandBar" 
+                Background="#AA000000" 
+                Visibility="Visible" 
+                ClosedDisplayMode="Minimal">
             <AppBarButton x:Name="AddCategoryAppBarButton" Label="category" Icon="Bookmarks" Click="AddCategoryAppBarButton_Click" />
             <AppBarButton x:Name="QuickAddAppBarButton" Label="quick add" Icon="Add" Click="QuickAddAppBarButton_Click" />
             <AppBarButton x:Name="EditProfileAppBarButton" Label="profile" Icon="Contact" Click="EditProfileAppBarButton_Click" />

@@ -2,10 +2,16 @@ using Fluence.Common;
 using Fluence.ViewModels;
 using Fluence.Views;
 using System;
+using System.IO;
 using Windows.ApplicationModel.Resources;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml.Input;
 
 namespace Fluence
 {
@@ -16,41 +22,37 @@ namespace Fluence
         private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("Resources");
         private readonly CategoryViewModel categoryViewModel = new CategoryViewModel();
         private readonly HubViewModel hubViewModel = new HubViewModel();
+        private double _targetX = 0;
+        private double _currentX = 0;
+        private bool _isRenderingHooked = false;
+        private static bool _isWallpaperFetched = false;
+
+        private const string BackgroundFileName = "cached_background.jpg";
+        private const string WallpaperUrl = "https://picsum.photos/1920/1080";
 
         public HubPage()
         {
             this.InitializeComponent();
-
             this.NavigationCacheMode = NavigationCacheMode.Required;
-
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
-
             this.DefaultViewModel["CategoryViewModel"] = this.categoryViewModel;
             this.DefaultViewModel["HubViewModel"] = this.hubViewModel;
         }
 
-        public NavigationHelper NavigationHelper
-        {
-            get { return this.navigationHelper; }
-        }
-
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
-        }
+        public NavigationHelper NavigationHelper => this.navigationHelper;
+        public ObservableDictionary DefaultViewModel => this.defaultViewModel;
 
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             await this.hubViewModel.LoadOverviewAsync();
             await this.hubViewModel.LoadHistoryAsync();
             await this.hubViewModel.LoadReportAsync();
+            await InitializeBackgroundAsync();
         }
-
-        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e)
-        {
-        }
+        
+        private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }
 
         private void AddCategoryAppBarButton_Click(object sender, RoutedEventArgs e)
         {
@@ -91,14 +93,211 @@ namespace Fluence
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e) => this.navigationHelper.OnNavigatedTo(e);
+        protected override void OnNavigatedFrom(NavigationEventArgs e) => this.navigationHelper.OnNavigatedFrom(e);
+
+        private double _targetOpacity = 0.6;
+        private double _currentOpacity = 0.6;
+
+        private void hub_Loaded(object sender, RoutedEventArgs e)
         {
-            this.navigationHelper.OnNavigatedTo(e);
+            if (_isRenderingHooked) return;
+            _isRenderingHooked = true;
+
+            var scrollViewer = GetScrollViewer(hub);
+            if (scrollViewer != null)
+            {
+                _targetOpacity = 0.6;
+                _currentOpacity = 0.6;
+                BackgroundDimmer.Opacity = 0.6;
+
+                scrollViewer.ViewChanged += (s, args) =>
+                {
+                    if (scrollViewer.ScrollableWidth > 0)
+                    {
+                        // Reduced factor from 1.5 to 0.3 to keep background visible if using RelativeTransform
+                        _targetX = -(scrollViewer.HorizontalOffset / scrollViewer.ScrollableWidth) * 0.3;
+                        System.Diagnostics.Debug.WriteLine($"hub_Loaded: ScrollableWidth={scrollViewer.ScrollableWidth}, Offset={scrollViewer.HorizontalOffset}, TargetX={_targetX}");
+                        
+                        double sectionWidth = 360;
+                        double progress = Math.Min(1, scrollViewer.HorizontalOffset / sectionWidth);
+                        _targetOpacity = 0.6 + (0.2 * progress);
+                    }
+                };
+
+                CompositionTarget.Rendering += (s, a) =>
+                {
+                    double xDiff = _targetX - _currentX;
+                    if (Math.Abs(xDiff) > 0.0001)
+                    {
+                        _currentX += xDiff * 0.15;
+                        BackgroundTransform.TranslateX = _currentX;
+                    }
+
+                    double oDiff = _targetOpacity - _currentOpacity;
+                    if (Math.Abs(oDiff) > 0.0001)
+                    {
+                        _currentOpacity += oDiff * 0.15;
+                        BackgroundDimmer.Opacity = _currentOpacity;
+                    }
+                };
+            }
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        private async System.Threading.Tasks.Task InitializeBackgroundAsync()
         {
-            this.navigationHelper.OnNavigatedFrom(e);
+            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Starting...");
+
+            try
+            {
+                try
+                {
+                    var cachedFile = await localFolder.GetFileAsync(BackgroundFileName);
+                    using (var stream = await cachedFile.OpenReadAsync())
+                    {
+                        if (stream.Size > 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Loading from cache...");
+                            BitmapImage bitmap = new BitmapImage();
+                            await bitmap.SetSourceAsync(stream);
+                            if (BackgroundImageBrush != null)
+                            {
+                                BackgroundImageBrush.ImageSource = bitmap;
+                            }
+                        }
+                    }
+                }
+                catch (Exception) { }
+
+                if (!_isWallpaperFetched)
+                {
+                    _isWallpaperFetched = true;
+                    try
+                    {
+                        string currentUrl = WallpaperUrl;
+                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fetching random wallpaper from " + currentUrl);
+                        
+                        using (var filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter())
+                        {
+                            filter.CacheControl.ReadBehavior = Windows.Web.Http.Filters.HttpCacheReadBehavior.MostRecent;
+                            filter.AllowAutoRedirect = false; // Disable auto-redirect to debug the link
+
+                            using (var client = new Windows.Web.Http.HttpClient(filter))
+                            {
+                                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko");
+                                
+                                Windows.Web.Http.HttpResponseMessage response = null;
+                                
+                                try
+                                {
+                                    System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Sending initial request...");
+                                    response = await client.GetAsync(new Uri(currentUrl));
+                                }
+                                catch (Exception ex)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Initial request exception: 0x{ex.HResult:X8} - {ex.Message}");
+                                    if ((uint)ex.HResult == 0x80072EFD)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: HTTPS connection failed. Retrying with HTTP...");
+                                        currentUrl = currentUrl.Replace("https://", "http://");
+                                        try { response = await client.GetAsync(new Uri(currentUrl)); }
+                                        catch (Exception ex2) { System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: HTTP retry failed: 0x{ex2.HResult:X8}"); }
+                                    }
+                                }
+
+                                if (response != null && ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399))
+                                {
+                                    string location = response.Headers.Location.ToString();
+                                    System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Redirect detected ({response.StatusCode}) to: {location}");
+                                    
+                                    // Manual follow
+                                    try 
+                                    {
+                                        response = await client.GetAsync(new Uri(location));
+                                    }
+                                    catch (Exception ex3)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Redirect follow failed: 0x{ex3.HResult:X8}");
+                                        if ((uint)ex3.HResult == 0x80072EFD)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Redirect HTTPS failed. Retrying redirect with HTTP...");
+                                            response = await client.GetAsync(new Uri(location.Replace("https://", "http://")));
+                                        }
+                                    }
+                                }
+
+                                if (response == null || !response.IsSuccessStatusCode)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Fetch failed. Status: {(response != null ? (int)response.StatusCode : 0)}");
+                                    _isWallpaperFetched = false;
+                                    return;
+                                }
+
+                                var buffer = await response.Content.ReadAsBufferAsync();
+                                System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Downloaded {buffer.Length} bytes");
+
+                                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                                {
+                                    try
+                                    {
+                                        using (var stream = new InMemoryRandomAccessStream())
+                                        {
+                                            await stream.WriteAsync(buffer);
+                                            stream.Seek(0);
+                                            
+                                            BitmapImage bitmap = new BitmapImage();
+                                            await bitmap.SetSourceAsync(stream);
+                                            
+                                            if (BackgroundImageBrush != null)
+                                            {
+                                                BackgroundImageBrush.ImageSource = bitmap;
+                                                System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: New wallpaper applied. {bitmap.PixelWidth}x{bitmap.PixelHeight}");
+                                                hub.UpdateLayout();
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: UI set error: " + ex.Message);
+                                    }
+                                });
+
+                                var newFile = await localFolder.CreateFileAsync(BackgroundFileName, Windows.Storage.CreationCollisionOption.ReplaceExisting);
+                                using (var stream = await newFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
+                                {
+                                    await stream.WriteAsync(buffer);
+                                    await stream.FlushAsync();
+                                }
+                                System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Cache updated");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fetch error: " + ex.Message);
+                        _isWallpaperFetched = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fatal error: " + ex.Message);
+            }
+        }
+
+        private ScrollViewer GetScrollViewer(DependencyObject depObj)
+        {
+            ScrollViewer viewer = depObj as ScrollViewer;
+            if (viewer != null) return viewer;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                ScrollViewer result = GetScrollViewer(child);
+                if (result != null) return result;
+            }
+            return null;
         }
     }
 }
