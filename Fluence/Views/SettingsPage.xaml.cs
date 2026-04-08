@@ -94,6 +94,7 @@ namespace Fluence.Views
                 if (_categoryViewModel.IsBusy) return;
 
                 await _categoryViewModel.SaveCategoryAsync();
+                HubViewModel.IsDirty = true;
                 CategoryTextBox.IsEnabled = false;
                 this.Focus(FocusState.Programmatic);
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -116,6 +117,7 @@ namespace Fluence.Views
                     bool success = await _profileViewModel.SaveProfileDetailsAsync();
                     if (success)
                     {
+                        HubViewModel.IsDirty = true;
                         _profileViewModel.IsEditing = false;
                     }
                 }
@@ -184,6 +186,7 @@ namespace Fluence.Views
                     CategoryTextBox.IsEnabled = false;
 
                     await _categoryViewModel.DeleteCategoryAsync(category);
+                    HubViewModel.IsDirty = true;
 
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
@@ -246,6 +249,8 @@ namespace Fluence.Views
                 var profileService = new ProfileService();
                 await profileService.SeedProfileAsync();
 
+                HubViewModel.IsDirty = true;
+
                 await _categoryViewModel.LoadCategoriesAsync();
                 await _profileViewModel.LoadProfileDetailsAsync();
                 UpdateAppBar();
@@ -269,6 +274,8 @@ namespace Fluence.Views
 
                 var profileService = new ProfileService();
                 await profileService.ClearProfileAsync();
+
+                HubViewModel.IsDirty = true;
 
                 await _categoryViewModel.LoadCategoriesAsync();
                 await _profileViewModel.LoadProfileDetailsAsync();

@@ -63,6 +63,7 @@ namespace Fluence.Views
         {
             if (await _viewModel.SaveTransactionAsync())
             {
+                HubViewModel.IsDirty = true;
                 if (Frame.CanGoBack)
                 {
                     Frame.GoBack();

@@ -117,9 +117,26 @@ namespace Fluence.ViewModels
         private double _projectedTotal;
         public double ProjectedTotal { get { return _projectedTotal; } set { _projectedTotal = value; OnPropertyChanged(); } }
 
-        public ObservableCollection<ReportCategoryItem> Distribution { get; set; } = new ObservableCollection<ReportCategoryItem>();
-        public ObservableCollection<ReportCategoryItem> BudgetBurners { get; set; } = new ObservableCollection<ReportCategoryItem>();
-        public ObservableCollection<IntensityItem> IntensityMap { get; set; } = new ObservableCollection<IntensityItem>();
+        private ObservableCollection<ReportCategoryItem> _distribution = new ObservableCollection<ReportCategoryItem>();
+        public ObservableCollection<ReportCategoryItem> Distribution
+        {
+            get { return _distribution; }
+            set { _distribution = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<ReportCategoryItem> _budgetBurners = new ObservableCollection<ReportCategoryItem>();
+        public ObservableCollection<ReportCategoryItem> BudgetBurners
+        {
+            get { return _budgetBurners; }
+            set { _budgetBurners = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<IntensityItem> _intensityMap = new ObservableCollection<IntensityItem>();
+        public ObservableCollection<IntensityItem> IntensityMap
+        {
+            get { return _intensityMap; }
+            set { _intensityMap = value; OnPropertyChanged(); }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -134,7 +151,14 @@ namespace Fluence.ViewModels
         private readonly CategoryService _categoryService = new CategoryService();
         private readonly ProfileService _profileService = new ProfileService();
 
-        public ObservableCollection<TransactionGroup> GroupedTransactions { get; set; } = new ObservableCollection<TransactionGroup>();
+        public static bool IsDirty { get; set; } = true;
+
+        private ObservableCollection<TransactionGroup> _groupedTransactions = new ObservableCollection<TransactionGroup>();
+        public ObservableCollection<TransactionGroup> GroupedTransactions
+        {
+            get { return _groupedTransactions; }
+            set { _groupedTransactions = value; OnPropertyChanged(); }
+        }
         
         private double _currentBalance;
         public double CurrentBalance
@@ -260,31 +284,35 @@ namespace Fluence.ViewModels
 
             DateTime today = now.Date;
             DateTime yesterday = today.AddDays(-1);
-            await PopulatePeriodReport(DayReport, 
+            PopulatePeriodReport(DayReport,
                 transactions.Where(t => t.Date.Date == today), 
                 transactions.Where(t => t.Date.Date == yesterday),
                 categoryMap, "day");
+
+            await Task.Delay(50);
 
             DateTime startOfMonth = new DateTime(now.Year, now.Month, 1);
             DateTime startOfLastMonth = startOfMonth.AddMonths(-1);
             DateTime sameDayLastMonth = now.AddMonths(-1);
 
-            await PopulatePeriodReport(MonthReport, 
+            PopulatePeriodReport(MonthReport,
                 transactions.Where(t => t.Date >= startOfMonth && t.Date <= now),
                 transactions.Where(t => t.Date >= startOfLastMonth && t.Date <= sameDayLastMonth),
                 categoryMap, "month");
+
+            await Task.Delay(50);
 
             DateTime startOfYear = new DateTime(now.Year, 1, 1);
             DateTime startOfLastYear = new DateTime(now.Year - 1, 1, 1);
             DateTime sameDayLastYear = now.AddYears(-1);
 
-            await PopulatePeriodReport(YearReport, 
+            PopulatePeriodReport(YearReport,
                 transactions.Where(t => t.Date >= startOfYear && t.Date <= now),
                 transactions.Where(t => t.Date >= startOfLastYear && t.Date <= sameDayLastYear),
                 categoryMap, "year");
         }
 
-        private async Task PopulatePeriodReport(PeriodReport report, IEnumerable<Transaction> current, IEnumerable<Transaction> previous, Dictionary<int, string> categoryMap, string type)
+        private void PopulatePeriodReport(PeriodReport report, IEnumerable<Transaction> current, IEnumerable<Transaction> previous, Dictionary<int, string> categoryMap, string type)
         {
             var currentList = current.ToList();
             var previousList = previous.ToList();
@@ -333,7 +361,7 @@ namespace Fluence.ViewModels
                 report.ProjectedTotal = report.DailyAverage * 12;
             }
 
-            report.IntensityMap.Clear();
+            var newIntensityMap = new ObservableCollection<IntensityItem>();
             if (type == "month")
             {
                 var dailySpending = currentList.Where(t => t.Type == "Expense")
@@ -346,7 +374,7 @@ namespace Fluence.ViewModels
                 for (int d = 1; d <= daysInMonth; d++)
                 {
                     double amt = dailySpending.ContainsKey(d) ? dailySpending[d] : 0;
-                    report.IntensityMap.Add(new IntensityItem { 
+                    newIntensityMap.Add(new IntensityItem {
                         Intensity = maxDaily > 0 ? Math.Max(0.1, amt / maxDaily) : 0.05,
                         Label = d.ToString()
                     });
@@ -362,15 +390,16 @@ namespace Fluence.ViewModels
                 for (int m = 1; m <= 12; m++)
                 {
                     double amt = monthlySpending.ContainsKey(m) ? monthlySpending[m] : 0;
-                    report.IntensityMap.Add(new IntensityItem { 
+                    newIntensityMap.Add(new IntensityItem {
                         Intensity = maxMonthly > 0 ? Math.Max(0.1, amt / maxMonthly) : 0.05,
                         Label = new DateTime(2000, m, 1).ToString("MMM").ToLower().Substring(0, 1)
                     });
                 }
             }
+            report.IntensityMap = newIntensityMap;
 
-            report.Distribution.Clear();
-            report.BudgetBurners.Clear();
+            var newDistribution = new ObservableCollection<ReportCategoryItem>();
+            var newBudgetBurners = new ObservableCollection<ReportCategoryItem>();
             var currentExpenses = currentList.Where(t => t.Type == "Expense").ToList();
             var prevExpenses = previousList.Where(t => t.Type == "Expense").ToList();
 
@@ -407,20 +436,22 @@ namespace Fluence.ViewModels
                         Trend = catTrend,
                         Color = new SolidColorBrush(palette[i % palette.Length])
                     };
-                    report.Distribution.Add(item);
+                    newDistribution.Add(item);
                     allItems.Add(item);
                     i++;
                 }
 
                 var burners = allItems.Where(x => x.Trend > 0).OrderByDescending(item => item.Trend).Take(3);
-                foreach (var b in burners) report.BudgetBurners.Add(b);
+                foreach (var b in burners) newBudgetBurners.Add(b);
             }
+            report.Distribution = newDistribution;
+            report.BudgetBurners = newBudgetBurners;
         }
 
         public async Task LoadHistoryAsync()
         {
             _historySkip = 0;
-            GroupedTransactions.Clear();
+            GroupedTransactions = new ObservableCollection<TransactionGroup>();
             await LoadMoreHistoryAsync();
         }
 
@@ -458,13 +489,20 @@ namespace Fluence.ViewModels
                         IsExpanded = false
                     };
 
+                    bool isNewGroup = false;
                     if (currentGroup == null || currentGroup.DateKey != dateKey)
                     {
                         currentGroup = new TransactionGroup { DateKey = dateKey };
-                        GroupedTransactions.Add(currentGroup);
+                        isNewGroup = true;
                     }
 
                     currentGroup.Add(displayItem);
+
+                    if (isNewGroup)
+                    {
+                        GroupedTransactions.Add(currentGroup);
+                        await Task.Delay(30);
+                    }
                 }
 
                 _historySkip += transactions.Count;

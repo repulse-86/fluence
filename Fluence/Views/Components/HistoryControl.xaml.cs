@@ -102,6 +102,7 @@ namespace Fluence.Views.Components
                     var transactionViewModel = new TransactionViewModel();
                     if (await transactionViewModel.DeleteTransactionAsync(displayItem.Id))
                     {
+                        HubViewModel.IsDirty = true;
                         TransactionDeleted?.Invoke(this, EventArgs.Empty);
                     }
                 }

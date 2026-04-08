@@ -46,9 +46,13 @@ namespace Fluence
 
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            await this.hubViewModel.LoadOverviewAsync();
-            await this.hubViewModel.LoadHistoryAsync();
-            await this.hubViewModel.LoadReportAsync();
+            if (HubViewModel.IsDirty)
+            {
+                await this.hubViewModel.LoadOverviewAsync();
+                await this.hubViewModel.LoadHistoryAsync();
+                await this.hubViewModel.LoadReportAsync();
+                HubViewModel.IsDirty = false;
+            }
             await InitializeBackgroundAsync();
         }
         
