@@ -101,6 +101,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Components\ReportDistributionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportBurnersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportBreakdownControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportComparisonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportIntensityControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -144,6 +164,21 @@
     </Compile>
     <Compile Include="Views\Components\ReportsControl.xaml.cs">
       <DependentUpon>ReportsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportDistributionControl.xaml.cs">
+      <DependentUpon>ReportDistributionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportBurnersControl.xaml.cs">
+      <DependentUpon>ReportBurnersControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportBreakdownControl.xaml.cs">
+      <DependentUpon>ReportBreakdownControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportComparisonControl.xaml.cs">
+      <DependentUpon>ReportComparisonControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportIntensityControl.xaml.cs">
+      <DependentUpon>ReportIntensityControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
