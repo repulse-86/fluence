@@ -2,6 +2,7 @@ using Fluence.Common;
 using Fluence.ViewModels;
 using System;
 using System.Linq;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -64,10 +65,11 @@ namespace Fluence.Views
             if (await _viewModel.SaveTransactionAsync())
             {
                 HubViewModel.IsDirty = true;
-                if (Frame.CanGoBack)
-                {
-                    Frame.GoBack();
-                }
+                
+                var dialog = new MessageDialog(_viewModel.DebugData);
+                await dialog.ShowAsync();
+                
+                _viewModel.SelectedTransaction = null;
             }
         }
 
