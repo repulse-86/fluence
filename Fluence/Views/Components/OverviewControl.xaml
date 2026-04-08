@@ -33,46 +33,20 @@
                     </Rectangle>
                 </Grid>
             </Border>
-            <TextBlock Text="monthly budget health" FontSize="12" Opacity="0.6" Margin="0,0,0,30" />
+            <TextBlock Text="monthly budget health" FontSize="12" Opacity="0.6" Margin="0,0,0,20" />
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="150" />
-                    <RowDefinition Height="150" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" />
+            <TextBlock Text="daily allowance" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
 
-                <Border Grid.Row="0" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,5,5" Padding="15">
-                    <Grid>
-                        <TextBlock Text="daily allowance" FontSize="14" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                        <TextBlock Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-                    </Grid>
-                </Border>
+            <TextBlock Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" />
+            <TextBlock Text="spent today" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
 
-                <Border Grid.Row="0" Grid.Column="1" Background="#33FFFFFF" Margin="5,0,0,5" Padding="15">
-                    <Grid>
-                        <TextBlock Text="spent today" FontSize="14" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                        <TextBlock Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-                    </Grid>
-                </Border>
+            <TextBlock Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" />
+            <TextBlock Text="weekly total" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
 
-                <Border Grid.Row="1" Grid.Column="0" Background="#33FFFFFF" Margin="0,5,5,0" Padding="15">
-                    <Grid>
-                        <TextBlock Text="weekly total" FontSize="14" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                        <TextBlock Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-                    </Grid>
-                </Border>
-
-                <Border Grid.Row="1" Grid.Column="1" Background="#33FFFFFF" Margin="5,5,0,0" Padding="15">
-                    <Grid>
-                        <TextBlock Text="top category" FontSize="14" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                        <TextBlock Text="{Binding TopCategory}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" />
-                    </Grid>
-                </Border>
-            </Grid>
+            <TextBlock Text="{Binding TopCategory}" FontSize="24" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="top category" FontSize="12" Opacity="0.6" Margin="0,-2,0,18" />
+            
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -39,27 +39,62 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <TextBlock Text="comparison" FontSize="18" Margin="0,0,0,10" />
                         <Grid Margin="0,0,0,30">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100" />
+                                <RowDefinition Height="100" />
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="savings rate" FontSize="12" />
-                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
-                                    <Run Text="%" FontSize="14" />
-                                </TextBlock>
-                                <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,20,0" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                                <TextBlock Text="vs yesterday" FontSize="12" HorizontalAlignment="Right" />
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,5,5,0" />
-                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
+
+                            <Border Grid.Row="0" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,5,5" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="savings rate" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White">
+                                        <Run Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="24" />
                                         <Run Text="%" FontSize="14" />
                                     </TextBlock>
-                                </StackPanel>
-                            </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="0" Grid.Column="1" Background="#33FFFFFF" Margin="5,0,0,5" Padding="15">
+                                <Grid>
+                                    <TextBlock Text="vs yesterday" FontSize="12" Opacity="0.8" VerticalAlignment="Top" Foreground="White" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,0,5,0" VerticalAlignment="Bottom" Foreground="White" />
+                                        <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" Foreground="White">
+                                            <Run Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="24" />
+                                            <Run Text="%" FontSize="14" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" Grid.Column="0" Background="#33FFFFFF" Margin="0,5,5,0" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="flow in" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" Grid.Column="1" Background="#33FFFFFF" Margin="5,5,0,0" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="flow out" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
+                                </Grid>
+                            </Border>
                         </Grid>
 
                         <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
@@ -81,24 +116,6 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-
-                        <TextBlock Text="period flow" FontSize="18" Margin="0,0,0,10" />
-                        <Grid Margin="0,0,0,30">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="in" FontSize="12" />
-                                <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="6" Margin="0,4,0,4" />
-                                <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="20" FontWeight="Bold" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="out" FontSize="12" />
-                                <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="6" Margin="0,4,0,4" />
-                                <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="20" FontWeight="Bold" />
-                            </StackPanel>
-                        </Grid>
 
                         <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
@@ -129,7 +146,7 @@
 
             <PivotItem Header="month" DataContext="{Binding MonthReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,10,30">
+                    <StackPanel Margin="0,0,0,30">
                         <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
@@ -158,28 +175,64 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <TextBlock Text="comparison" FontSize="18" Margin="0,0,0,10" />
                         <Grid Margin="0,0,0,30">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100" />
+                                <RowDefinition Height="100" />
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="savings rate" FontSize="12" />
-                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
-                                    <Run Text="%" FontSize="14" />
-                                </TextBlock>
-                                <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,20,0" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                                <TextBlock Text="vs last month" FontSize="12" HorizontalAlignment="Right" />
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,5,5,0" />
-                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
-                                        <Run Text="%" FontSize="14" />
+
+                            <Border Grid.Row="0" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,5,5" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="savings rate" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White">
+                            <Run Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="24" />
+                            <Run Text="%" FontSize="14" />
                                     </TextBlock>
-                                </StackPanel>
-                            </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="0" Grid.Column="1" Background="#33FFFFFF" Margin="5,0,0,5" Padding="15">
+                                <Grid>
+                                    <TextBlock Text="vs last month" FontSize="12" Opacity="0.8" VerticalAlignment="Top" Foreground="White" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,0,5,0" VerticalAlignment="Bottom" Foreground="White" />
+                                        <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" Foreground="White">
+                                <Run Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="24" />
+                                <Run Text="%" FontSize="14" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" Grid.Column="0" Background="#33FFFFFF" Margin="0,5,5,0" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="flow in" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" Grid.Column="1" Background="#33FFFFFF" Margin="5,5,0,0" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="flow out" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
+                                </Grid>
+                            </Border>
                         </Grid>
+
                         <Grid Margin="0,0,0,30">
                             <StackPanel HorizontalAlignment="Left">
                                 <TextBlock Text="daily average" FontSize="12" />
@@ -211,24 +264,6 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="month flow" FontSize="18" Margin="0,0,0,10" />
-                        <Grid Margin="0,0,0,30">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="in" FontSize="12" />
-                                <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="6" Margin="0,4,0,4" />
-                                <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="20" FontWeight="Bold" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="out" FontSize="12" />
-                                <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="6" Margin="0,4,0,4" />
-                                <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="20" FontWeight="Bold" />
-                            </StackPanel>
-                        </Grid>
-
                         <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}">
                             <ItemsControl.ItemTemplate>
@@ -258,7 +293,7 @@
 
             <PivotItem Header="year" DataContext="{Binding YearReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,10,30">
+                    <StackPanel Margin="0,0,0,30">
                         <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemsPanel>
@@ -290,27 +325,62 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <TextBlock Text="comparison" FontSize="18" Margin="0,0,0,10" />
                         <Grid Margin="0,0,0,30">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100" />
+                                <RowDefinition Height="100" />
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="savings rate" FontSize="12" />
-                                <TextBlock Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
-                                    <Run Text="%" FontSize="14" />
-                                </TextBlock>
-                                <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,20,0" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                                <TextBlock Text="vs last year" FontSize="12" HorizontalAlignment="Right" />
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,5,5,0" />
-                                    <TextBlock Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold">
-                                        <Run Text="%" FontSize="14" />
+
+                            <Border Grid.Row="0" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,5,5" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="savings rate" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White">
+                            <Run Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="24" />
+                            <Run Text="%" FontSize="14" />
                                     </TextBlock>
-                                </StackPanel>
-                            </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="0" Grid.Column="1" Background="#33FFFFFF" Margin="5,0,0,5" Padding="15">
+                                <Grid>
+                                    <TextBlock Text="vs last year" FontSize="12" Opacity="0.8" VerticalAlignment="Top" Foreground="White" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding TrendDirection}" FontSize="18" Margin="0,0,5,0" VerticalAlignment="Bottom" Foreground="White" />
+                                        <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" Foreground="White">
+                                <Run Text="{Binding TrendPercent, ConverterParameter='N2'}" FontSize="24" />
+                                <Run Text="%" FontSize="14" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" Grid.Column="0" Background="#33FFFFFF" Margin="0,5,5,0" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="flow in" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" Grid.Column="1" Background="#33FFFFFF" Margin="5,5,0,0" Padding="15">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <TextBlock Text="flow out" FontSize="12" Opacity="0.8" Foreground="White" />
+                                        <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="4" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
+                                </Grid>
+                            </Border>
                         </Grid>
 
                         <Grid Margin="0,0,0,30">
@@ -343,24 +413,6 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-
-                        <TextBlock Text="period flow" FontSize="18" Margin="0,0,0,10" />
-                        <Grid Margin="0,0,0,30">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="in" FontSize="12" />
-                                <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="6" Margin="0,4,0,4" />
-                                <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="20" FontWeight="Bold" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="out" FontSize="12" />
-                                <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="6" Margin="0,4,0,4" />
-                                <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="20" FontWeight="Bold" />
-                            </StackPanel>
-                        </Grid>
 
                         <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}">
