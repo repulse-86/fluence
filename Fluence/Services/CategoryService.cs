@@ -11,38 +11,38 @@ namespace Fluence.Services
     {
         public async Task<List<Category>> GetCategoriesAsync()
         {
-            await InitializeDatabaseAsync();
-            return await _db.Table<Category>().OrderBy(c => c.Name).ToListAsync();
+            var db = await GetDbAsync();
+            return await db.Table<Category>().OrderBy(c => c.Name).ToListAsync();
         }
 
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
-            await InitializeDatabaseAsync();
-            return await _db.Table<Category>().Where(c => c.Id == id).FirstOrDefaultAsync();
+            var db = await GetDbAsync();
+            return await db.Table<Category>().Where(c => c.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task AddCategoryAsync(Category category)
         {
-            await InitializeDatabaseAsync();
-            await _db.InsertAsync(category);    
+            var db = await GetDbAsync();
+            await db.InsertAsync(category);    
         }
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            await InitializeDatabaseAsync();
-            await _db.UpdateAsync(category);
+            var db = await GetDbAsync();
+            await db.UpdateAsync(category);
         }
 
         public async Task DeleteCategoryAsync(Category category)
         {
-            await InitializeDatabaseAsync();
-            await _db.DeleteAsync(category);
+            var db = await GetDbAsync();
+            await db.DeleteAsync(category);
         }
 
         public async Task InitializeDatabaseSync()
         {
-            await InitializeDatabaseAsync();
-            if (await _db.Table<Category>().CountAsync() == 0)
+            var db = await GetDbAsync();
+            if (await db.Table<Category>().CountAsync() == 0)
             {
                 List<Category> systemCategories = new List<Category>
                 {
@@ -53,7 +53,7 @@ namespace Fluence.Services
                     new Category { Name = "Expense", IsSystem = true },
                 };
 
-                await _db.InsertAllAsync(systemCategories);
+                await db.InsertAllAsync(systemCategories);
             }
         }
     }

@@ -12,18 +12,25 @@ namespace Fluence.Services
 {
     class BaseDatabaseService
     {
-        protected static SQLiteAsyncConnection _db;
+        private static SQLiteAsyncConnection _db;
+
+        protected async Task<SQLiteAsyncConnection> GetDbAsync()
+        {
+            if (_db == null)
+            {
+                string folderPath = ApplicationData.Current.LocalFolder.Path;
+                string path = Path.Combine(folderPath, "Fluence.db");
+                _db = new SQLiteAsyncConnection(path);
+
+                await _db.CreateTableAsync<Category>();
+                await _db.CreateTableAsync<Transaction>();
+            }
+            return _db;
+        }
 
         public async Task InitializeDatabaseAsync()
         {
-            if (_db != null) return;
-
-            string folderPath = ApplicationData.Current.LocalFolder.Path;
-            string path = Path.Combine(folderPath, "Fluence.db");
-            _db = new SQLiteAsyncConnection(path);
-
-            await _db.CreateTableAsync<Category>();
-            await _db.CreateTableAsync<Transaction>();
+            await GetDbAsync();
         }
     }
 }

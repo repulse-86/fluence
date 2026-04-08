@@ -11,14 +11,14 @@ namespace Fluence.Services
     {
         public async Task<List<Transaction>> GetTransactionsAsync()
         {
-            await InitializeDatabaseAsync();
-            return await _db.Table<Transaction>().OrderByDescending(t => t.Date).ToListAsync();
+            var db = await GetDbAsync();
+            return await db.Table<Transaction>().OrderByDescending(t => t.Date).ToListAsync();
         }
 
         public async Task<List<Transaction>> GetTransactionsAsync(int skip, int take)
         {
-            await InitializeDatabaseAsync();
-            return await _db.Table<Transaction>()
+            var db = await GetDbAsync();
+            return await db.Table<Transaction>()
                 .OrderByDescending(t => t.Date)
                 .Skip(skip)
                 .Take(take)
@@ -27,50 +27,50 @@ namespace Fluence.Services
 
         public async Task AddTransactionAsync(Transaction transaction)
         {
-            await InitializeDatabaseAsync();
-            await _db.InsertAsync(transaction);
+            var db = await GetDbAsync();
+            await db.InsertAsync(transaction);
         }
 
         public async Task UpdateTransactionAsync(Transaction transaction)
         {
-            await InitializeDatabaseAsync();
-            await _db.UpdateAsync(transaction);
+            var db = await GetDbAsync();
+            await db.UpdateAsync(transaction);
         }
 
         public async Task<Transaction> GetTransactionByIdAsync(int id)
         {
-            await InitializeDatabaseAsync();
-            return await _db.Table<Transaction>().Where(t => t.Id == id).FirstOrDefaultAsync();
+            var db = await GetDbAsync();
+            return await db.Table<Transaction>().Where(t => t.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task DeleteTransactionAsync(int id)
         {
-            await InitializeDatabaseAsync();
             var transaction = await GetTransactionByIdAsync(id);
             if (transaction != null)
             {
-                await _db.DeleteAsync(transaction);
+                var db = await GetDbAsync();
+                await db.DeleteAsync(transaction);
             }
         }
 
         public async Task DeleteTransactionAsync(Transaction transaction)
         {
-            await InitializeDatabaseAsync();
-            await _db.DeleteAsync(transaction);
+            var db = await GetDbAsync();
+            await db.DeleteAsync(transaction);
         }
 
         public async Task ClearTransactionsAsync()
         {
-            await InitializeDatabaseAsync();
-            await _db.ExecuteAsync("DELETE FROM [Transaction]");
+            var db = await GetDbAsync();
+            await db.ExecuteAsync("DELETE FROM [Transaction]");
         }
 
         public async Task SeedTransactionsAsync()
         {
-            await InitializeDatabaseAsync();
+            var db = await GetDbAsync();
             await ClearTransactionsAsync();
             
-            var categories = await _db.Table<Category>().ToListAsync();
+            var categories = await db.Table<Category>().ToListAsync();
             if (categories.Count == 0) return;
 
             var random = new Random();
@@ -103,7 +103,7 @@ namespace Fluence.Services
                 }
             }
 
-            await _db.InsertAllAsync(transactions);
+            await db.InsertAllAsync(transactions);
         }
     }
 }
