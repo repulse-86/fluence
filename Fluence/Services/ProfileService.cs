@@ -60,5 +60,17 @@ namespace Fluence.Services
                 return null;
             }
         }
+
+        public async Task SeedProfileAsync()
+        {
+            var profile = new Profile
+            {
+                InitialBalance = 5000,
+                MonthlyIncome = 3000,
+                MonthlyLimit = 2000,
+                Payday = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
+            };
+            await SaveProfileAsync(profile);
+        }
     }
 }

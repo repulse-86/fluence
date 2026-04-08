@@ -217,7 +217,7 @@ namespace Fluence.ViewModels
 
                 int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
                 int daysRemaining = daysInMonth - DateTime.Now.Day + 1;
-                DailyAllowance = Math.Max(0, (profile.MonthlyLimit - monthlySpent) / daysRemaining);
+                DailyAllowance = Math.Round(Math.Max(0, (profile.MonthlyLimit - monthlySpent) / daysRemaining), 2);
             }
 
             DateTime today = DateTime.Today;

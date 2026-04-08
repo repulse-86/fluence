@@ -93,6 +93,9 @@ namespace Fluence
                 var categoryService = new CategoryService();
                 await categoryService.InitializeDatabaseSync();
 
+                var profileService = new ProfileService();
+                await profileService.SeedProfileAsync();
+
                 var transactionService = new TransactionService();
                 await transactionService.SeedTransactionsAsync();
             }

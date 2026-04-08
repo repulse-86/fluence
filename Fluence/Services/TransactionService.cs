@@ -49,36 +49,45 @@ namespace Fluence.Services
             await _db.DeleteAsync(transaction);
         }
 
+        public async Task ClearTransactionsAsync()
+        {
+            await InitializeDatabaseAsync();
+            await _db.ExecuteAsync("DELETE FROM [Transaction]");
+        }
+
         public async Task SeedTransactionsAsync()
         {
             await InitializeDatabaseAsync();
+            await ClearTransactionsAsync();
             
-            await _db.ExecuteAsync("DELETE FROM [Transaction]");
-
             var categories = await _db.Table<Category>().ToListAsync();
             if (categories.Count == 0) return;
 
             var random = new Random();
             var transactions = new List<Transaction>();
-
-            for (int d = 1; d <= 7; d++)
+            var today = DateTime.Now.Date;
+            
+            for (int d = 0; d < 30; d++)
             {
-                var baseDate = new DateTime(2026, 4, d);
+                var baseDate = today.AddDays(-d);
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     var category = categories[random.Next(categories.Count)];
-                    var type = random.Next(2) == 0 ? "Income" : "Expense";
-                    var amount = Math.Round(random.NextDouble() * 500 + 10, 2);
                     
-                    var transactionDate = baseDate.AddHours(10 + i).AddMinutes(random.Next(0, 60));
+                    string type = (i == 0) ? "Income" : "Expense";
+                    double amount = (i == 0) 
+                        ? Math.Round(random.NextDouble() * 400 + 600, 2)
+                        : Math.Round(random.NextDouble() * 80 + 10, 2);
+                    
+                    var transactionDate = baseDate.AddHours(8 + (i * 2)).AddMinutes(random.Next(0, 60));
 
                     transactions.Add(new Transaction
                     {
                         CategoryId = category.Id,
                         Amount = amount,
                         Type = type,
-                        Note = "grouped transaction " + baseDate.ToString("mmm dd") + " #" + (i + 1),
+                        Note = "mock " + type.ToLower() + " " + baseDate.ToString("MMM dd") + " #" + (i + 1),
                         Date = transactionDate
                     });
                 }
