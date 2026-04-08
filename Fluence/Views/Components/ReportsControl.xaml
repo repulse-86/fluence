@@ -25,7 +25,21 @@
             <PivotItem Header="day" DataContext="{Binding DayReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
                     <StackPanel>
-                        <Grid Margin="0,0,0,20">
+                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
+                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -48,21 +62,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
-                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,15" />
+                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding BudgetBurners}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -100,8 +100,8 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,15" />
-                        <ItemsControl ItemsSource="{Binding Distribution}">
+                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
+                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="0,0,0,15">
@@ -114,7 +114,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" MaxWidth="200" />
+                                            <TextBlock Text="{Binding Name}" FontSize="14" TextTrimming="CharacterEllipsis" MaxWidth="200" />
                                             <TextBlock Text="{Binding TransactionCount}" FontSize="12" Margin="10,3,0,0" />
                                         </StackPanel>
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />
@@ -130,7 +130,35 @@
             <PivotItem Header="month" DataContext="{Binding MonthReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
                     <StackPanel Margin="0,0,10,30">
-                        <Grid Margin="0,0,0,20">
+                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
+                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="spending intensity" FontSize="18" Margin="0,0,0,10" />
+                        <ItemsControl ItemsSource="{Binding IntensityMap}" Margin="0,0,0,30">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Horizontal" MaximumRowsOrColumns="16" VerticalChildrenAlignment="Top" HorizontalChildrenAlignment="Left" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="18" Height="18" Background="#2ECC71" Opacity="{Binding Intensity}" Margin="1" CornerRadius="2" ToolTipService.ToolTip="{Binding Label}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -152,36 +180,18 @@
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
+                        <Grid Margin="0,0,0,30">
+                            <StackPanel HorizontalAlignment="Left">
+                                <TextBlock Text="daily average" FontSize="12" />
+                                <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel HorizontalAlignment="Right">
+                                <TextBlock Text="projected total" FontSize="12" HorizontalAlignment="Right" />
+                                <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </Grid>
 
-                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
-                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,15">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <TextBlock Text="spending intensity" FontSize="12" HorizontalAlignment="Right" Margin="0,0,0,5" />
-                        <ItemsControl ItemsSource="{Binding IntensityMap}" Margin="0,0,0,30">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapGrid Orientation="Horizontal" MaximumRowsOrColumns="16" VerticalChildrenAlignment="Top" HorizontalChildrenAlignment="Left" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Width="18" Height="18" Background="#2ECC71" Opacity="{Binding Intensity}" Margin="1" CornerRadius="2" ToolTipService.ToolTip="{Binding Label}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,15" />
+                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding BudgetBurners}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -202,7 +212,7 @@
                         </ItemsControl>
 
                         <TextBlock Text="month flow" FontSize="18" Margin="0,0,0,10" />
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -219,18 +229,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <Grid Background="#33FFFFFF" Margin="0,0,0,30">
-                            <StackPanel HorizontalAlignment="Left">
-                                <TextBlock Text="daily average" FontSize="12" />
-                                <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" />
-                            </StackPanel>
-                            <StackPanel HorizontalAlignment="Right">
-                                <TextBlock Text="projected total" FontSize="12" HorizontalAlignment="Right" />
-                                <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Right" />
-                            </StackPanel>
-                        </Grid>
-
-                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,15" />
+                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -244,7 +243,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" MaxWidth="200" />
+                                            <TextBlock Text="{Binding Name}" FontSize="14" TextTrimming="CharacterEllipsis" MaxWidth="200" />
                                             <TextBlock Text="{Binding TransactionCount}" FontSize="12" Margin="10,3,0,0" />
                                         </StackPanel>
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />
@@ -260,7 +259,38 @@
             <PivotItem Header="year" DataContext="{Binding YearReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
                     <StackPanel Margin="0,0,10,30">
-                        <Grid Margin="0,0,0,20">
+                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
+                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,30">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="monthly intensity" FontSize="18" Margin="0,0,0,10" />
+                        <ItemsControl ItemsSource="{Binding IntensityMap}" Margin="0,0,0,30">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="2,0">
+                                        <Border Width="24" Height="24" Background="#2ECC71" Opacity="{Binding Intensity}" CornerRadius="4" />
+                                        <TextBlock Text="{Binding Label}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -283,38 +313,18 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="distribution" FontSize="18" Margin="0,0,0,10" />
-                        <ItemsControl ItemsSource="{Binding Distribution}" Margin="0,0,0,15">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <Grid Margin="0,0,0,30">
+                            <StackPanel HorizontalAlignment="Left">
+                                <TextBlock Text="monthly average" FontSize="12" />
+                                <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel HorizontalAlignment="Right">
+                                <TextBlock Text="projected year" FontSize="12" HorizontalAlignment="Right" />
+                                <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </Grid>
 
-                        <TextBlock Text="monthly intensity" FontSize="12" HorizontalAlignment="Right" Margin="0,0,0,5" />
-                        <ItemsControl ItemsSource="{Binding IntensityMap}" Margin="0,0,0,30">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="2,0">
-                                        <Border Width="24" Height="24" Background="#2ECC71" Opacity="{Binding Intensity}" CornerRadius="4" />
-                                        <TextBlock Text="{Binding Label}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,15" />
+                        <TextBlock Text="top budget burners" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding BudgetBurners}" Margin="0,0,0,30">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -335,7 +345,7 @@
                         </ItemsControl>
 
                         <TextBlock Text="period flow" FontSize="18" Margin="0,0,0,10" />
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -352,18 +362,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <Grid Background="#33FFFFFF" Margin="0,0,0,30">
-                            <StackPanel HorizontalAlignment="Left">
-                                <TextBlock Text="monthly average" FontSize="12" />
-                                <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" />
-                            </StackPanel>
-                            <StackPanel HorizontalAlignment="Right">
-                                <TextBlock Text="projected year" FontSize="12" HorizontalAlignment="Right" />
-                                <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Right" />
-                            </StackPanel>
-                        </Grid>
-
-                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,15" />
+                        <TextBlock Text="breakdown" FontSize="18" Margin="0,0,0,10" />
                         <ItemsControl ItemsSource="{Binding Distribution}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -377,7 +376,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" FontSize="16" TextTrimming="CharacterEllipsis" MaxWidth="200" />
+                                            <TextBlock Text="{Binding Name}" FontSize="14" TextTrimming="CharacterEllipsis" MaxWidth="200" />
                                             <TextBlock Text="{Binding TransactionCount}" FontSize="12" Margin="10,3,0,0" />
                                         </StackPanel>
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />
