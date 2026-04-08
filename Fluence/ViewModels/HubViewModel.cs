@@ -272,6 +272,8 @@ namespace Fluence.ViewModels
                 var cat = await _categoryService.GetCategoryByIdAsync(topCat.Key);
                 TopCategory = cat?.Name?.ToLower() ?? "unknown";
             }
+            
+            TileService.UpdateLiveTile(BudgetPercent, CurrentBalance, DailyAllowance, SpentToday, WeeklyTotal, TopCategory);
         }
 
         public async Task LoadReportAsync()
