@@ -72,5 +72,15 @@ namespace Fluence.Services
             };
             await SaveProfileAsync(profile);
         }
+
+        public async Task ClearProfileAsync()
+        {
+            var settings = ApplicationData.Current.LocalSettings.Values;
+            settings.Remove("InitialBalance");
+            settings.Remove("MonthlyIncome");
+            settings.Remove("MonthlyLimit");
+            settings.Remove("Payday");
+            await Task.Yield();
+        }
     }
 }

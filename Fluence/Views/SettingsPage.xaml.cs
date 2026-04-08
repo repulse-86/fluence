@@ -1,6 +1,7 @@
 using Fluence.Common;
 using Fluence.Models;
 using Fluence.ViewModels;
+using Fluence.Services;
 using System;
 using System.Linq;
 using Windows.UI.Core;
@@ -222,6 +223,43 @@ namespace Fluence.Views
             {
                 tb.Text = filtered;
                 tb.SelectionStart = tb.Text.Length;
+            }
+        }
+
+        // System Page logic
+        private async void MockData_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Windows.UI.Popups.MessageDialog("this will PERMANENTLY delete all your current transactions and replace them with 30 days of mock data. proceed?", "confirm mock data");
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("proceed") { Id = 0 });
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
+            dialog.DefaultCommandIndex = 1;
+
+            var result = await dialog.ShowAsync();
+            if ((int)result.Id == 0)
+            {
+                var transactionService = new TransactionService();
+                await transactionService.SeedTransactionsAsync();
+                await new Windows.UI.Popups.MessageDialog("mock data activated. navigate back to see the changes.", "success").ShowAsync();
+            }
+        }
+
+        private async void ClearData_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Windows.UI.Popups.MessageDialog("this will PERMANENTLY delete ALL-TIME transactions and reset your profile settings. this cannot be undone. proceed?", "DANGER: CLEAR ALL DATA");
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("clear everything") { Id = 0 });
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
+            dialog.DefaultCommandIndex = 1;
+
+            var result = await dialog.ShowAsync();
+            if ((int)result.Id == 0)
+            {
+                var transactionService = new TransactionService();
+                await transactionService.ClearTransactionsAsync();
+
+                var profileService = new ProfileService();
+                await profileService.ClearProfileAsync();
+
+                await new Windows.UI.Popups.MessageDialog("all data cleared successfully. please restart the app to complete the reset.", "success").ShowAsync();
             }
         }
     }

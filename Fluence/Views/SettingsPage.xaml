@@ -104,6 +104,20 @@
                     </ScrollViewer>
                 </Grid>
             </PivotItem>
+
+            <PivotItem x:Name="SystemPivotItem" Header="system">
+                <Grid>
+                    <StackPanel Margin="0,20,0,0">
+                        <TextBlock Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" />
+                        
+                        <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
+                        <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" />
+
+                        <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
+                        <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </PivotItem>
         </Pivot>
     </Grid>
 
