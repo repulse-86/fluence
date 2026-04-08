@@ -75,14 +75,17 @@
                                         VerticalAlignment="Center" 
                                         Margin="10,0,0,0" />
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" 
-                                        Text="{Binding Note}" 
-                                        FontSize="16" Margin="0,8,0,0"
-                                        Visibility="{Binding NoteVisibility}" 
-                                        TextWrapping="{Binding NoteWrapping}"
-                                        TextTrimming="{Binding NoteTrimming}"
-                                        MaxWidth="240" 
-                                        HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="2"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="2"
+                                       Text="{Binding Note}"
+                                       FontSize="16"
+                                       Margin="0,8,0,0"
+                                       Visibility="{Binding NoteVisibility}"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="240"
+                                       Opacity="0.6"
+                                       HorizontalAlignment="Left" />
                         </Grid>
                     </Border>
                 </DataTemplate>

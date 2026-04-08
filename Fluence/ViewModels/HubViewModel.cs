@@ -41,7 +41,13 @@ namespace Fluence.ViewModels
 
         public Visibility NoteVisibility
         {
-            get { return string.IsNullOrEmpty(Note) ? Visibility.Collapsed : Visibility.Visible; }
+            get
+            {
+                if (string.IsNullOrEmpty(Note) || !_isExpanded)
+                    return Visibility.Collapsed;
+
+                return Visibility.Visible;
+            }
         }
 
         public TextWrapping NoteWrapping
