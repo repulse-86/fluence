@@ -17,6 +17,38 @@ namespace Fluence.Views.Components
             this.InitializeComponent();
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            var scrollViewer = GetScrollViewer(TransactionList);
+            if (scrollViewer != null)
+            {
+                scrollViewer.ViewChanged += async (s, args) =>
+                {
+                    if (scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight - 50)
+                    {
+                        var viewModel = this.DataContext as HubViewModel;
+                        if (viewModel != null)
+                        {
+                            await viewModel.LoadMoreHistoryAsync();
+                        }
+                    }
+                };
+            }
+        }
+
+        private ScrollViewer GetScrollViewer(DependencyObject depObj)
+        {
+            if (depObj is ScrollViewer) return depObj as ScrollViewer;
+
+            for (int i = 0; i < Windows.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(depObj, i);
+                var result = GetScrollViewer(child);
+                if (result != null) return result;
+            }
+            return null;
+        }
+
         private void TransactionList_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as TransactionDisplayItem;

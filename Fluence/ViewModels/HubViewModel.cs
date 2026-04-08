@@ -192,6 +192,10 @@ namespace Fluence.ViewModels
         public PeriodReport MonthReport { get; set; } = new PeriodReport();
         public PeriodReport YearReport { get; set; } = new PeriodReport();
 
+        private int _historySkip = 0;
+        private const int HistoryTake = 10;
+        private bool _isLoadingHistory = false;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -415,42 +419,59 @@ namespace Fluence.ViewModels
 
         public async Task LoadHistoryAsync()
         {
-            var transactions = await _transactionService.GetTransactionsAsync();
-            var categories = await _categoryService.GetCategoriesAsync();
-            var categoryMap = categories.ToDictionary(c => c.Id, c => c.Name);
-
+            _historySkip = 0;
             GroupedTransactions.Clear();
+            await LoadMoreHistoryAsync();
+        }
 
-            TransactionGroup currentGroup = null;
-            string currentDateKey = null;
+        public async Task LoadMoreHistoryAsync()
+        {
+            if (_isLoadingHistory) return;
+            _isLoadingHistory = true;
 
-            foreach (var t in transactions)
+            try
             {
-                string categoryName = categoryMap.ContainsKey(t.CategoryId) ? categoryMap[t.CategoryId] : "unknown";
-                string dateKey = t.Date.ToString("MMMM d, yyyy").ToLower();
+                var transactions = await _transactionService.GetTransactionsAsync(_historySkip, HistoryTake);
+                if (transactions.Count == 0) return;
 
-                var displayItem = new TransactionDisplayItem
-                {
-                    Id = t.Id,
-                    CategoryName = categoryName.ToLower(),
-                    Note = t.Note?.ToLower(),
-                    Type = t.Type,
-                    Amount = t.Amount,
-                    DisplayAmount = (t.Type == "Income" ? "+" : "-") + t.Amount.ToString("N2"),
-                    DisplayDate = t.Date.ToString("MMM dd").ToLower(),
-                    DisplayTime = t.Date.ToString("t").ToLower(),
-                    TypeBrush = t.Type == "Income" ? new SolidColorBrush(Color.FromArgb(255, 46, 204, 113)) : new SolidColorBrush(Color.FromArgb(255, 231, 76, 60)),
-                    IsExpanded = false
-                };
+                var categories = await _categoryService.GetCategoriesAsync();
+                var categoryMap = categories.ToDictionary(c => c.Id, c => c.Name);
 
-                if (currentDateKey != dateKey)
+                TransactionGroup currentGroup = GroupedTransactions.LastOrDefault();
+
+                foreach (var t in transactions)
                 {
-                    currentDateKey = dateKey;
-                    currentGroup = new TransactionGroup { DateKey = dateKey };
-                    GroupedTransactions.Add(currentGroup);
+                    string categoryName = categoryMap.ContainsKey(t.CategoryId) ? categoryMap[t.CategoryId] : "unknown";
+                    string dateKey = t.Date.ToString("MMMM d, yyyy").ToLower();
+
+                    var displayItem = new TransactionDisplayItem
+                    {
+                        Id = t.Id,
+                        CategoryName = categoryName.ToLower(),
+                        Note = t.Note?.ToLower(),
+                        Type = t.Type,
+                        Amount = t.Amount,
+                        DisplayAmount = (t.Type == "Income" ? "+" : "-") + t.Amount.ToString("N2"),
+                        DisplayDate = t.Date.ToString("MMM dd").ToLower(),
+                        DisplayTime = t.Date.ToString("t").ToLower(),
+                        TypeBrush = t.Type == "Income" ? new SolidColorBrush(Color.FromArgb(255, 46, 204, 113)) : new SolidColorBrush(Color.FromArgb(255, 231, 76, 60)),
+                        IsExpanded = false
+                    };
+
+                    if (currentGroup == null || currentGroup.DateKey != dateKey)
+                    {
+                        currentGroup = new TransactionGroup { DateKey = dateKey };
+                        GroupedTransactions.Add(currentGroup);
+                    }
+
+                    currentGroup.Add(displayItem);
                 }
 
-                currentGroup.Add(displayItem);
+                _historySkip += transactions.Count;
+            }
+            finally
+            {
+                _isLoadingHistory = false;
             }
         }
     }

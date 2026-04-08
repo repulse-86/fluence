@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="600"
-    d:DesignWidth="360">
+    d:DesignWidth="360"
+    Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="GroupedTransactionsSource" 
@@ -16,7 +17,8 @@
     </UserControl.Resources>
 
     <Grid Margin="0,-8,0,0">
-        <ListView ItemsSource="{Binding Source={StaticResource GroupedTransactionsSource}}"
+        <ListView x:Name="TransactionList"
+                    ItemsSource="{Binding Source={StaticResource GroupedTransactionsSource}}"
                     HorizontalContentAlignment="Stretch"
                     IsItemClickEnabled="True"
                     ItemClick="TransactionList_ItemClick">

@@ -15,6 +15,16 @@ namespace Fluence.Services
             return await _db.Table<Transaction>().OrderByDescending(t => t.Date).ToListAsync();
         }
 
+        public async Task<List<Transaction>> GetTransactionsAsync(int skip, int take)
+        {
+            await InitializeDatabaseAsync();
+            return await _db.Table<Transaction>()
+                .OrderByDescending(t => t.Date)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+
         public async Task AddTransactionAsync(Transaction transaction)
         {
             await InitializeDatabaseAsync();
