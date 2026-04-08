@@ -170,7 +170,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Width="18" Height="18" Background="#2ECC71" Opacity="{Binding Intensity}" Margin="1" CornerRadius="2" ToolTipService.ToolTip="{Binding Label}" />
+                                    <Border Width="18" Height="18" Background="#FFFFFF" Opacity="{Binding Intensity}" Margin="1" CornerRadius="2" ToolTipService.ToolTip="{Binding Label}" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -318,7 +318,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Margin="2,0">
-                                        <Border Width="24" Height="24" Background="#2ECC71" Opacity="{Binding Intensity}" CornerRadius="4" />
+                                        <Border Width="24" Height="24" Background="#FFFFFF" Opacity="{Binding Intensity}" CornerRadius="4" />
                                         <TextBlock Text="{Binding Label}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0" />
                                     </StackPanel>
                                 </DataTemplate>
