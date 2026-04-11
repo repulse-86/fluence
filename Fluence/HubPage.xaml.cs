@@ -39,6 +39,17 @@ namespace Fluence
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
             this.DefaultViewModel["CategoryViewModel"] = this.categoryViewModel;
             this.DefaultViewModel["HubViewModel"] = this.hubViewModel;
+
+            Window.Current.VisibilityChanged += Window_VisibilityChanged;
+        }
+
+        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            if (e.Visible && !hubViewModel.IsActive)
+            {
+                System.Diagnostics.Debug.WriteLine("HubPage: Window visible and Hub inactive. Triggering reload.");
+                NavigationHelper_LoadState(this, null);
+            }
         }
 
         public NavigationHelper NavigationHelper => this.navigationHelper;
@@ -46,14 +57,48 @@ namespace Fluence
 
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("HubPage: NavigationHelper_LoadState - Entering");
+
             if (HubViewModel.IsDirty)
             {
-                await this.hubViewModel.LoadOverviewAsync();
-                await this.hubViewModel.LoadHistoryAsync();
-                await this.hubViewModel.LoadReportAsync();
+                HubViewModel.IsOverviewDirty = true;
+                HubViewModel.IsHistoryDirty = true;
+                HubViewModel.IsReportsDirty = true;
                 HubViewModel.IsDirty = false;
             }
+
+            if (HubViewModel.IsOverviewDirty)
+            {
+                await this.hubViewModel.LoadOverviewAsync();
+                HubViewModel.IsOverviewDirty = false;
+            }
+
+            // wait 2 seconds before loading History and Reports
+            System.Diagnostics.Debug.WriteLine("HubPage: NavigationHelper_LoadState - Waiting 1.5 seconds...");
+            await System.Threading.Tasks.Task.Delay(1500);
+
+            // check if we are still on the page before loading
+            var currentFrame = Window.Current.Content as Frame;
+            if (currentFrame == null || currentFrame.Content != this)
+            {
+                System.Diagnostics.Debug.WriteLine("HubPage: NavigationHelper_LoadState - Aborting load, user navigated away");
+                return;
+            }
+
+            // set IsActive to true to uncollapse the sections first, so LoadHistoryAsync can populate UI
+            this.hubViewModel.IsActive = true;
+
+            // always reload History and Reports because they are unloaded in OnNavigatedFrom
+            await this.hubViewModel.LoadHistoryAsync();
+            await this.hubViewModel.LoadReportAsync();
+
+            hub.UpdateLayout();
+
+            HubViewModel.IsHistoryDirty = false;
+            HubViewModel.IsReportsDirty = false;
+
             await InitializeBackgroundAsync();
+            System.Diagnostics.Debug.WriteLine("HubPage: NavigationHelper_LoadState - Completed");
         }
         
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }
@@ -74,13 +119,6 @@ namespace Fluence
             }
         }
 
-        private async void HistoryControl_TransactionDeleted(object sender, EventArgs e)
-        {
-            await this.hubViewModel.LoadOverviewAsync();
-            await this.hubViewModel.LoadHistoryAsync();
-            await this.hubViewModel.LoadReportAsync();
-        }
-
         private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
         {
             if (!Frame.Navigate(typeof(SettingsPage), "profile"))
@@ -98,7 +136,12 @@ namespace Fluence
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) => this.navigationHelper.OnNavigatedTo(e);
-        protected override void OnNavigatedFrom(NavigationEventArgs e) => this.navigationHelper.OnNavigatedFrom(e);
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("HubPage: OnNavigatedFrom - Unloading content");
+            this.hubViewModel.IsActive = false;
+            this.navigationHelper.OnNavigatedFrom(e);
+        }
 
         private double _targetOpacity = 0.6;
         private double _currentOpacity = 0.6;
@@ -119,7 +162,6 @@ namespace Fluence
                 {
                     if (scrollViewer.ScrollableWidth > 0)
                     {
-                        // Reduced factor from 1.5 to 0.3 to keep background visible if using RelativeTransform
                         _targetX = -(scrollViewer.HorizontalOffset / scrollViewer.ScrollableWidth) * 0.3;
                         System.Diagnostics.Debug.WriteLine($"hub_Loaded: ScrollableWidth={scrollViewer.ScrollableWidth}, Offset={scrollViewer.HorizontalOffset}, TargetX={_targetX}");
                         
@@ -185,7 +227,7 @@ namespace Fluence
                         using (var filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter())
                         {
                             filter.CacheControl.ReadBehavior = Windows.Web.Http.Filters.HttpCacheReadBehavior.MostRecent;
-                            filter.AllowAutoRedirect = false; // Disable auto-redirect to debug the link
+                            filter.AllowAutoRedirect = false; // disable auto-redirect to debug the link
 
                             using (var client = new Windows.Web.Http.HttpClient(filter))
                             {
@@ -215,7 +257,6 @@ namespace Fluence
                                     string location = response.Headers.Location.ToString();
                                     System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Redirect detected ({response.StatusCode}) to: {location}");
                                     
-                                    // Manual follow
                                     try 
                                     {
                                         response = await client.GetAsync(new Uri(location));

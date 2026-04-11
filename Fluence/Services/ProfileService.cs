@@ -33,6 +33,7 @@ namespace Fluence.Services
             try
             {
                 var settings = ApplicationData.Current.LocalSettings.Values;
+                await Task.Yield();
                 if (settings.ContainsKey("InitialBalance"))
                 {
                     var profile = new Profile

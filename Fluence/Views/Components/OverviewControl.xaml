@@ -15,9 +15,25 @@
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="0,0,10,16">
+        <Grid Margin="0,0,10,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <Border Height="30" Background="#1AFFFFFF" Margin="0,0,0,5">
+            <Border Grid.Row="0" Height="30" Background="#1AFFFFFF" Margin="0,0,0,5">
                 <Grid>
                     <Rectangle Fill="{Binding BudgetBrush}" HorizontalAlignment="Left">
                         <Rectangle.Width>
@@ -31,23 +47,25 @@
                     </Rectangle>
                 </Grid>
             </Border>
-            <TextBlock Text="monthly budget health" FontSize="20" Opacity="0.6" Margin="0,0,0,20" />
+            <TextBlock Grid.Row="1" Text="monthly budget health" FontSize="20" Margin="0,0,0,20" Foreground="{ThemeResource SystemColorControlAccentBrush}" />
             
-            <TextBlock Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Text="current balance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,20" />
+            <TextBlock Grid.Row="2" Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
+            <TextBlock Grid.Row="3" Text="current balance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,20" />
 
-            <TextBlock Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Text="daily allowance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="4" Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
+            <TextBlock Grid.Row="5" Text="daily allowance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
 
-            <TextBlock Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Text="spent today" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="6" Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
+            <TextBlock Grid.Row="7" Text="spent today" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
 
-            <TextBlock Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Text="weekly total" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="8" Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
+            <TextBlock Grid.Row="9" Text="weekly total" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
 
-            <TextBlock Text="{Binding TopCategory}" FontSize="36" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
-            <TextBlock Text="top category" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
-            
-        </StackPanel>
+            <TextBlock Grid.Row="10" Text="{Binding TopCategory}" FontSize="36" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+            <TextBlock Grid.Row="11" Text="top category" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+
+            <TextBlock Grid.Row="12" Text="{Binding DaysUntilPayday}" FontSize="36" FontWeight="Bold" />
+            <TextBlock Grid.Row="13" Text="days until payday" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+        </Grid>
     </ScrollViewer>
 </UserControl>

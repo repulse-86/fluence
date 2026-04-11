@@ -1,0 +1,120 @@
+<Page
+    x:Class="Fluence.Views.ReportsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Fluence.Views"
+    xmlns:components="using:Fluence.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="REPORTS"
+                   Style="{ThemeResource BodyTextBlockStyle}"
+                   Margin="19,10,0,0"
+                   FontSize="16" />
+
+        <Pivot x:Name="ReportsPivot" Grid.Row="1" Margin="0,-36,0,0">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontSize="56" FontWeight="SemiLight" />
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+
+            <PivotItem Header="today" DataContext="{Binding DayReport}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,20,19,30">
+                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportDistributionControl DataContext="{Binding Distribution}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportComparisonControl TrendText="vs yesterday" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportBreakdownControl DataContext="{Binding Distribution}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+
+            <PivotItem Header="month" DataContext="{Binding MonthReport}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,20,19,30">
+                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportDistributionControl DataContext="{Binding Distribution}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="spending intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="False" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportComparisonControl TrendText="vs last month" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="daily average" FontSize="18" Foreground="{ThemeResource SystemColorControlAccentBrush}" Margin="0,0,0,5" />
+                        <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="48" FontWeight="Thin" Margin="0,0,0,25" />
+                        <TextBlock Text="projected total" FontSize="18" Foreground="{ThemeResource SystemColorControlAccentBrush}" Margin="0,0,0,5" />
+                        <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="48" FontWeight="Thin" Margin="0,0,0,30" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportBreakdownControl DataContext="{Binding Distribution}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+
+            <PivotItem Header="year" DataContext="{Binding YearReport}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,20,19,30">
+                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportDistributionControl DataContext="{Binding Distribution}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="monthly intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="True" Margin="0,0,0,0" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportComparisonControl TrendText="vs last year" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="monthly average" FontSize="18" Foreground="{ThemeResource SystemColorControlAccentBrush}" Margin="0,0,0,5" />
+                        <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="48" FontWeight="Thin" Margin="0,0,0,25" />
+                        <TextBlock Text="projected year" FontSize="18" Foreground="{ThemeResource SystemColorControlAccentBrush}" Margin="0,0,0,5" />
+                        <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="48" FontWeight="Thin" Margin="0,0,0,30" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
+                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportBreakdownControl DataContext="{Binding Distribution}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>

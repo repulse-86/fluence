@@ -8,16 +8,34 @@
         <converters:WidthConverter x:Key="WidthConverter" />
     </UserControl.Resources>
 
-    <ItemsControl ItemsSource="{Binding}" Margin="0,0,0,30">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="30" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <StackPanel Margin="0,0,0,30">
+        <ItemsControl ItemsSource="{Binding}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="40" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Rectangle Fill="{Binding Color}" Width="{Binding Percentage, Converter={StaticResource WidthConverter}, ConverterParameter=340}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding}" Margin="0,15,0,0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapGrid Orientation="Horizontal" MaximumRowsOrColumns="2" VerticalChildrenAlignment="Top" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,20,10" Width="160">
+                        <Border Background="{Binding Color}" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Text="{Binding Name}" FontSize="14" Opacity="0.8" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
 </UserControl>

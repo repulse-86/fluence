@@ -23,12 +23,18 @@ namespace Fluence.Services
 
         public async Task AddCategoryAsync(Category category)
         {
+            if (category != null && category.Name != null)
+                category.Name = category.Name.ToLower();
+
             var db = await GetDbAsync();
             await db.InsertAsync(category);    
         }
 
         public async Task UpdateCategoryAsync(Category category)
         {
+            if (category != null && category.Name != null)
+                category.Name = category.Name.ToLower();
+
             var db = await GetDbAsync();
             await db.UpdateAsync(category);
         }
@@ -42,15 +48,26 @@ namespace Fluence.Services
         public async Task InitializeDatabaseSync()
         {
             var db = await GetDbAsync();
+
+            var existingCategories = await db.Table<Category>().ToListAsync();
+            foreach (var cat in existingCategories)
+            {
+                if (cat.Name != cat.Name.ToLower())
+                {
+                    cat.Name = cat.Name.ToLower();
+                    await db.UpdateAsync(cat);
+                }
+            }
+
             if (await db.Table<Category>().CountAsync() == 0)
             {
                 List<Category> systemCategories = new List<Category>
                 {
-                    new Category { Name = "Food", IsSystem = true },
-                    new Category { Name = "Transportation", IsSystem = true },
-                    new Category { Name = "Bills", IsSystem = true },
-                    new Category { Name = "Income", IsSystem = true },
-                    new Category { Name = "Expense", IsSystem = true },
+                    new Category { Name = "food", IsSystem = true },
+                    new Category { Name = "transportation", IsSystem = true },
+                    new Category { Name = "bills", IsSystem = true },
+                    new Category { Name = "income", IsSystem = true },
+                    new Category { Name = "expense", IsSystem = true },
                 };
 
                 await db.InsertAllAsync(systemCategories);

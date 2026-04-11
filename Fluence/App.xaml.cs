@@ -93,11 +93,12 @@ namespace Fluence
                 var categoryService = new CategoryService();
                 await categoryService.InitializeDatabaseSync();
 
-                var profileService = new ProfileService();
-                await profileService.SeedProfileAsync();
+                // var profileService = new ProfileService();
+                // await profileService.SeedProfileAsync();
 
-                var transactionService = new TransactionService();
-                await transactionService.SeedTransactionsAsync();
+                // var transactionService = new TransactionService();
+                // await transactionService.RunMigrationsAsync();
+                // await transactionService.SeedTransactionsAsync();
             }
 
             if (rootFrame.Content == null)
@@ -152,6 +153,15 @@ namespace Fluence
             var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
             deferral.Complete();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            System.Diagnostics.Debug.WriteLine("App: OnActivated - " + args.Kind);
+            base.OnActivated(args);
+
+            // Set dirty flags to force a reload when returning to Hub
+            ViewModels.HubViewModel.IsDirty = true;
         }
     }
 }

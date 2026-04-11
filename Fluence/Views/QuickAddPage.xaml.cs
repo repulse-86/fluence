@@ -64,7 +64,9 @@ namespace Fluence.Views
         {
             if (await _viewModel.SaveTransactionAsync())
             {
-                HubViewModel.IsDirty = true;
+                HubViewModel.IsOverviewDirty = true;
+                HubViewModel.IsHistoryDirty = true;
+                HubViewModel.IsReportsDirty = true;
                 
                 var dialog = new MessageDialog(_viewModel.DebugData);
                 await dialog.ShowAsync();

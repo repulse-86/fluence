@@ -90,6 +90,15 @@ namespace Fluence.ViewModels
 
     public class PeriodReport : INotifyPropertyChanged
     {
+        public void Clear()
+        {
+            Distribution.Clear();
+            BudgetBurners.Clear();
+            IntensityMap.Clear();
+            FlowIn = FlowOut = FlowInPercent = FlowOutPercent = SavingsRate = TrendPercent = DailyAverage = ProjectedTotal = 0;
+            TrendDirection = "none";
+        }
+
         private double _flowIn;
         public double FlowIn { get { return _flowIn; } set { _flowIn = value; OnPropertyChanged(); } }
 
@@ -152,6 +161,39 @@ namespace Fluence.ViewModels
         private readonly ProfileService _profileService = new ProfileService();
 
         public static bool IsDirty { get; set; } = true;
+        public static bool IsOverviewDirty { get; set; } = true;
+        public static bool IsHistoryDirty { get; set; } = true;
+        public static bool IsReportsDirty { get; set; } = true;
+
+        private bool _isActive;
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged("ContentVisibility");
+                    if (!_isActive) UnloadContent();
+                }
+            }
+        }
+
+        public Visibility ContentVisibility => _isActive ? Visibility.Visible : Visibility.Collapsed;
+
+        private void UnloadContent()
+        {
+            GroupedTransactions.Clear();
+            _historySkip = 0;
+
+            DayReport.Clear();
+            MonthReport.Clear();
+            YearReport.Clear();
+
+            System.Diagnostics.Debug.WriteLine("HubViewModel: UnloadContent - Data cleared");
+        }
 
         private ObservableCollection<TransactionGroup> _groupedTransactions = new ObservableCollection<TransactionGroup>();
         public ObservableCollection<TransactionGroup> GroupedTransactions
@@ -212,12 +254,19 @@ namespace Fluence.ViewModels
             set { _topCategory = value; OnPropertyChanged(); }
         }
 
+        private int _daysUntilPayday;
+        public int DaysUntilPayday
+        {
+            get { return _daysUntilPayday; }
+            set { _daysUntilPayday = value; OnPropertyChanged(); }
+        }
+
         public PeriodReport DayReport { get; set; } = new PeriodReport();
         public PeriodReport MonthReport { get; set; } = new PeriodReport();
         public PeriodReport YearReport { get; set; } = new PeriodReport();
 
         private int _historySkip = 0;
-        private const int HistoryTake = 10;
+        private const int HistoryTake = 5;
         private bool _isLoadingHistory = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -229,37 +278,35 @@ namespace Fluence.ViewModels
 
         public async Task LoadOverviewAsync()
         {
-            var transactions = await _transactionService.GetTransactionsAsync();
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Starting");
             var profile = await _profileService.GetProfileAsync();
             
             BudgetPercent = 0;
             DailyAllowance = 0;
 
-            double totalIncome = transactions.Where(t => t.Type == "Income").Sum(t => t.Amount);
-            double totalExpense = transactions.Where(t => t.Type == "Expense").Sum(t => t.Amount);
+            double totalIncome = await _transactionService.GetTotalIncomeAsync();
+            double totalExpense = await _transactionService.GetTotalExpenseAsync();
             CurrentBalance = totalIncome - totalExpense;
 
+            DateTime now = DateTime.Now;
             if (profile != null && profile.MonthlyLimit > 0)
             {
-                double monthlySpent = transactions
-                    .Where(t => t.Type == "Expense" && t.Date.Month == DateTime.Now.Month && t.Date.Year == DateTime.Now.Year)
-                    .Sum(t => t.Amount);
+                double monthlySpent = await _transactionService.GetMonthlyExpenseAsync(now.Year, now.Month);
                 BudgetPercent = Math.Min(100, (monthlySpent / profile.MonthlyLimit) * 100);
 
-                int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                int daysRemaining = daysInMonth - DateTime.Now.Day + 1;
+                int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                int daysRemaining = daysInMonth - now.Day + 1;
                 DailyAllowance = Math.Round(Math.Max(0, (profile.MonthlyLimit - monthlySpent) / daysRemaining), 2);
             }
 
-            DateTime today = DateTime.Today;
-            SpentToday = transactions
-                .Where(t => t.Type == "Expense" && t.Date.Date == today)
-                .Sum(t => t.Amount);
+            DateTime today = now.Date;
+            SpentToday = await _transactionService.GetExpenseSumAsync(today, today.AddDays(1));
 
             DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-            WeeklyTotal = transactions
-                .Where(t => t.Type == "Expense" && t.Date.Date >= startOfWeek)
-                .Sum(t => t.Amount);
+            WeeklyTotal = await _transactionService.GetExpenseSumAsync(startOfWeek, now.AddDays(1));
+
+            // only fetch for top category calculation
+            var transactions = await _transactionService.GetTransactionsAsync();
 
             var topCat = transactions
                 .Where(t => t.Type == "Expense")
@@ -270,57 +317,60 @@ namespace Fluence.ViewModels
             if (topCat != null)
             {
                 var cat = await _categoryService.GetCategoryByIdAsync(topCat.Key);
-                TopCategory = cat?.Name?.ToLower() ?? "unknown";
+                TopCategory = cat?.Name ?? "unknown";
+            }
+
+            if (profile != null)
+            {
+                int paydayDay = profile.Payday.Day;
+                DateTime nextPayday = new DateTime(now.Year, now.Month, paydayDay);
+                if (now.Day > paydayDay)
+                {
+                    nextPayday = nextPayday.AddMonths(1);
+                }
+                DaysUntilPayday = (nextPayday - now.Date).Days;
             }
             
             TileService.UpdateLiveTile(BudgetPercent, CurrentBalance, DailyAllowance, SpentToday, WeeklyTotal, TopCategory);
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Completed");
         }
 
         public async Task LoadReportAsync()
         {
-            var transactions = await _transactionService.GetTransactionsAsync();
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadReportAsync - Starting");
             var categories = await _categoryService.GetCategoriesAsync();
             var categoryMap = categories.ToDictionary(c => c.Id, c => c.Name);
 
             DateTime now = DateTime.Now;
 
             DateTime today = now.Date;
+            DateTime tomorrow = today.AddDays(1);
             DateTime yesterday = today.AddDays(-1);
-            PopulatePeriodReport(DayReport,
-                transactions.Where(t => t.Date.Date == today), 
-                transactions.Where(t => t.Date.Date == yesterday),
-                categoryMap, "day");
+            await PopulatePeriodReportAsync(DayReport, today, tomorrow, yesterday, today, categoryMap, "today");
 
             await Task.Delay(50);
 
             DateTime startOfMonth = new DateTime(now.Year, now.Month, 1);
+            DateTime nextMonth = startOfMonth.AddMonths(1);
             DateTime startOfLastMonth = startOfMonth.AddMonths(-1);
             DateTime sameDayLastMonth = now.AddMonths(-1);
-
-            PopulatePeriodReport(MonthReport,
-                transactions.Where(t => t.Date >= startOfMonth && t.Date <= now),
-                transactions.Where(t => t.Date >= startOfLastMonth && t.Date <= sameDayLastMonth),
-                categoryMap, "month");
+            await PopulatePeriodReportAsync(MonthReport, startOfMonth, nextMonth, startOfLastMonth, sameDayLastMonth, categoryMap, "month");
 
             await Task.Delay(50);
 
             DateTime startOfYear = new DateTime(now.Year, 1, 1);
+            DateTime nextYear = startOfYear.AddYears(1);
             DateTime startOfLastYear = new DateTime(now.Year - 1, 1, 1);
             DateTime sameDayLastYear = now.AddYears(-1);
+            await PopulatePeriodReportAsync(YearReport, startOfYear, nextYear, startOfLastYear, sameDayLastYear, categoryMap, "year");
 
-            PopulatePeriodReport(YearReport,
-                transactions.Where(t => t.Date >= startOfYear && t.Date <= now),
-                transactions.Where(t => t.Date >= startOfLastYear && t.Date <= sameDayLastYear),
-                categoryMap, "year");
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadReportAsync - Completed");
         }
 
-        private void PopulatePeriodReport(PeriodReport report, IEnumerable<Transaction> current, IEnumerable<Transaction> previous, Dictionary<int, string> categoryMap, string type)
+        private async Task PopulatePeriodReportAsync(PeriodReport report, DateTime start, DateTime end, DateTime prevStart, DateTime prevEnd, Dictionary<int, string> categoryMap, string type)
         {
-            var currentList = current.ToList();
-            var previousList = previous.ToList();
-
-            report.FlowIn = currentList.Where(t => t.Type == "Income").Sum(t => t.Amount);
-            report.FlowOut = currentList.Where(t => t.Type == "Expense").Sum(t => t.Amount);
+            report.FlowIn = await _transactionService.GetIncomeSumAsync(start, end);
+            report.FlowOut = await _transactionService.GetExpenseSumAsync(start, end);
 
             double totalFlow = report.FlowIn + report.FlowOut;
             if (totalFlow > 0)
@@ -336,7 +386,7 @@ namespace Fluence.ViewModels
             }
             else { report.SavingsRate = 0; }
 
-            double prevOut = previousList.Where(t => t.Type == "Expense").Sum(t => t.Amount);
+            double prevOut = await _transactionService.GetExpenseSumAsync(prevStart, prevEnd);
             if (prevOut > 0)
             {
                 report.TrendPercent = Math.Abs((report.FlowOut - prevOut) / prevOut * 100);
@@ -363,10 +413,11 @@ namespace Fluence.ViewModels
                 report.ProjectedTotal = report.DailyAverage * 12;
             }
 
-            var newIntensityMap = new ObservableCollection<IntensityItem>();
+            var newIntensityMap = new List<IntensityItem>();
             if (type == "month")
             {
-                var dailySpending = currentList.Where(t => t.Type == "Expense")
+                var currentExpenses = await _transactionService.GetTransactionsAsync(start, end);
+                var dailySpending = currentExpenses.Where(t => t.Type == "Expense")
                     .GroupBy(t => t.Date.Day)
                     .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
                 
@@ -384,7 +435,8 @@ namespace Fluence.ViewModels
             }
             else if (type == "year")
             {
-                var monthlySpending = currentList.Where(t => t.Type == "Expense")
+                var currentExpenses = await _transactionService.GetTransactionsAsync(start, end);
+                var monthlySpending = currentExpenses.Where(t => t.Type == "Expense")
                     .GroupBy(t => t.Date.Month)
                     .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
 
@@ -398,55 +450,70 @@ namespace Fluence.ViewModels
                     });
                 }
             }
-            report.IntensityMap = newIntensityMap;
+            report.IntensityMap.Clear();
+            foreach (var item in newIntensityMap) report.IntensityMap.Add(item);
 
-            var newDistribution = new ObservableCollection<ReportCategoryItem>();
-            var newBudgetBurners = new ObservableCollection<ReportCategoryItem>();
-            var currentExpenses = currentList.Where(t => t.Type == "Expense").ToList();
-            var prevExpenses = previousList.Where(t => t.Type == "Expense").ToList();
+            var newDistribution = new List<ReportCategoryItem>();
+            var newBudgetBurners = new List<ReportCategoryItem>();
 
-            if (currentExpenses.Any())
+            var currentSummaries = await _transactionService.GetCategorySummariesAsync(start, end);
+            if (currentSummaries.Any())
             {
-                double totalExpenses = currentExpenses.Sum(t => t.Amount);
-                var grouped = currentExpenses.GroupBy(t => t.CategoryId)
-                    .OrderByDescending(g => g.Sum(t => t.Amount));
+                var prevSummaries = await _transactionService.GetCategorySummariesAsync(prevStart, prevEnd);
+                var prevGrouped = prevSummaries.ToDictionary(s => s.CategoryId, s => s.TotalAmount);
 
-                var prevGrouped = prevExpenses.GroupBy(t => t.CategoryId)
-                    .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+                double totalExpenses = report.FlowOut;
+                var grouped = currentSummaries.OrderByDescending(s => s.TotalAmount);
 
-                int totalCategories = grouped.Count();
-                int i = 0;
                 var allItems = new List<ReportCategoryItem>();
                 foreach (var g in grouped)
                 {
-                    double amt = g.Sum(t => t.Amount);
-                    double prevAmt = prevGrouped.ContainsKey(g.Key) ? prevGrouped[g.Key] : 0;
-                    
+                    double amt = g.TotalAmount;
+                    double prevAmt = prevGrouped.ContainsKey(g.CategoryId) ? prevGrouped[g.CategoryId] : 0;
                     double catTrend = prevAmt > 0 ? (amt - prevAmt) / prevAmt * 100 : 100;
 
-                    // Generate color from HSL spectrum (0 to 360 degrees)
-                    double hue = (360.0 * i) / totalCategories;
-                    var color = ColorFromHsl(hue, 0.65, 0.55);
-
-                    var item = new ReportCategoryItem
+                    allItems.Add(new ReportCategoryItem
                     {
-                        Name = categoryMap.ContainsKey(g.Key) ? categoryMap[g.Key].ToLower() : "unknown",
+                        Name = categoryMap.ContainsKey(g.CategoryId) ? categoryMap[g.CategoryId] : "unknown",
                         Amount = amt,
                         Percentage = (amt / totalExpenses) * 100,
-                        TransactionCount = g.Count(),
-                        Trend = catTrend,
-                        Color = new SolidColorBrush(color)
-                    };
-                    newDistribution.Add(item);
-                    allItems.Add(item);
-                    i++;
+                        TransactionCount = g.Count,
+                        Trend = catTrend
+                    });
+                }
+
+                var top10 = allItems.Take(10).ToList();
+                var others = allItems.Skip(10).ToList();
+
+                if (others.Any())
+                {
+                    double othersAmt = others.Sum(x => x.Amount);
+                    top10.Add(new ReportCategoryItem
+                    {
+                        Name = "others",
+                        Amount = othersAmt,
+                        Percentage = (othersAmt / totalExpenses) * 100,
+                        TransactionCount = others.Sum(x => x.TransactionCount),
+                        Trend = 0
+                    });
+                }
+
+                for (int j = 0; j < top10.Count; j++)
+                {
+                    double hue = (360.0 * j) / top10.Count;
+                    top10[j].Color = new SolidColorBrush(ColorFromHsl(hue, 0.65, 0.55));
+                    newDistribution.Add(top10[j]);
                 }
 
                 var burners = allItems.Where(x => x.Trend > 0).OrderByDescending(item => item.Trend).Take(3);
                 foreach (var b in burners) newBudgetBurners.Add(b);
             }
-            report.Distribution = newDistribution;
-            report.BudgetBurners = newBudgetBurners;
+
+            report.Distribution.Clear();
+            foreach (var item in newDistribution) report.Distribution.Add(item);
+
+            report.BudgetBurners.Clear();
+            foreach (var item in newBudgetBurners) report.BudgetBurners.Add(item);
         }
 
         private Color ColorFromHsl(double h, double s, double l)
@@ -479,9 +546,21 @@ namespace Fluence.ViewModels
 
         public async Task LoadHistoryAsync()
         {
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadHistoryAsync - Starting");
+
+            // wait for any concurrent load to finish
+            while (_isLoadingHistory) await Task.Delay(50);
+
             _historySkip = 0;
-            GroupedTransactions = new ObservableCollection<TransactionGroup>();
-            await LoadMoreHistoryAsync();
+            GroupedTransactions.Clear();
+
+            // initial load of 15 items to ensure the list is scrollable
+            for (int i = 0; i < 3; i++)
+            {
+                await LoadMoreHistoryAsync();
+            }
+
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadHistoryAsync - Completed. Groups: " + GroupedTransactions.Count);
         }
 
         public async Task LoadMoreHistoryAsync()
@@ -491,13 +570,12 @@ namespace Fluence.ViewModels
 
             try
             {
+                // retrieve exactly 5 items regardless of date
                 var transactions = await _transactionService.GetTransactionsAsync(_historySkip, HistoryTake);
                 if (transactions.Count == 0) return;
 
                 var categories = await _categoryService.GetCategoriesAsync();
                 var categoryMap = categories.ToDictionary(c => c.Id, c => c.Name);
-
-                TransactionGroup currentGroup = GroupedTransactions.LastOrDefault();
 
                 foreach (var t in transactions)
                 {
@@ -507,8 +585,8 @@ namespace Fluence.ViewModels
                     var displayItem = new TransactionDisplayItem
                     {
                         Id = t.Id,
-                        CategoryName = categoryName.ToLower(),
-                        Note = t.Note?.ToLower(),
+                        CategoryName = categoryName,
+                        Note = t.Note,
                         Type = t.Type,
                         Amount = t.Amount,
                         DisplayAmount = (t.Type == "Income" ? "+" : "-") + t.Amount.ToString("N2"),
@@ -518,19 +596,17 @@ namespace Fluence.ViewModels
                         IsExpanded = false
                     };
 
-                    bool isNewGroup = false;
-                    if (currentGroup == null || currentGroup.DateKey != dateKey)
+                    var group = GroupedTransactions.FirstOrDefault(g => g.DateKey == dateKey);
+                    if (group == null)
                     {
-                        currentGroup = new TransactionGroup { DateKey = dateKey };
-                        isNewGroup = true;
+                        group = new TransactionGroup { DateKey = dateKey };
+                        GroupedTransactions.Add(group);
                     }
 
-                    currentGroup.Add(displayItem);
-
-                    if (isNewGroup)
+                    // avoid duplicates if reloading
+                    if (!group.Any(i => i.Id == displayItem.Id))
                     {
-                        GroupedTransactions.Add(currentGroup);
-                        await Task.Delay(30);
+                        group.Add(displayItem);
                     }
                 }
 

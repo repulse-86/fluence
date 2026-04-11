@@ -9,7 +9,17 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Pivot x:Name="SettingsPivot" SelectionChanged="SettingsPivot_SelectionChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="MANAGEMENT"
+                   Style="{ThemeResource BodyTextBlockStyle}"
+                   Margin="19,10,0,0"
+                   FontSize="16" />
+
+        <Pivot x:Name="SettingsPivot" Grid.Row="1" Margin="0,-36,0,0" SelectionChanged="SettingsPivot_SelectionChanged">
             <PivotItem x:Name="CategoryPivotItem" Header="categories">
                 <Grid DataContext="{Binding CategoryVM}">
                     <Grid.RowDefinitions>
@@ -19,7 +29,7 @@
 
                     <StackPanel Grid.Row="0">
                         <TextBlock Text="category name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                        <TextBox x:Name="CategoryTextBox" Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. Transportation" />
+                        <TextBox x:Name="CategoryTextBox" Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. transportation" />
                         <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" />
                     </StackPanel>
 
@@ -58,65 +68,53 @@
             </PivotItem>
 
             <PivotItem x:Name="ProfilePivotItem" Header="profile">
-                <Grid DataContext="{Binding ProfileVM}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <StackPanel Visibility="{Binding ViewVisibility}">
-                                <TextBlock Text="current balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" />
-                                <TextBlock Text="{Binding InitialBalanceText, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" Margin="0,-10,0,30" TextWrapping="Wrap" />
+                <ScrollViewer DataContext="{Binding ProfileVM}" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <StackPanel Visibility="{Binding ViewVisibility}">
+                            <TextBlock Text="{Binding InitialBalanceText, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" TextWrapping="Wrap" />
+                            <TextBlock Text="current balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
 
-                                <StackPanel>
-                                    <StackPanel Margin="0,0,0,25">
-                                        <TextBlock Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Opacity="0.6" FontSize="20" TextWrapping="Wrap" />
-                                        <TextBlock Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
-                                    </StackPanel>
+                            <TextBlock Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" />
+                            <TextBlock Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
 
-                                    <StackPanel Margin="0,0,0,25">
-                                        <TextBlock Text="monthly limit" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Opacity="0.6" FontSize="20" TextWrapping="Wrap" />
-                                        <TextBlock Text="{Binding MonthlyLimitText, ConverterParameter='N2'}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
-                                    </StackPanel>
+                            <TextBlock Text="{Binding MonthlyLimitText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" />
+                            <TextBlock Text="monthly limit" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
 
-                                    <StackPanel Margin="0,0,0,25">
-                                        <TextBlock Text="payday" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Opacity="0.6" FontSize="20" TextWrapping="Wrap" />
-                                        <TextBlock Text="{Binding PaydayFormatted}" FontSize="34" Margin="0,5,0,0" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <StackPanel Visibility="{Binding EditVisibility}">
-                                <TextBlock Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                                <TextBox x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                                <TextBlock Text="{Binding InitialBalanceErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
-
-                                <TextBlock Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                                <TextBox x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                                <TextBlock Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
-
-                                <TextBlock Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                                <TextBox x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                                <TextBlock Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
-
-                                <TextBlock Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                                <DatePicker x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
-                                <TextBlock Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
-                            </StackPanel>
+                            <TextBlock Text="{Binding PaydayFormatted}" FontSize="34" TextWrapping="Wrap" />
+                            <TextBlock Text="payday" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
                         </StackPanel>
-                    </ScrollViewer>
-                </Grid>
+
+                        <StackPanel Visibility="{Binding EditVisibility}">
+                            <TextBlock Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
+                            <TextBox x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Text="{Binding InitialBalanceErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+
+                            <TextBlock Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
+                            <TextBox x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+
+                            <TextBlock Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
+                            <TextBox x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+
+                            <TextBlock Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
+                            <DatePicker x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
+                            <TextBlock Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
 
             <PivotItem x:Name="SystemPivotItem" Header="system">
-                <Grid>
-                    <StackPanel Margin="0,20,0,0">
-                        <TextBlock Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" />
-                        
-                        <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
-                        <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" />
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" />
 
-                        <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
-                        <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" />
-                    </StackPanel>
-                </Grid>
+                    <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
+                    <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" />
+
+                    <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
+                    <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" />
+                </StackPanel>
             </PivotItem>
         </Pivot>
     </Grid>

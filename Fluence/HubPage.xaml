@@ -65,7 +65,9 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <components:HistoryControl DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" TransactionDeleted="HistoryControl_TransactionDeleted" />
+                    <components:HistoryControl
+                        Visibility="{Binding DefaultViewModel.HubViewModel.ContentVisibility, ElementName=pageRoot}"
+                        DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" />
                 </DataTemplate>
             </HubSection>
 
@@ -76,7 +78,9 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <components:ReportsControl DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" />
+                    <components:ReportsControl
+                        Visibility="{Binding DefaultViewModel.HubViewModel.ContentVisibility, ElementName=pageRoot}"
+                        DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" />
                 </DataTemplate>
             </HubSection>
         </Hub>

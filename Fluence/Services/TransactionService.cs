@@ -15,6 +15,79 @@ namespace Fluence.Services
             return await db.Table<Transaction>().OrderByDescending(t => t.Date).ToListAsync();
         }
 
+        public async Task<double> GetTotalIncomeAsync()
+        {
+            var db = await GetDbAsync();
+            var result = await db.ExecuteScalarAsync<double>("SELECT COALESCE(SUM(Amount), 0) FROM [Transaction] WHERE Type = 'Income'");
+            return result;
+        }
+
+        public async Task<double> GetTotalExpenseAsync()
+        {
+            var db = await GetDbAsync();
+            var result = await db.ExecuteScalarAsync<double>("SELECT COALESCE(SUM(Amount), 0) FROM [Transaction] WHERE Type = 'Expense'");
+            return result;
+        }
+
+        public async Task<double> GetMonthlyExpenseAsync(int year, int month)
+        {
+            var db = await GetDbAsync();
+            DateTime start = new DateTime(year, month, 1);
+            DateTime end = start.AddMonths(1);
+            var result = await db.ExecuteScalarAsync<double>("SELECT COALESCE(SUM(Amount), 0) FROM [Transaction] WHERE Type = 'Expense' AND Date >= ? AND Date < ?", start.Ticks, end.Ticks);
+            return result;
+        }
+
+        public async Task<double> GetExpenseSumAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            return await db.ExecuteScalarAsync<double>("SELECT COALESCE(SUM(Amount), 0) FROM [Transaction] WHERE Type = 'Expense' AND Date >= ? AND Date < ?", start.Ticks, end.Ticks);
+        }
+
+        public async Task<double> GetIncomeSumAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            return await db.ExecuteScalarAsync<double>("SELECT COALESCE(SUM(Amount), 0) FROM [Transaction] WHERE Type = 'Income' AND Date >= ? AND Date < ?", start.Ticks, end.Ticks);
+        }
+
+        public async Task<List<Transaction>> GetTransactionsAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            return await db.Table<Transaction>()
+                .Where(t => t.Date >= start && t.Date < end)
+                .OrderByDescending(t => t.Date)
+                .ToListAsync();
+        }
+
+        public class CategorySummary
+        {
+            public int CategoryId { get; set; }
+            public double TotalAmount { get; set; }
+            public int Count { get; set; }
+        }
+
+        public async Task<List<CategorySummary>> GetCategorySummariesAsync(DateTime start, DateTime end, string type = "Expense")
+        {
+            var db = await GetDbAsync();
+            // SQLite-net-pcl doesn't support complex group by with projections well in LINQ, use raw SQL
+            string sql = "SELECT CategoryId, SUM(Amount) as TotalAmount, COUNT(Id) as Count FROM [Transaction] WHERE Type = ? AND Date >= ? AND Date < ? GROUP BY CategoryId";
+            return await db.QueryAsync<CategorySummary>(sql, type, start.Ticks, end.Ticks);
+        }
+
+        public async Task RunMigrationsAsync()
+        {
+            var db = await GetDbAsync();
+            var existingTransactions = await db.Table<Transaction>().ToListAsync();
+            foreach (var t in existingTransactions)
+            {
+                if (t.Note != null && t.Note != t.Note.ToLower())
+                {
+                    t.Note = t.Note.ToLower();
+                    await db.UpdateAsync(t);
+                }
+            }
+        }
+
         public async Task<List<Transaction>> GetTransactionsAsync(int skip, int take)
         {
             var db = await GetDbAsync();
@@ -27,12 +100,18 @@ namespace Fluence.Services
 
         public async Task AddTransactionAsync(Transaction transaction)
         {
+            if (transaction != null && transaction.Note != null)
+                transaction.Note = transaction.Note.ToLower();
+
             var db = await GetDbAsync();
             await db.InsertAsync(transaction);
         }
 
         public async Task UpdateTransactionAsync(Transaction transaction)
         {
+            if (transaction != null && transaction.Note != null)
+                transaction.Note = transaction.Note.ToLower();
+
             var db = await GetDbAsync();
             await db.UpdateAsync(transaction);
         }
@@ -97,7 +176,7 @@ namespace Fluence.Services
                         CategoryId = category.Id,
                         Amount = amount,
                         Type = type,
-                        Note = "mock " + type.ToLower() + " " + baseDate.ToString("MMM dd") + " #" + (i + 1),
+                        Note = ("mock " + type.ToLower() + " " + baseDate.ToString("MMM dd") + " #" + (i + 1)).ToLower(),
                         Date = transactionDate
                     });
                 }

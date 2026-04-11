@@ -10,7 +10,7 @@
     d:DesignHeight="600"
     d:DesignWidth="360">
 
-    <Grid Margin="-16,-44,0,0">
+    <Grid Margin="-19,-44,0,0">
         <Pivot x:Name="ReportsPivot">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
@@ -18,39 +18,27 @@
                 </DataTemplate>
             </Pivot.HeaderTemplate>
 
-            <!-- DAY REPORT -->
-            <PivotItem Header="day" DataContext="{Binding DayReport}">
+            <PivotItem Header="today" DataContext="{Binding DayReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel>
-                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportDistributionControl DataContext="{Binding Distribution}" />
-
+                    <StackPanel Margin="0,0,19,0">
                         <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <local:ReportComparisonControl TrendText="vs yesterday" />
 
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
+                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,20,0,10" />
                         <local:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
 
-                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportBreakdownControl DataContext="{Binding Distribution}" />
+                        <Button Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="today" />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
 
-            <!-- MONTH REPORT -->
             <PivotItem Header="month" DataContext="{Binding MonthReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,0,30">
-                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportDistributionControl DataContext="{Binding Distribution}" />
-
-                        <TextBlock Text="spending intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="False" />
-
+                    <StackPanel Margin="0,0,19,0">
                         <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <local:ReportComparisonControl TrendText="vs last month" />
 
-                        <Grid Margin="0,0,0,30">
+                        <Grid Margin="0,10,0,20">
                             <StackPanel HorizontalAlignment="Left">
                                 <TextBlock Text="daily average" FontSize="12" />
                                 <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" />
@@ -64,26 +52,18 @@
                         <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <local:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
 
-                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportBreakdownControl DataContext="{Binding Distribution}" />
+                        <Button Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="month" />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
 
-            <!-- YEAR REPORT -->
             <PivotItem Header="year" DataContext="{Binding YearReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,0,30">
-                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportDistributionControl DataContext="{Binding Distribution}" />
-
-                        <TextBlock Text="monthly intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="True" />
-
+                    <StackPanel Margin="0,0,19,0">
                         <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <local:ReportComparisonControl TrendText="vs last year" />
 
-                        <Grid Margin="0,0,0,30">
+                        <Grid Margin="0,10,0,20">
                             <StackPanel HorizontalAlignment="Left">
                                 <TextBlock Text="monthly average" FontSize="12" />
                                 <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="18" FontWeight="SemiBold" />
@@ -97,8 +77,7 @@
                         <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
                         <local:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
 
-                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportBreakdownControl DataContext="{Binding Distribution}" />
+                        <Button Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="year" />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

@@ -6,7 +6,7 @@
     <ItemsControl ItemsSource="{Binding}" Margin="0,0,0,30">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Grid Margin="0,0,0,15">
+                <Grid Margin="0,0,0,25">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -16,11 +16,11 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                        <TextBlock Text="{Binding Name}" FontSize="14" TextTrimming="CharacterEllipsis" MaxWidth="200" />
-                        <TextBlock Text="{Binding TransactionCount}" FontSize="12" Margin="10,3,0,0" />
+                        <TextBlock Text="{Binding Name}" FontSize="20" TextTrimming="CharacterEllipsis" MaxWidth="200" />
+                        <TextBlock Text="{Binding TransactionCount}" FontSize="16" Margin="10,4,0,0" Opacity="0.6" />
                     </StackPanel>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="16" FontWeight="SemiBold" />
-                    <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding Percentage}" Foreground="{Binding Color}" Height="4" Margin="0,5,0,0" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="24" FontWeight="SemiBold" />
+                    <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding Percentage}" Foreground="{Binding Color}" Height="4" Margin="0,8,0,0" />
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
