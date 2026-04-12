@@ -74,6 +74,14 @@ namespace Fluence.Services
             return await db.QueryAsync<CategorySummary>(sql, type, start.Ticks, end.Ticks);
         }
 
+        public async Task<int> GetTopCategoryIdAsync(string type = "Expense")
+        {
+            var db = await GetDbAsync();
+            string sql = "SELECT CategoryId FROM [Transaction] WHERE Type = ? GROUP BY CategoryId ORDER BY SUM(Amount) DESC LIMIT 1";
+            var result = await db.QueryAsync<CategorySummary>(sql, type);
+            return result.FirstOrDefault()?.CategoryId ?? 0;
+        }
+
         public async Task RunMigrationsAsync()
         {
             var db = await GetDbAsync();

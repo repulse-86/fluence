@@ -14,6 +14,33 @@ namespace Fluence.Views.Components
             set { SetValue(TrendTextProperty, value); }
         }
 
+        public static readonly DependencyProperty ShowProjectionsProperty =
+            DependencyProperty.Register("ShowProjections", typeof(bool), typeof(ReportComparisonControl), new PropertyMetadata(false));
+
+        public bool ShowProjections
+        {
+            get { return (bool)GetValue(ShowProjectionsProperty); }
+            set { SetValue(ShowProjectionsProperty, value); }
+        }
+
+        public static readonly DependencyProperty AverageLabelProperty =
+            DependencyProperty.Register("AverageLabel", typeof(string), typeof(ReportComparisonControl), new PropertyMetadata("daily average"));
+
+        public string AverageLabel
+        {
+            get { return (string)GetValue(AverageLabelProperty); }
+            set { SetValue(AverageLabelProperty, value); }
+        }
+
+        public static readonly DependencyProperty ProjectedLabelProperty =
+            DependencyProperty.Register("ProjectedLabel", typeof(string), typeof(ReportComparisonControl), new PropertyMetadata("projected total"));
+
+        public string ProjectedLabel
+        {
+            get { return (string)GetValue(ProjectedLabelProperty); }
+            set { SetValue(ProjectedLabelProperty, value); }
+        }
+
         public ReportComparisonControl()
         {
             this.InitializeComponent();

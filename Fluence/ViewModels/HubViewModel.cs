@@ -305,19 +305,15 @@ namespace Fluence.ViewModels
             DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
             WeeklyTotal = await _transactionService.GetExpenseSumAsync(startOfWeek, now.AddDays(1));
 
-            // only fetch for top category calculation
-            var transactions = await _transactionService.GetTransactionsAsync();
-
-            var topCat = transactions
-                .Where(t => t.Type == "Expense")
-                .GroupBy(t => t.CategoryId)
-                .OrderByDescending(g => g.Sum(t => t.Amount))
-                .FirstOrDefault();
-
-            if (topCat != null)
+            int topCatId = await _transactionService.GetTopCategoryIdAsync();
+            if (topCatId > 0)
             {
-                var cat = await _categoryService.GetCategoryByIdAsync(topCat.Key);
+                var cat = await _categoryService.GetCategoryByIdAsync(topCatId);
                 TopCategory = cat?.Name ?? "unknown";
+            }
+            else
+            {
+                TopCategory = "none";
             }
 
             if (profile != null)
