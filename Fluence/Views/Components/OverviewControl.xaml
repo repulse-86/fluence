@@ -34,9 +34,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Height="30" Background="#1AFFFFFF" Margin="0,0,0,5">
+            <Border Grid.Row="0" Height="30" Background="#1AFFFFFF" Margin="0,0,0,5" IsHitTestVisible="False">
                 <Grid>
-                    <Rectangle Fill="{Binding BudgetBrush}" HorizontalAlignment="Left">
+                    <Rectangle Fill="{Binding BudgetBrush}" HorizontalAlignment="Left" IsHitTestVisible="False">
                         <Rectangle.Width>
                             <Binding Path="BudgetPercent">
                                 <Binding.Converter>
@@ -48,33 +48,39 @@
                     </Rectangle>
                 </Grid>
             </Border>
-            <TextBlock Grid.Row="1" Text="monthly budget health" FontSize="20" Margin="0,0,0,20" Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+            <TextBlock Grid.Row="1" Text="monthly budget health" FontSize="20" Margin="0,0,0,20" Foreground="{ThemeResource SystemColorControlAccentBrush}" IsHitTestVisible="False" />
             
             <!-- Advanced Hybrid Insights -->
-            <StackPanel Grid.Row="2" Margin="0,0,0,20">
-                <TextBlock Text="{Binding RunwayDays}" FontSize="36" FontWeight="Bold" />
-                <TextBlock Text="estimated days left until balance reaches zero" FontSize="14" Opacity="0.6" Margin="0,2,0,0" />
-                <TextBlock Text="{Binding SavingOpportunitiesSummary}" FontSize="12" Foreground="Gray" Margin="0,5,0,5" />
-                <TextBlock Text="financial runway" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,0" />
-            </StackPanel>
+            <Grid Grid.Row="2" Margin="0,0,0,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{Binding RunwayDays}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="1" Text="estimated days left until balance reaches zero" FontSize="14" Opacity="0.6" Margin="0,2,0,0" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="2" Text="{Binding SavingOpportunitiesSummary}" FontSize="12" Foreground="Gray" Margin="0,5,0,5" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="3" Text="financial runway" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,0" IsHitTestVisible="False" />
+            </Grid>
 
-            <TextBlock Grid.Row="3" Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Grid.Row="4" Text="current balance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,20" />
+            <TextBlock Grid.Row="3" Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="4" Text="current balance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,20" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="5" Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Grid.Row="6" Text="daily allowance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="5" Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="6" Text="daily allowance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="7" Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Grid.Row="8" Text="spent today" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="7" Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="8" Text="spent today" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="9" Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Grid.Row="10" Text="weekly total" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="9" Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="10" Text="weekly total" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="11" Text="{Binding TopCategory}" FontSize="36" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
-            <TextBlock Grid.Row="12" Text="top category" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="11" Text="{Binding TopCategory}" FontSize="36" FontWeight="Bold" TextTrimming="CharacterEllipsis" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="12" Text="top category" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="13" Text="{Binding DaysUntilPayday}" FontSize="36" FontWeight="Bold" />
-            <TextBlock Grid.Row="14" Text="days until payday" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" />
+            <TextBlock Grid.Row="13" Text="{Binding DaysUntilPayday}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="14" Text="days until payday" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
         </Grid>
     </ScrollViewer>
 </UserControl>

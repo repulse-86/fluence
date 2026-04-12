@@ -10,6 +10,7 @@
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
             <converters:WidthConverter x:Key="WidthConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 

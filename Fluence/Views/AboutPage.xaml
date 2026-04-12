@@ -14,46 +14,56 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="fluence" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="80" FontWeight="Bold" Margin="19,0,-100,20" Padding="0,0,0,6" TextWrapping="NoWrap" />
+        <TextBlock Grid.Row="0" Text="fluence" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="80" FontWeight="Bold" Margin="19,0,-100,26" TextWrapping="NoWrap" />
 
         <ScrollViewer Grid.Row="1">
-            <StackPanel Margin="19,0,19,0">
-                <TextBlock 
+            <Grid Margin="19,0,19,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
                     Text="version" 
                     FontSize="18" 
                     FontWeight="SemiBold"
                     Margin="0,0,0,5" 
-                    Foreground="{ThemeResource SystemColorControlAccentBrush}" />
-                <TextBlock 
+                    Foreground="{ThemeResource SystemColorControlAccentBrush}" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="1"
                     Text="1.0.0.0" 
                     FontSize="18" 
-                    Margin="0,0,0,30" />
+                    Margin="0,0,0,30" IsHitTestVisible="False" />
 
-                <TextBlock Text="description" 
+                <TextBlock Grid.Row="2" Text="description"
                            FontSize="18" 
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemColorControlAccentBrush}" 
-                           Margin="0,0,0,5" />
-                <TextBlock Text="fluence is a lightweight personal finance tracker designed for simplicity and speed. manage your daily expenses and monitor your budget health with ease." 
+                           Margin="0,0,0,5" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="3" Text="fluence is a lightweight personal finance tracker designed for simplicity and speed. manage your daily expenses and monitor your budget health with ease."
                            FontSize="18" 
                            TextWrapping="Wrap" 
                            Margin="0,0,0,30" 
-                           Opacity="0.8" />
+                           Opacity="0.8" IsHitTestVisible="False" />
 
-                <TextBlock Text="platform" 
+                <TextBlock Grid.Row="4" Text="platform"
                            FontSize="18" 
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemColorControlAccentBrush}" 
-                           Margin="0,0,0,5" />
-                <TextBlock Text="windows phone 8.1" FontSize="18" Margin="0,0,0,30" Opacity="0.6" />
+                           Margin="0,0,0,5" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="5" Text="windows phone 8.1" FontSize="18" Margin="0,0,0,30" Opacity="0.6" IsHitTestVisible="False" />
 
-                <TextBlock Text="created by" 
+                <TextBlock Grid.Row="6" Text="created by"
                            FontSize="18" 
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemColorControlAccentBrush}" 
-                           Margin="0,0,0,5" />
-                <TextBlock Text="repulse" FontSize="24" Margin="0,0,0,10" />
-            </StackPanel>
+                           Margin="0,0,0,5" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="7" Text="repulse" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>

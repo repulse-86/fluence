@@ -20,43 +20,46 @@
 
             <PivotItem Header="today" DataContext="{Binding DayReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,19,0">
-                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportComparisonControl TrendText="vs yesterday" />
-
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,20,0,10" />
-                        <local:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
-
-                        <Button Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="today" />
-                    </StackPanel>
+                    <Grid Margin="0,0,19,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <local:ReportComparisonControl Grid.Row="0" Header="comparison" TrendText="vs yesterday" />
+                        <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" Margin="0,20,0,10" />
+                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="today" />
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
 
             <PivotItem Header="month" DataContext="{Binding MonthReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,19,0">
-                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportComparisonControl TrendText="vs last month" />
-
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
-
-                        <Button Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="month" />
-                    </StackPanel>
+                    <Grid Margin="0,0,19,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <local:ReportComparisonControl Grid.Row="0" Header="comparison" TrendText="vs last month" />
+                        <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" />
+                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="month" />
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
 
             <PivotItem Header="year" DataContext="{Binding YearReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Margin="-4">
-                    <StackPanel Margin="0,0,19,0">
-                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportComparisonControl TrendText="vs last year" />
-
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="18" Margin="0,0,0,10" />
-                        <local:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
-
-                        <Button Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="year" />
-                    </StackPanel>
+                    <Grid Margin="0,0,19,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <local:ReportComparisonControl Grid.Row="0" Header="comparison" TrendText="vs last year" />
+                        <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" />
+                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="year" />
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
         </Pivot>

@@ -23,37 +23,42 @@
         <TextBlock x:Name="PageTitle"
                    Text="{Binding CategoryName}"
                    Style="{ThemeResource HeaderTextBlockStyle}"
-                   Margin="19,0,-100,20"
-                   Padding="0,0,0,6"
+                   Margin="19,0,-100,26"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Left"
                    TextWrapping="NoWrap" />
 
         <ScrollViewer Grid.Row="1" Margin="19,0,19,0">
-            <StackPanel>
-                <TextBlock Foreground="{ThemeResource SystemColorControlAccentBrush}" Margin="0,0,0,30">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Foreground="{ThemeResource SystemColorControlAccentBrush}" Margin="0,0,0,30" IsHitTestVisible="False">
                     <Run Text="{Binding DisplayDate}" FontSize="28" />
                     <Run Text="  " FontSize="28" />
                     <Run Text="{Binding DisplayTime}" FontSize="28" />
                 </TextBlock>
 
-                <TextBlock Text="{Binding DisplayAmount}"
+                <TextBlock Grid.Row="1" Text="{Binding DisplayAmount}"
                            Foreground="{Binding TypeBrush}"
                            FontSize="84"
                            FontWeight="Bold"
-                           Margin="0,0,0,5" />
+                           Margin="0,0,0,5" IsHitTestVisible="False" />
 
-                <TextBlock Text="{Binding Type}"
+                <TextBlock Grid.Row="2" Text="{Binding Type}"
                            FontSize="24"
                            Foreground="{Binding TypeBrush}"
                            Opacity="0.8"
-                           Margin="0,0,0,30" />
+                           Margin="0,0,0,30" IsHitTestVisible="False" />
 
-                <TextBlock Text="{Binding Note}"
+                <TextBlock Grid.Row="3" Text="{Binding Note}"
                            FontSize="24"
                            TextWrapping="Wrap"
-                           Margin="0,0,0,30" />
-            </StackPanel>
+                           Margin="0,0,0,30" IsHitTestVisible="False" />
+            </Grid>
         </ScrollViewer>
     </Grid>
 

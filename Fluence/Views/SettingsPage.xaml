@@ -27,16 +27,26 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0">
-                        <TextBlock Text="category name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                        <TextBox x:Name="CategoryTextBox" Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. transportation" />
-                        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" />
-                    </StackPanel>
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="category name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                        <TextBox Grid.Row="1" x:Name="CategoryTextBox" Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. transportation" />
+                        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" IsHitTestVisible="False" />
+                    </Grid>
 
                     <ListView Grid.Row="1" 
                               ItemsSource="{Binding Categories}"
                               HorizontalContentAlignment="Stretch" 
                               ShowsScrollingPlaceholders="False">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -49,7 +59,6 @@
                             <DataTemplate>
                                 <Border BorderBrush="Gray"
                                         BorderThickness="0,0,0,0.5"
-                                        Padding="0,14,0,14"
                                         HorizontalAlignment="Stretch"
                                         Background="Transparent"
                                         Holding="CategoryBorder_Holding">
@@ -59,7 +68,7 @@
                                             <MenuFlyoutItem Text="delete" Click="DeleteCategory_Click" />
                                         </MenuFlyout>
                                     </FlyoutBase.AttachedFlyout>
-                                    <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" Margin="0,14,0,14" />
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -69,67 +78,106 @@
 
             <PivotItem x:Name="ProfilePivotItem" Header="profile">
                 <ScrollViewer DataContext="{Binding ProfileVM}" VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <StackPanel Visibility="{Binding ViewVisibility}">
-                            <TextBlock Text="{Binding InitialBalanceText, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" TextWrapping="Wrap" />
-                            <TextBlock Text="current balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
+                    <Grid>
+                        <Grid Visibility="{Binding ViewVisibility}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="{Binding InitialBalanceText, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="1" Text="current balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
 
-                            <TextBlock Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" />
-                            <TextBlock Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
+                            <TextBlock Grid.Row="2" Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="3" Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
 
-                            <TextBlock Text="{Binding MonthlyLimitText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" />
-                            <TextBlock Text="monthly limit" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
+                            <TextBlock Grid.Row="4" Text="{Binding MonthlyLimitText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="5" Text="monthly limit" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
 
-                            <TextBlock Text="{Binding PaydayFormatted}" FontSize="34" TextWrapping="Wrap" />
-                            <TextBlock Text="payday" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
+                            <TextBlock Grid.Row="6" Text="{Binding PaydayFormatted}" FontSize="34" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="7" Text="payday" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
 
-                            <TextBlock Text="{Binding WeekStartFormatted}" FontSize="34" TextWrapping="Wrap" />
-                            <TextBlock Text="week start" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" />
-                        </StackPanel>
+                            <TextBlock Grid.Row="8" Text="{Binding WeekStartFormatted}" FontSize="34" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="9" Text="week start" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+                        </Grid>
 
-                        <StackPanel Visibility="{Binding EditVisibility}">
-                            <TextBlock Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                            <TextBox x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                            <TextBlock Text="{Binding InitialBalanceErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+                        <Grid Visibility="{Binding EditVisibility}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <TextBox Grid.Row="1" x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Grid.Row="2" Text="{Binding InitialBalanceErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <TextBlock Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                            <TextBox x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                            <TextBlock Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="3" Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <TextBox Grid.Row="4" x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Grid.Row="5" Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <TextBlock Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                            <TextBox x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                            <TextBlock Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="6" Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <TextBox Grid.Row="7" x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Grid.Row="8" Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <TextBlock Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                            <DatePicker x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
-                            <TextBlock Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="9" Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <DatePicker Grid.Row="10" x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
+                            <TextBlock Grid.Row="11" Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <ToggleSwitch Header="start week on monday" IsOn="{Binding IsMondayFirst, Mode=TwoWay}" Margin="0,10,0,0" />
-                        </StackPanel>
-                    </StackPanel>
+                            <ToggleSwitch Grid.Row="12" Header="start week on monday" IsOn="{Binding IsMondayFirst, Mode=TwoWay}" Margin="0,10,0,0" />
+                        </Grid>
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
 
             <PivotItem x:Name="SystemPivotItem" Header="system">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="0,20,0,0">
-                        <TextBlock Text="background management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" />
+                    <Grid Margin="0,20,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="background management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" IsHitTestVisible="False" />
                         
-                        <ToggleSwitch Header="auto refresh wallpaper" IsOn="{Binding SystemVM.IsIntervalRefreshEnabled, Mode=TwoWay}" Margin="0,0,0,10" />
+                        <ToggleSwitch Grid.Row="1" Header="auto refresh wallpaper" IsOn="{Binding SystemVM.IsIntervalRefreshEnabled, Mode=TwoWay}" Margin="0,0,0,10" />
                         
-                        <StackPanel Visibility="{Binding SystemVM.IntervalInputVisibility}">
-                            <TextBlock Text="refresh interval (minutes)" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
-                            <TextBox Text="{Binding SystemVM.RefreshIntervalMinutes, Mode=TwoWay}" InputScope="Number" Margin="0,0,0,20" />
-                        </StackPanel>
+                        <Grid Grid.Row="2" Visibility="{Binding SystemVM.IntervalInputVisibility}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="refresh interval (minutes)" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <TextBox Grid.Row="1" Text="{Binding SystemVM.RefreshIntervalMinutes, Mode=TwoWay}" InputScope="Number" Margin="0,0,0,20" />
+                        </Grid>
 
-                        <TextBlock Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,20,0,20" />
+                        <TextBlock Grid.Row="3" Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,20,0,20" IsHitTestVisible="False" />
 
-                        <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
-                        <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" />
+                        <Button Grid.Row="4" x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
+                        <TextBlock Grid.Row="5" Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" IsHitTestVisible="False" />
 
-                        <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
-                        <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" />
-                    </StackPanel>
+                        <Button Grid.Row="6" x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
+                        <TextBlock Grid.Row="7" Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" IsHitTestVisible="False" />
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
         </Pivot>

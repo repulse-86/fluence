@@ -1,5 +1,6 @@
 <UserControl
     x:Class="Fluence.Views.Components.ReportDistributionControl"
+    x:Name="root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Fluence.Converters">
@@ -9,7 +10,13 @@
     </UserControl.Resources>
 
     <StackPanel Margin="0,0,0,30">
-        <ItemsControl ItemsSource="{Binding}">
+        <TextBlock x:Name="HeaderLabel"
+                   Text="{Binding Header, ElementName=root}"
+                   Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                   FontSize="18"
+                   Margin="0,0,0,10"
+                   Visibility="{Binding Header, ElementName=root, Converter={StaticResource StringToVisibilityConverter}}" />
+        <ItemsControl ItemsSource="{Binding}" IsHitTestVisible="False">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" Background="#33FFFFFF" Height="40" />
@@ -22,7 +29,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <ItemsControl ItemsSource="{Binding}" Margin="0,15,0,0">
+        <ItemsControl ItemsSource="{Binding}" Margin="0,15,0,0" IsHitTestVisible="False">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapGrid Orientation="Horizontal" VerticalChildrenAlignment="Top" />
@@ -30,10 +37,14 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,15,10">
+                    <Grid Margin="0,0,15,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <Border Background="{Binding Color}" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBlock Text="{Binding Name}" FontSize="14" Opacity="0.8" TextWrapping="Wrap" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="14" Opacity="0.8" TextWrapping="Wrap" />
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

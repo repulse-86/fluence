@@ -5,6 +5,15 @@ namespace Fluence.Views.Components
 {
     public sealed partial class ReportComparisonControl : UserControl
     {
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(string), typeof(ReportComparisonControl), new PropertyMetadata(null));
+
+        public string Header
+        {
+            get { return (string)GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
         public static readonly DependencyProperty TrendTextProperty =
             DependencyProperty.Register("TrendText", typeof(string), typeof(ReportComparisonControl), new PropertyMetadata("vs yesterday"));
 

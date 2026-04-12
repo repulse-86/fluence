@@ -10,17 +10,26 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,10,10" Padding="15" Height="155" Width="155">
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+                   Text="{Binding Header, ElementName=controlRoot}"
+                   Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                   FontSize="18"
+                   Margin="0,0,0,10"
+                   Visibility="{Binding Header, ElementName=controlRoot, Converter={StaticResource StringToVisibilityConverter}}"
+                   IsHitTestVisible="False" />
+
+        <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" Margin="0,0,10,10" Padding="15" Height="155" Width="155" IsHitTestVisible="False">
             <Grid>
                 <StackPanel VerticalAlignment="Top">
-                    <TextBlock Text="savings rate" FontSize="14" Opacity="0.8" Foreground="White" />
-                    <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                    <TextBlock Text="savings rate" FontSize="14" Foreground="White" />
+                    <ProgressBar Value="{Binding SavingsRate}" Foreground="#2ECC71" Height="8" Margin="0,5,0,0" />
                 </StackPanel>
                 <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White">
                     <Run Text="{Binding SavingsRate, ConverterParameter='N2'}" FontSize="28" />
@@ -29,9 +38,9 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="0" Grid.Column="1" Background="#33FFFFFF" Margin="0,0,0,10" Padding="15" Height="155" Width="155">
+        <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" Margin="0,0,0,10" Padding="15" Height="155" Width="155" IsHitTestVisible="False">
             <Grid>
-                <TextBlock Text="{Binding TrendText, ElementName=controlRoot}" FontSize="14" Opacity="0.8" VerticalAlignment="Top" Foreground="White" />
+                <TextBlock Text="{Binding TrendText, ElementName=controlRoot}" FontSize="14" VerticalAlignment="Top" Foreground="White" />
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                     <TextBlock Text="{Binding TrendDirection}" FontSize="20" Margin="0,0,5,0" VerticalAlignment="Bottom" Foreground="White" />
                     <TextBlock FontWeight="Bold" VerticalAlignment="Bottom" Foreground="White">
@@ -42,39 +51,38 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="1" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,10,10" Padding="15" Height="155" Width="155">
+        <Border Grid.Row="2" Grid.Column="0" Background="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" Margin="0,0,10,10" Padding="15" Height="155" Width="155" IsHitTestVisible="False">
             <Grid>
                 <StackPanel VerticalAlignment="Top">
-                    <TextBlock Text="flow in" FontSize="14" Opacity="0.8" Foreground="White" />
-                    <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="4" Margin="0,5,0,0" />
+                    <TextBlock Text="flow in" FontSize="14" Foreground="White" />
+                    <ProgressBar Value="{Binding FlowInPercent}" Foreground="#2ECC71" Height="8" Margin="0,5,0,0" />
                 </StackPanel>
                 <TextBlock Text="{Binding FlowIn, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
             </Grid>
         </Border>
 
-        <Border Grid.Row="1" Grid.Column="1" Background="#33FFFFFF" Margin="0,0,0,10" Padding="15" Height="155" Width="155">
+        <Border Grid.Row="2" Grid.Column="1" Background="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" Margin="0,0,0,10" Padding="15" Height="155" Width="155" IsHitTestVisible="False">
             <Grid>
                 <StackPanel VerticalAlignment="Top">
-                    <TextBlock Text="flow out" FontSize="14" Opacity="0.8" Foreground="White" />
-                    <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="4" Margin="0,5,0,0" />
+                    <TextBlock Text="flow out" FontSize="14" Foreground="White" />
+                    <ProgressBar Value="{Binding FlowOutPercent}" Foreground="#E74C3C" Height="8" Margin="0,5,0,0" />
                 </StackPanel>
                 <TextBlock Text="{Binding FlowOut, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
             </Grid>
         </Border>
 
-        <!-- PROJECTIONS -->
-        <Border Grid.Row="2" Grid.Column="0" Background="#33FFFFFF" Margin="0,0,10,0" Padding="15" Height="155" Width="155"
+        <Border Grid.Row="3" Grid.Column="0" Background="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" Margin="0,0,10,0" Padding="15" Height="155" Width="155" IsHitTestVisible="False"
                 Visibility="{Binding ShowProjections, ElementName=controlRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid>
-                <TextBlock Text="{Binding AverageLabel, ElementName=controlRoot}" FontSize="14" Opacity="0.8" VerticalAlignment="Top" Foreground="White" />
+                <TextBlock Text="{Binding AverageLabel, ElementName=controlRoot}" FontSize="14" VerticalAlignment="Top" Foreground="White" />
                 <TextBlock Text="{Binding DailyAverage, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Grid.Column="1" Background="#33FFFFFF" Margin="0,0,0,0" Padding="15" Height="155" Width="155"
+        <Border Grid.Row="3" Grid.Column="1" Background="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" Margin="0,0,0,0" Padding="15" Height="155" Width="155" IsHitTestVisible="False"
                 Visibility="{Binding ShowProjections, ElementName=controlRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid>
-                <TextBlock Text="{Binding ProjectedLabel, ElementName=controlRoot}" FontSize="14" Opacity="0.8" VerticalAlignment="Top" Foreground="White" />
+                <TextBlock Text="{Binding ProjectedLabel, ElementName=controlRoot}" FontSize="14" VerticalAlignment="Top" Foreground="White" />
                 <TextBlock Text="{Binding ProjectedTotal, ConverterParameter='N2'}" FontSize="28" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="White" />
             </Grid>
         </Border>

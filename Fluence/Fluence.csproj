@@ -156,6 +156,7 @@
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthConverter.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="HubPage.xaml.cs">
