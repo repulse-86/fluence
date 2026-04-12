@@ -102,7 +102,7 @@ namespace Fluence.ViewModels
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Failed to load categories: " + ex.Message;
+                ErrorMessage = "failed to load categories: " + ex.Message;
                 throw;
             }
             finally
@@ -115,8 +115,8 @@ namespace Fluence.ViewModels
         {
             if (string.IsNullOrWhiteSpace(CategoryName))
             {
-                ErrorMessage = "Category name is required.";
-                throw new ArgumentException("Category name is required.");
+                ErrorMessage = "category name is required.";
+                return;
             }
 
             if (IsBusy) return;
@@ -128,22 +128,21 @@ namespace Fluence.ViewModels
             {
                 if (SelectedCategory == null)
                 {
-                    Category newCategory = new Category { Name = CategoryName };
+                    Category newCategory = new Category { Name = CategoryName.Trim().ToLower() };
                     await _categoryService.AddCategoryAsync(newCategory);
                     Categories.Add(newCategory);
                 }
                 else
                 {
-                    SelectedCategory.Name = CategoryName;
+                    SelectedCategory.Name = CategoryName.Trim().ToLower();
                     await _categoryService.UpdateCategoryAsync(SelectedCategory);
-                    
                     SelectedCategory = null;
                 }
                 CategoryName = string.Empty;
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Failed to save: " + ex.Message;
+                ErrorMessage = "failed to save: " + ex.Message;
                 throw;
             }
             finally
@@ -154,8 +153,11 @@ namespace Fluence.ViewModels
 
         public async Task DeleteCategoryAsync(Category category)
         {
+            if (category == null) return;
             if (IsBusy) return;
+
             IsBusy = true;
+            ErrorMessage = string.Empty;
 
             try
             {
@@ -170,7 +172,7 @@ namespace Fluence.ViewModels
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Failed to delete: " + ex.Message;
+                ErrorMessage = "failed to delete: " + ex.Message;
                 throw;
             }
             finally

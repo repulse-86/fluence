@@ -12,6 +12,7 @@ namespace Fluence.Services
     {
         public async Task SaveProfileAsync(Profile profile)
         {
+            if (profile == null) return;
             try
             {
                 var settings = ApplicationData.Current.LocalSettings.Values;

@@ -98,20 +98,58 @@ namespace Fluence.Services
         public async Task<int> GetMostSpentDayOfWeekAsync(DateTime start, DateTime end)
         {
             var db = await GetDbAsync();
-            string sql = "SELECT (Date / 864000000000 + 1) % 7 as DayOfWeek FROM [Transaction] WHERE Type = 'Expense' AND Date >= ? AND Date < ? GROUP BY DayOfWeek ORDER BY SUM(Amount) DESC LIMIT 1";
+            string sql = "SELECT CAST((Date / 864000000000 + 1) % 7 AS INTEGER) as DayOfWeek, SUM(Amount) as TotalAmount FROM [Transaction] WHERE Type = 'Expense' AND Date >= ? AND Date < ? GROUP BY DayOfWeek ORDER BY TotalAmount DESC LIMIT 1";
             var result = await db.QueryAsync<WeekdaySummary>(sql, start.Ticks, end.Ticks);
-            return result.Any() ? result.First().DayOfWeek : -1;
+            return result.FirstOrDefault()?.DayOfWeek ?? -1;
+        }
+
+        public class MonthlySummary
+        {
+            public int Month { get; set; }
+            public double TotalAmount { get; set; }
+        }
+
+        public class DailySummary
+        {
+            public int Day { get; set; }
+            public double TotalAmount { get; set; }
+        }
+
+        public async Task<List<DailySummary>> GetDailyExpenseSummariesAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            string sql = @"SELECT CAST(strftime('%d', datetime(Date / 10000000 - 62135596800, 'unixepoch')) AS INTEGER) as Day,
+                           SUM(Amount) as TotalAmount
+                           FROM [Transaction]
+                           WHERE Type = 'Expense' AND Date >= ? AND Date < ?
+                           GROUP BY Day";
+            return await db.QueryAsync<DailySummary>(sql, start.Ticks, end.Ticks);
+        }
+
+        public async Task<List<MonthlySummary>> GetMonthlyExpenseSummariesAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            string sql = @"SELECT CAST(strftime('%m', datetime(Date / 10000000 - 62135596800, 'unixepoch')) AS INTEGER) as Month,
+                           SUM(Amount) as TotalAmount
+                           FROM [Transaction]
+                           WHERE Type = 'Expense' AND Date >= ? AND Date < ?
+                           GROUP BY Month";
+            return await db.QueryAsync<MonthlySummary>(sql, start.Ticks, end.Ticks);
         }
 
         public async Task<int> GetMostSpentMonthAsync(DateTime start, DateTime end)
         {
-            var transactions = await GetTransactionsAsync(start, end);
-            var monthlySums = transactions.Where(t => t.Type == "Expense")
-                .GroupBy(t => t.Date.Month)
-                .Select(g => new { Month = g.Key, Total = g.Sum(t => t.Amount) })
-                .OrderByDescending(x => x.Total)
-                .FirstOrDefault();
-            return monthlySums?.Month ?? -1;
+            var db = await GetDbAsync();
+
+            string sql = @"SELECT CAST(strftime('%m', datetime(Date / 10000000 - 62135596800, 'unixepoch')) AS INTEGER) as Month,
+                           SUM(Amount) as TotalAmount
+                           FROM [Transaction]
+                           WHERE Type = 'Expense' AND Date >= ? AND Date < ?
+                           GROUP BY Month
+                           ORDER BY TotalAmount DESC LIMIT 1";
+
+            var result = await db.QueryAsync<MonthlySummary>(sql, start.Ticks, end.Ticks);
+            return result.FirstOrDefault()?.Month ?? -1;
         }
 
         public async Task<double> GetTrailing30DayDailyBurnRateAsync()
@@ -147,8 +185,8 @@ namespace Fluence.Services
 
         public async Task AddTransactionAsync(Transaction transaction)
         {
-            if (transaction != null && transaction.Note != null)
-                transaction.Note = transaction.Note.ToLower();
+            if (transaction == null) return;
+            if (transaction.Note != null) transaction.Note = transaction.Note.ToLower();
 
             var db = await GetDbAsync();
             await db.InsertAsync(transaction);
@@ -156,8 +194,8 @@ namespace Fluence.Services
 
         public async Task UpdateTransactionAsync(Transaction transaction)
         {
-            if (transaction != null && transaction.Note != null)
-                transaction.Note = transaction.Note.ToLower();
+            if (transaction == null) return;
+            if (transaction.Note != null) transaction.Note = transaction.Note.ToLower();
 
             var db = await GetDbAsync();
             await db.UpdateAsync(transaction);
@@ -165,22 +203,24 @@ namespace Fluence.Services
 
         public async Task<Transaction> GetTransactionByIdAsync(int id)
         {
+            if (id <= 0) return null;
             var db = await GetDbAsync();
             return await db.Table<Transaction>().Where(t => t.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task DeleteTransactionAsync(int id)
         {
+            if (id <= 0) return;
             var transaction = await GetTransactionByIdAsync(id);
-            if (transaction != null)
-            {
-                var db = await GetDbAsync();
-                await db.DeleteAsync(transaction);
-            }
+            if (transaction == null) return;
+
+            var db = await GetDbAsync();
+            await db.DeleteAsync(transaction);
         }
 
         public async Task DeleteTransactionAsync(Transaction transaction)
         {
+            if (transaction == null) return;
             var db = await GetDbAsync();
             await db.DeleteAsync(transaction);
         }

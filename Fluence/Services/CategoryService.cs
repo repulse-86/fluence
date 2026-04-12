@@ -23,8 +23,8 @@ namespace Fluence.Services
 
         public async Task AddCategoryAsync(Category category)
         {
-            if (category != null && category.Name != null)
-                category.Name = category.Name.ToLower();
+            if (category == null) return;
+            if (category.Name != null) category.Name = category.Name.Trim().ToLower();
 
             var db = await GetDbAsync();
             await db.InsertAsync(category);    
@@ -32,8 +32,8 @@ namespace Fluence.Services
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            if (category != null && category.Name != null)
-                category.Name = category.Name.ToLower();
+            if (category == null) return;
+            if (category.Name != null) category.Name = category.Name.Trim().ToLower();
 
             var db = await GetDbAsync();
             await db.UpdateAsync(category);
@@ -41,6 +41,7 @@ namespace Fluence.Services
 
         public async Task DeleteCategoryAsync(Category category)
         {
+            if (category == null) return;
             var db = await GetDbAsync();
             await db.DeleteAsync(category);
         }

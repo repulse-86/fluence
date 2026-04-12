@@ -39,16 +39,7 @@ namespace Fluence.ViewModels
             }
         }
 
-        public Visibility NoteVisibility
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(Note) || !_isExpanded)
-                    return Visibility.Collapsed;
-
-                return Visibility.Visible;
-            }
-        }
+        public Visibility NoteVisibility => (string.IsNullOrEmpty(Note) || !_isExpanded) ? Visibility.Collapsed : Visibility.Visible;
 
         public TextWrapping NoteWrapping
         {
@@ -114,6 +105,12 @@ namespace Fluence.ViewModels
             WaterfallData.Clear();
             FlowIn = FlowOut = FlowInPercent = FlowOutPercent = SavingsRate = TrendPercent = DailyAverage = ProjectedTotal = RunwayDays = 0;
             TrendDirection = "none";
+        }
+
+        public void UpdateAll(Action action)
+        {
+            action?.Invoke();
+            OnPropertyChanged(string.Empty);
         }
 
         private double _flowIn;
@@ -286,9 +283,9 @@ namespace Fluence.ViewModels
         {
             get
             {
-                if (_budgetPercent < 50) return new SolidColorBrush(Color.FromArgb(255, 46, 204, 113));
-                if (_budgetPercent < 80) return new SolidColorBrush(Color.FromArgb(255, 241, 196, 15));
-                return new SolidColorBrush(Color.FromArgb(255, 231, 76, 60));
+                if (_budgetPercent < AppConstants.BudgetHealthThresholdSafe) return new SolidColorBrush(AppConstants.IncomeColor);
+                if (_budgetPercent < AppConstants.BudgetHealthThresholdWarning) return new SolidColorBrush(AppConstants.WarningColor);
+                return new SolidColorBrush(AppConstants.ExpenseColor);
             }
         }
 
@@ -362,73 +359,50 @@ namespace Fluence.ViewModels
         {
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Starting");
             var profile = await _profileService.GetProfileAsync();
-            
+            if (profile == null) return;
+
             BudgetPercent = 0;
             DailyAllowance = 0;
 
             double totalIncome = await _transactionService.GetTotalIncomeAsync();
             double totalExpense = await _transactionService.GetTotalExpenseAsync();
-            CurrentBalance = (profile?.InitialBalance ?? 0) + totalIncome - totalExpense;
+            CurrentBalance = profile.InitialBalance + totalIncome - totalExpense;
 
             DateTime now = DateTime.Now;
-            if (profile != null && profile.MonthlyLimit > 0)
+            if (profile.MonthlyLimit > 0)
             {
                 double monthlySpent = await _transactionService.GetMonthlyExpenseAsync(now.Year, now.Month);
                 BudgetPercent = Math.Min(100, (monthlySpent / profile.MonthlyLimit) * 100);
-
-                int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
-                int daysRemaining = daysInMonth - now.Day + 1;
-                DailyAllowance = Math.Round(Math.Max(0, (profile.MonthlyLimit - monthlySpent) / daysRemaining), 2);
+                DailyAllowance = AppHelper.CalculateDailyAllowance(profile.MonthlyLimit, monthlySpent, now);
             }
 
             DateTime today = now.Date;
             DateTime tomorrow = today.AddDays(1);
             SpentToday = await _transactionService.GetExpenseSumAsync(today, tomorrow);
 
-            DayOfWeek weekStart = profile?.WeekStart ?? DayOfWeek.Sunday;
+            DayOfWeek weekStart = profile.WeekStart;
             int dayOfWeek = (int)today.DayOfWeek;
-            int diff;
-            if (weekStart == DayOfWeek.Monday)
-            {
-                diff = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
-            }
-            else
-            {
-                diff = dayOfWeek;
-            }
+            int diff = (weekStart == DayOfWeek.Monday) ? (dayOfWeek == 0 ? 6 : dayOfWeek - 1) : dayOfWeek;
 
             DateTime startOfWeek = today.AddDays(-diff);
             WeeklyTotal = await _transactionService.GetExpenseSumAsync(startOfWeek, tomorrow);
 
             int topCatId = await _transactionService.GetTopCategoryIdAsync();
+            TopCategory = "none";
             if (topCatId > 0)
             {
                 var cat = await _categoryService.GetCategoryByIdAsync(topCatId);
                 TopCategory = cat?.Name ?? "unknown";
             }
-            else
-            {
-                TopCategory = "none";
-            }
 
-            if (profile != null)
-            {
-                int paydayDay = profile.Payday.Day;
-                DateTime nextPayday = new DateTime(now.Year, now.Month, paydayDay);
-                if (now.Day > paydayDay)
-                {
-                    nextPayday = nextPayday.AddMonths(1);
-                }
-                DaysUntilPayday = (nextPayday - now.Date).Days;
+            int paydayDay = profile.Payday.Day;
+            DateTime nextPayday = new DateTime(now.Year, now.Month, paydayDay);
+            if (now.Day > paydayDay) nextPayday = nextPayday.AddMonths(1);
+            DaysUntilPayday = (nextPayday - now.Date).Days;
 
-                double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
-                if (dailyBurn > 0)
-                {
-                    RunwayDays = (int)Math.Max(0, CurrentBalance / dailyBurn);
-                }
-                else RunwayDays = 999;
-            }
-            
+            double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
+            RunwayDays = AppHelper.CalculateRunwayDays(CurrentBalance, dailyBurn);
+
             TileService.UpdateLiveTile(BudgetPercent, CurrentBalance, DailyAllowance, SpentToday, WeeklyTotal, TopCategory);
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Completed");
         }
@@ -472,30 +446,14 @@ namespace Fluence.ViewModels
             report.FlowOut = await _transactionService.GetExpenseSumAsync(start, end);
 
             double totalFlow = report.FlowIn + report.FlowOut;
-            if (totalFlow > 0)
-            {
-                report.FlowInPercent = (report.FlowIn / totalFlow) * 100;
-                report.FlowOutPercent = (report.FlowOut / totalFlow) * 100;
-            }
-            else { report.FlowInPercent = report.FlowOutPercent = 0; }
+            report.FlowInPercent = totalFlow > 0 ? (report.FlowIn / totalFlow) * 100 : 0;
+            report.FlowOutPercent = totalFlow > 0 ? (report.FlowOut / totalFlow) * 100 : 0;
 
-            if (report.FlowIn > 0)
-            {
-                report.SavingsRate = Math.Max(0, (report.FlowIn - report.FlowOut) / report.FlowIn * 100);
-            }
-            else { report.SavingsRate = 0; }
+            report.SavingsRate = report.FlowIn > 0 ? Math.Max(0, (report.FlowIn - report.FlowOut) / report.FlowIn * 100) : 0;
 
             double prevOut = await _transactionService.GetExpenseSumAsync(prevStart, prevEnd);
-            if (prevOut > 0)
-            {
-                report.TrendPercent = Math.Abs((report.FlowOut - prevOut) / prevOut * 100);
-                report.TrendDirection = report.FlowOut > prevOut ? "up" : (report.FlowOut < prevOut ? "down" : "same");
-            }
-            else 
-            { 
-                report.TrendPercent = report.FlowOut > 0 ? 100 : 0; 
-                report.TrendDirection = report.FlowOut > 0 ? "up" : "none"; 
-            }
+            report.TrendPercent = AppHelper.CalculateTrendPercent(report.FlowOut, prevOut);
+            report.TrendDirection = AppHelper.GetTrendDirection(report.FlowOut, prevOut);
 
             DateTime now = DateTime.Now;
             if (type == "month")
@@ -528,17 +486,15 @@ namespace Fluence.ViewModels
             var newIntensityMap = new List<IntensityItem>();
             if (type == "month")
             {
-                var currentExpenses = await _transactionService.GetTransactionsAsync(start, end);
-                var dailySpending = currentExpenses.Where(t => t.Type == "Expense")
-                    .GroupBy(t => t.Date.Day)
-                    .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+                var dailySpending = await _transactionService.GetDailyExpenseSummariesAsync(start, end);
+                var dailyMap = dailySpending.ToDictionary(s => s.Day, s => s.TotalAmount);
                 
-                double maxDaily = dailySpending.Values.Count > 0 ? dailySpending.Values.Max() : 0;
+                double maxDaily = dailyMap.Values.Any() ? dailyMap.Values.Max() : 0;
                 int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
                 
                 for (int d = 1; d <= daysInMonth; d++)
                 {
-                    double amt = dailySpending.ContainsKey(d) ? dailySpending[d] : 0;
+                    double amt = dailyMap.ContainsKey(d) ? dailyMap[d] : 0;
                     newIntensityMap.Add(new IntensityItem {
                         Intensity = maxDaily > 0 ? Math.Max(0.1, amt / maxDaily) : 0.05,
                         Label = d.ToString()
@@ -547,15 +503,13 @@ namespace Fluence.ViewModels
             }
             else if (type == "year")
             {
-                var currentExpenses = await _transactionService.GetTransactionsAsync(start, end);
-                var monthlySpending = currentExpenses.Where(t => t.Type == "Expense")
-                    .GroupBy(t => t.Date.Month)
-                    .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+                var monthlySpending = await _transactionService.GetMonthlyExpenseSummariesAsync(start, end);
+                var monthlyMap = monthlySpending.ToDictionary(s => s.Month, s => s.TotalAmount);
 
-                double maxMonthly = monthlySpending.Values.Count > 0 ? monthlySpending.Values.Max() : 0;
+                double maxMonthly = monthlyMap.Values.Any() ? monthlyMap.Values.Max() : 0;
                 for (int m = 1; m <= 12; m++)
                 {
-                    double amt = monthlySpending.ContainsKey(m) ? monthlySpending[m] : 0;
+                    double amt = monthlyMap.ContainsKey(m) ? monthlyMap[m] : 0;
                     newIntensityMap.Add(new IntensityItem {
                         Intensity = maxMonthly > 0 ? Math.Max(0.1, amt / maxMonthly) : 0.05,
                         Label = new DateTime(2000, m, 1).ToString("MMM").ToLower().Substring(0, 1)
@@ -613,7 +567,7 @@ namespace Fluence.ViewModels
                 for (int j = 0; j < top10.Count; j++)
                 {
                     double hue = (360.0 * j) / top10.Count;
-                    top10[j].Color = new SolidColorBrush(ColorFromHsl(hue, 0.65, 0.55));
+                    top10[j].Color = new SolidColorBrush(AppHelper.ColorFromHsl(hue, AppConstants.DefaultSaturation, AppConstants.DefaultLuminosity));
                     newDistribution.Add(top10[j]);
                 }
 
@@ -646,12 +600,7 @@ namespace Fluence.ViewModels
             }
 
             double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
-            if (dailyBurn > 0)
-            {
-                report.RunwayDays = (int)Math.Max(0, CurrentBalance / dailyBurn);
-            }
-            else report.RunwayDays = 999;
-
+            report.RunwayDays = AppHelper.CalculateRunwayDays(CurrentBalance, dailyBurn);
             report.RunwayExplanation = "based on your average daily spending over the last 30 days.";
 
             report.SavingOpportunities.Clear();
@@ -672,36 +621,8 @@ namespace Fluence.ViewModels
 
             report.WaterfallData.Clear();
             double totalWater = Math.Max(report.FlowIn, report.FlowOut);
-            report.WaterfallData.Add(new WaterfallItem { Label = "income", Amount = report.FlowIn, Color = new SolidColorBrush(Color.FromArgb(255, 46, 204, 113)), Percentage = totalWater > 0 ? report.FlowIn / totalWater : 0 });
-            report.WaterfallData.Add(new WaterfallItem { Label = "expense", Amount = report.FlowOut, Color = new SolidColorBrush(Color.FromArgb(255, 231, 76, 60)), Percentage = totalWater > 0 ? report.FlowOut / totalWater : 0 });
-        }
-
-        private Color ColorFromHsl(double h, double s, double l)
-        {
-            double r = 0, g = 0, b = 0;
-            if (s == 0)
-            {
-                r = g = b = l;
-            }
-            else
-            {
-                double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                double p = 2 * l - q;
-                r = HueToRgb(p, q, h / 360.0 + 1.0 / 3.0);
-                g = HueToRgb(p, q, h / 360.0);
-                b = HueToRgb(p, q, h / 360.0 - 1.0 / 3.0);
-            }
-            return Color.FromArgb(255, (byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
-        }
-
-        private double HueToRgb(double p, double q, double t)
-        {
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1.0 / 6.0) return p + (q - p) * 6 * t;
-            if (t < 1.0 / 2.0) return q;
-            if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6;
-            return p;
+            report.WaterfallData.Add(new WaterfallItem { Label = "income", Amount = report.FlowIn, Color = new SolidColorBrush(AppConstants.IncomeColor), Percentage = totalWater > 0 ? report.FlowIn / totalWater : 0 });
+            report.WaterfallData.Add(new WaterfallItem { Label = "expense", Amount = report.FlowOut, Color = new SolidColorBrush(AppConstants.ExpenseColor), Percentage = totalWater > 0 ? report.FlowOut / totalWater : 0 });
         }
 
         public async Task LoadHistoryAsync()
@@ -740,7 +661,7 @@ namespace Fluence.ViewModels
                 foreach (var t in transactions)
                 {
                     string categoryName = categoryMap.ContainsKey(t.CategoryId) ? categoryMap[t.CategoryId] : "unknown";
-                    string dateKey = t.Date.ToString("MMMM d, yyyy").ToLower();
+                    string dateKey = t.Date.ToString(AppConstants.DateKeyFormat).ToLower();
 
                     var displayItem = new TransactionDisplayItem
                     {
@@ -749,10 +670,10 @@ namespace Fluence.ViewModels
                         Note = t.Note,
                         Type = t.Type,
                         Amount = t.Amount,
-                        DisplayAmount = (t.Type == "Income" ? "+" : "-") + t.Amount.ToString("N2"),
-                        DisplayDate = t.Date.ToString("MMM dd").ToLower(),
+                        DisplayAmount = (t.Type == "Income" ? "+" : "-") + t.Amount.ToString(AppConstants.CurrencyFormat),
+                        DisplayDate = t.Date.ToString(AppConstants.ShortDateFormat).ToLower(),
                         DisplayTime = t.Date.ToString("t").ToLower(),
-                        TypeBrush = t.Type == "Income" ? new SolidColorBrush(Color.FromArgb(255, 46, 204, 113)) : new SolidColorBrush(Color.FromArgb(255, 231, 76, 60)),
+                        TypeBrush = t.Type == "Income" ? new SolidColorBrush(AppConstants.IncomeColor) : new SolidColorBrush(AppConstants.ExpenseColor),
                         IsExpanded = false
                     };
 

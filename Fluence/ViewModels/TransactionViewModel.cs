@@ -144,7 +144,7 @@ namespace Fluence.ViewModels
                 if (_selectedTransaction != null)
                 {
                     HeaderTitle = "edit transaction";
-                    AmountText = _selectedTransaction.Amount.ToString("N2");
+                    AmountText = _selectedTransaction.Amount.ToString(AppConstants.CurrencyFormat);
                     Note = _selectedTransaction.Note;
                     CategoryId = _selectedTransaction.CategoryId;
                     Type = _selectedTransaction.Type;
@@ -254,7 +254,7 @@ namespace Fluence.ViewModels
                     var transaction = new Transaction
                     {
                         Amount = amount,
-                        Note = Note,
+                        Note = string.IsNullOrEmpty(Note) ? string.Empty : Note.Trim().ToLower(),
                         CategoryId = CategoryId,
                         Type = Type,
                         Date = DateTime.Now
@@ -266,7 +266,7 @@ namespace Fluence.ViewModels
                 else
                 {
                     SelectedTransaction.Amount = amount;
-                    SelectedTransaction.Note = Note;
+                    SelectedTransaction.Note = string.IsNullOrEmpty(Note) ? string.Empty : Note.Trim().ToLower();
                     SelectedTransaction.CategoryId = CategoryId;
                     SelectedTransaction.Type = Type;
 
