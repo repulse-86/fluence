@@ -24,6 +24,8 @@ namespace Fluence.ViewModels
         private DateTimeOffset _payday = DateTimeOffset.Now;
         private string _paydayErrorMessage;
 
+        private bool _isMondayFirst;
+
         private bool _isBusy;
         private bool _isEditing;
 
@@ -159,7 +161,22 @@ namespace Fluence.ViewModels
             }
         }
 
+        public bool IsMondayFirst
+        {
+            get { return _isMondayFirst; }
+            set
+            {
+                if (_isMondayFirst != value)
+                {
+                    _isMondayFirst = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(WeekStartFormatted));
+                }
+            }
+        }
+
         public string PaydayFormatted => Payday.ToString("MMMM dd");
+        public string WeekStartFormatted => IsMondayFirst ? "starts on monday" : "starts on sunday";
 
         public string PaydayErrorMessage
         {
@@ -221,6 +238,7 @@ namespace Fluence.ViewModels
                     MonthlyIncomeText = data.MonthlyIncome.ToString("N2");
                     MonthlyLimitText = data.MonthlyLimit.ToString("N2");
                     Payday = data.Payday;
+                    IsMondayFirst = data.WeekStart == DayOfWeek.Monday;
                     IsEditing = false;
                     DebugData = string.Empty;
                 }
@@ -230,6 +248,7 @@ namespace Fluence.ViewModels
                     MonthlyIncomeText = "0.00";
                     MonthlyLimitText = "0.00";
                     Payday = DateTimeOffset.Now;
+                    IsMondayFirst = true;
                     IsEditing = true;
                     DebugData = string.Empty;
                 }
@@ -293,7 +312,8 @@ namespace Fluence.ViewModels
                     InitialBalance = initialBalance,
                     MonthlyIncome = monthlyIncome,
                     MonthlyLimit = monthlyLimit,
-                    Payday = this.Payday.DateTime
+                    Payday = this.Payday.DateTime,
+                    WeekStart = this.IsMondayFirst ? DayOfWeek.Monday : DayOfWeek.Sunday
                 };
                 await _profileService.SaveProfileAsync(data);
                 

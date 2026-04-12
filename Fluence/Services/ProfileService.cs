@@ -19,6 +19,7 @@ namespace Fluence.Services
                 settings["MonthlyIncome"] = profile.MonthlyIncome;
                 settings["MonthlyLimit"] = profile.MonthlyLimit;
                 settings["Payday"] = profile.Payday.ToString("O"); // ISO 8601 format
+                settings["WeekStart"] = (int)profile.WeekStart;
                 await Task.Yield();
             }
             catch (Exception ex)
@@ -51,6 +52,10 @@ namespace Fluence.Services
                             profile.Payday = payday;
                         }
                     }
+                    if (settings.ContainsKey("WeekStart"))
+                    {
+                        profile.WeekStart = (DayOfWeek)(int)settings["WeekStart"];
+                    }
                     return profile;
                 }
                 return null;
@@ -66,10 +71,11 @@ namespace Fluence.Services
         {
             var profile = new Profile
             {
-                InitialBalance = 5000,
-                MonthlyIncome = 3000,
-                MonthlyLimit = 2000,
-                Payday = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
+                InitialBalance = 81000,
+                MonthlyIncome = 24000,
+                MonthlyLimit = 5000,
+                Payday = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 28),
+                WeekStart = DayOfWeek.Monday
             };
             await SaveProfileAsync(profile);
         }
@@ -81,6 +87,7 @@ namespace Fluence.Services
             settings.Remove("MonthlyIncome");
             settings.Remove("MonthlyLimit");
             settings.Remove("Payday");
+            settings.Remove("WeekStart");
             await Task.Yield();
         }
     }

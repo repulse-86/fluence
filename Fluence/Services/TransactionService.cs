@@ -207,23 +207,36 @@ namespace Fluence.Services
             {
                 var baseDate = today.AddDays(-d);
 
-                for (int i = 0; i < 5; i++)
+                if (baseDate.Day == 28)
+                {
+                    transactions.Add(new Transaction
+                    {
+                        CategoryId = categories.FirstOrDefault(c => c.Name.Contains("income"))?.Id ?? categories[0].Id,
+                        Amount = 24000,
+                        Type = "Income",
+                        Note = "monthly salary",
+                        Date = baseDate.AddHours(9)
+                    });
+                }
+
+                // 3-5 random expenses daily
+                int expenseCount = random.Next(3, 6);
+                for (int i = 0; i < expenseCount; i++)
                 {
                     var category = categories[random.Next(categories.Count)];
-                    
-                    string type = (i == 0) ? "Income" : "Expense";
-                    double amount = (i == 0) 
-                        ? Math.Round(random.NextDouble() * 400 + 600, 2)
-                        : Math.Round(random.NextDouble() * 80 + 10, 2);
-                    
-                    var transactionDate = baseDate.AddHours(8 + (i * 2)).AddMinutes(random.Next(0, 60));
+                    if (category.Name.Contains("income")) category = categories[random.Next(categories.Count)];
+
+                    double amount = Math.Round(random.NextDouble() * (166.0 / expenseCount * 2), 2);
+                    if (amount < 5) amount = 15.50; // ensure some minimum
+
+                    var transactionDate = baseDate.AddHours(10 + (i * 2)).AddMinutes(random.Next(0, 60));
 
                     transactions.Add(new Transaction
                     {
                         CategoryId = category.Id,
                         Amount = amount,
-                        Type = type,
-                        Note = ("mock " + type.ToLower() + " " + baseDate.ToString("MMM dd") + " #" + (i + 1)).ToLower(),
+                        Type = "Expense",
+                        Note = ("mock expense " + baseDate.ToString("MMM dd") + " #" + (i + 1)).ToLower(),
                         Date = transactionDate
                     });
                 }

@@ -12,5 +12,6 @@ namespace Fluence.Models
         public double MonthlyIncome { get; set; }
         public double MonthlyLimit { get; set; }
         public DateTime Payday { get; set; }
+        public DayOfWeek WeekStart { get; set; } = DayOfWeek.Sunday;
     }
 }

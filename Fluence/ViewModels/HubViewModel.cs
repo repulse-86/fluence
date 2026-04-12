@@ -368,7 +368,7 @@ namespace Fluence.ViewModels
 
             double totalIncome = await _transactionService.GetTotalIncomeAsync();
             double totalExpense = await _transactionService.GetTotalExpenseAsync();
-            CurrentBalance = totalIncome - totalExpense;
+            CurrentBalance = (profile?.InitialBalance ?? 0) + totalIncome - totalExpense;
 
             DateTime now = DateTime.Now;
             if (profile != null && profile.MonthlyLimit > 0)
@@ -382,10 +382,23 @@ namespace Fluence.ViewModels
             }
 
             DateTime today = now.Date;
-            SpentToday = await _transactionService.GetExpenseSumAsync(today, today.AddDays(1));
+            DateTime tomorrow = today.AddDays(1);
+            SpentToday = await _transactionService.GetExpenseSumAsync(today, tomorrow);
 
-            DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-            WeeklyTotal = await _transactionService.GetExpenseSumAsync(startOfWeek, now.AddDays(1));
+            DayOfWeek weekStart = profile?.WeekStart ?? DayOfWeek.Sunday;
+            int dayOfWeek = (int)today.DayOfWeek;
+            int diff;
+            if (weekStart == DayOfWeek.Monday)
+            {
+                diff = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
+            }
+            else
+            {
+                diff = dayOfWeek;
+            }
+
+            DateTime startOfWeek = today.AddDays(-diff);
+            WeeklyTotal = await _transactionService.GetExpenseSumAsync(startOfWeek, tomorrow);
 
             int topCatId = await _transactionService.GetTopCategoryIdAsync();
             if (topCatId > 0)
@@ -616,13 +629,18 @@ namespace Fluence.ViewModels
 
             var weekdays = await _transactionService.GetWeekdaySpendingAsync(start, end);
             var maxWeekday = weekdays.Any() ? weekdays.Max(x => x.TotalAmount) : 0;
-            string[] daysOfWeek = { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+            
+            var profile = await _profileService.GetProfileAsync();
+            DayOfWeek weekStartPreference = profile?.WeekStart ?? DayOfWeek.Sunday;
+            string[] allDays = { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+            
             report.WeekdaySpending.Clear();
-            for (int d = 0; d < 7; d++)
+            for (int i = 0; i < 7; i++)
             {
+                int d = ((int)weekStartPreference + i) % 7;
                 var summary = weekdays.FirstOrDefault(x => x.DayOfWeek == d);
                 report.WeekdaySpending.Add(new IntensityItem {
-                    Label = daysOfWeek[d],
+                    Label = allDays[d],
                     Intensity = maxWeekday > 0 && summary != null ? Math.Max(0.1, summary.TotalAmount / maxWeekday) : 0.05
                 });
             }
