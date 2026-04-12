@@ -1,0 +1,15 @@
+<UserControl
+    x:Class="Fluence.Views.Components.ReportSpendingPatternsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Margin="0,0,0,40">
+        <TextBlock Text="spending patterns" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+        <StackPanel Margin="0,5,0,0">
+            <TextBlock FontSize="16" TextWrapping="Wrap">
+                <Run Text="you spend most on " /><Run Text="{Binding MostSpentDay}" FontWeight="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run Text=" while "/><Run Text="{Binding MostSpentMonth}" FontWeight="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run Text=" was your highest spending month" />
+            </TextBlock>
+            <TextBlock Text="suggested: try reducing weekend spending to increase runway." FontSize="14" Opacity="0.6" FontStyle="Italic" TextWrapping="Wrap" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -33,76 +33,83 @@
                 </DataTemplate>
             </Pivot.HeaderTemplate>
 
-            <!-- TODAY -->
             <PivotItem Header="today" DataContext="{Binding DayReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="0,20,19,30">
-                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <TextBlock Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportDistributionControl DataContext="{Binding Distribution}" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
-                        <components:ReportComparisonControl TrendText="vs yesterday" ShowProjections="False" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportBreakdownControl DataContext="{Binding Distribution}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
+
+                        <TextBlock Text="flow" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportComparisonControl 
+ TrendText="vs yesterday" ShowProjections="False" />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
 
-            <!-- MONTH -->
             <PivotItem Header="month" DataContext="{Binding MonthReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="0,20,19,30">
-                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
-                        <components:ReportDistributionControl DataContext="{Binding Distribution}" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="spending intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <TextBlock Text="activity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <TextBlock Text="weekday" FontSize="16" Margin="0,0,0,5" Foreground="White" />
+                        <components:ReportWeekdayControl DataContext="{Binding WeekdaySpending}" />
+                        <TextBlock Text="intensity" FontSize="16" Margin="0,15,0,5" Foreground="White" />
                         <components:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="False" />
 
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
-                        <components:ReportComparisonControl TrendText="vs last month" ShowProjections="True" AverageLabel="daily average" ProjectedLabel="projected total" />
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
 
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <TextBlock Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportDistributionControl DataContext="{Binding Distribution}" />
                         <components:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportBreakdownControl DataContext="{Binding Distribution}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
+
+                        <TextBlock Text="flow" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportComparisonControl 
+ TrendText="vs last month" ShowProjections="True" AverageLabel="daily average" ProjectedLabel="projected total" />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
 
-            <!-- YEAR -->
             <PivotItem Header="year" DataContext="{Binding YearReport}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="0,20,19,30">
-                        <TextBlock Text="distribution" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <TextBlock Text="activity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <TextBlock Text="monthly intensity" FontSize="16" Margin="0,0,0,5" Foreground="White" />
+                        <components:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="True" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
+
+                        <TextBlock Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportDistributionControl DataContext="{Binding Distribution}" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="monthly intensity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
-                        <components:ReportIntensityControl DataContext="{Binding IntensityMap}" IsYearly="True" Margin="0,0,0,0" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="comparison" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
-                        <components:ReportComparisonControl TrendText="vs last year" ShowProjections="True" AverageLabel="monthly average" ProjectedLabel="projected year" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="top budget burners" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportBurnersControl DataContext="{Binding BudgetBurners}" />
-
-                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,20" Opacity="1" />
-                        <TextBlock Text="breakdown" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
                         <components:ReportBreakdownControl DataContext="{Binding Distribution}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
+
+                        <TextBlock Text="flow" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" />
+                        <components:ReportComparisonControl 
+ TrendText="vs last year" ShowProjections="True" AverageLabel="monthly average" ProjectedLabel="projected year" />
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+
+            <PivotItem Header="insights" DataContext="{Binding MonthReport}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,20,19,30">
+                        <components:ReportRunwayControl />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
+
+                        <components:ReportOpportunitiesControl DataContext="{Binding SavingOpportunities}" />
+
+                        <Rectangle Height="1" Fill="Gray" Margin="0,0,0,40" />
+
+                        <components:ReportSpendingPatternsControl />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

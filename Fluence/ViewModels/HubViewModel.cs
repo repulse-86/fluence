@@ -88,6 +88,20 @@ namespace Fluence.ViewModels
         public string Label { get; set; }
     }
 
+    public class SavingOpportunity
+    {
+        public string Title { get; set; }
+        public string Advice { get; set; }
+    }
+
+    public class WaterfallItem
+    {
+        public string Label { get; set; }
+        public double Amount { get; set; }
+        public Brush Color { get; set; }
+        public double Percentage { get; set; }
+    }
+
     public class PeriodReport : INotifyPropertyChanged
     {
         public void Clear()
@@ -95,7 +109,10 @@ namespace Fluence.ViewModels
             Distribution.Clear();
             BudgetBurners.Clear();
             IntensityMap.Clear();
-            FlowIn = FlowOut = FlowInPercent = FlowOutPercent = SavingsRate = TrendPercent = DailyAverage = ProjectedTotal = 0;
+            WeekdaySpending.Clear();
+            SavingOpportunities.Clear();
+            WaterfallData.Clear();
+            FlowIn = FlowOut = FlowInPercent = FlowOutPercent = SavingsRate = TrendPercent = DailyAverage = ProjectedTotal = RunwayDays = 0;
             TrendDirection = "none";
         }
 
@@ -145,6 +162,55 @@ namespace Fluence.ViewModels
         {
             get { return _intensityMap; }
             set { _intensityMap = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<IntensityItem> _weekdaySpending = new ObservableCollection<IntensityItem>();
+        public ObservableCollection<IntensityItem> WeekdaySpending
+        {
+            get { return _weekdaySpending; }
+            set { _weekdaySpending = value; OnPropertyChanged(); }
+        }
+
+        private int _runwayDays;
+        public int RunwayDays
+        {
+            get { return _runwayDays; }
+            set { _runwayDays = value; OnPropertyChanged(); }
+        }
+
+        private string _mostSpentDay;
+        public string MostSpentDay
+        {
+            get { return _mostSpentDay; }
+            set { _mostSpentDay = value; OnPropertyChanged(); }
+        }
+
+        private string _mostSpentMonth;
+        public string MostSpentMonth
+        {
+            get { return _mostSpentMonth; }
+            set { _mostSpentMonth = value; OnPropertyChanged(); }
+        }
+
+        private string _runwayExplanation;
+        public string RunwayExplanation
+        {
+            get { return _runwayExplanation; }
+            set { _runwayExplanation = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<SavingOpportunity> _savingOpportunities = new ObservableCollection<SavingOpportunity>();
+        public ObservableCollection<SavingOpportunity> SavingOpportunities
+        {
+            get { return _savingOpportunities; }
+            set { _savingOpportunities = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<WaterfallItem> _waterfallData = new ObservableCollection<WaterfallItem>();
+        public ObservableCollection<WaterfallItem> WaterfallData
+        {
+            get { return _waterfallData; }
+            set { _waterfallData = value; OnPropertyChanged(); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -261,6 +327,22 @@ namespace Fluence.ViewModels
             set { _daysUntilPayday = value; OnPropertyChanged(); }
         }
 
+        private int _runwayDays;
+        public int RunwayDays
+        {
+            get { return _runwayDays; }
+            set { _runwayDays = value; OnPropertyChanged(); }
+        }
+
+        private string _savingOpportunitiesSummary = "no opportunities found";
+        public string SavingOpportunitiesSummary
+        {
+            get { return _savingOpportunitiesSummary; }
+            set { _savingOpportunitiesSummary = value; OnPropertyChanged(); }
+        }
+
+        public string RunwayExplanation => "based on your average daily spending over the last 30 days.";
+
         public PeriodReport DayReport { get; set; } = new PeriodReport();
         public PeriodReport MonthReport { get; set; } = new PeriodReport();
         public PeriodReport YearReport { get; set; } = new PeriodReport();
@@ -325,6 +407,13 @@ namespace Fluence.ViewModels
                     nextPayday = nextPayday.AddMonths(1);
                 }
                 DaysUntilPayday = (nextPayday - now.Date).Days;
+
+                double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
+                if (dailyBurn > 0)
+                {
+                    RunwayDays = (int)Math.Max(0, CurrentBalance / dailyBurn);
+                }
+                else RunwayDays = 999;
             }
             
             TileService.UpdateLiveTile(BudgetPercent, CurrentBalance, DailyAllowance, SpentToday, WeeklyTotal, TopCategory);
@@ -365,6 +454,7 @@ namespace Fluence.ViewModels
 
         private async Task PopulatePeriodReportAsync(PeriodReport report, DateTime start, DateTime end, DateTime prevStart, DateTime prevEnd, Dictionary<int, string> categoryMap, string type)
         {
+            System.Diagnostics.Debug.WriteLine($"HubViewModel: PopulatePeriodReportAsync - {type}");
             report.FlowIn = await _transactionService.GetIncomeSumAsync(start, end);
             report.FlowOut = await _transactionService.GetExpenseSumAsync(start, end);
 
@@ -401,6 +491,19 @@ namespace Fluence.ViewModels
                 int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
                 report.DailyAverage = report.FlowOut / daysPassed;
                 report.ProjectedTotal = report.DailyAverage * daysInMonth;
+
+                int mostSpentDayIdx = await _transactionService.GetMostSpentDayOfWeekAsync(start, end);
+                if (mostSpentDayIdx >= 0)
+                {
+                    string[] days = { "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday" };
+                    report.MostSpentDay = days[mostSpentDayIdx];
+                }
+
+                int mostSpentMonthIdx = await _transactionService.GetMostSpentMonthAsync(DateTime.MinValue, DateTime.MaxValue);
+                if (mostSpentMonthIdx >= 1)
+                {
+                    report.MostSpentMonth = new DateTime(2000, mostSpentMonthIdx, 1).ToString("MMMM").ToLower();
+                }
             }
             else if (type == "year")
             {
@@ -510,6 +613,49 @@ namespace Fluence.ViewModels
 
             report.BudgetBurners.Clear();
             foreach (var item in newBudgetBurners) report.BudgetBurners.Add(item);
+
+            var weekdays = await _transactionService.GetWeekdaySpendingAsync(start, end);
+            var maxWeekday = weekdays.Any() ? weekdays.Max(x => x.TotalAmount) : 0;
+            string[] daysOfWeek = { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+            report.WeekdaySpending.Clear();
+            for (int d = 0; d < 7; d++)
+            {
+                var summary = weekdays.FirstOrDefault(x => x.DayOfWeek == d);
+                report.WeekdaySpending.Add(new IntensityItem {
+                    Label = daysOfWeek[d],
+                    Intensity = maxWeekday > 0 && summary != null ? Math.Max(0.1, summary.TotalAmount / maxWeekday) : 0.05
+                });
+            }
+
+            double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
+            if (dailyBurn > 0)
+            {
+                report.RunwayDays = (int)Math.Max(0, CurrentBalance / dailyBurn);
+            }
+            else report.RunwayDays = 999;
+
+            report.RunwayExplanation = "based on your average daily spending over the last 30 days.";
+
+            report.SavingOpportunities.Clear();
+            var highTrend = newDistribution.Where(x => x.Trend > 20).OrderByDescending(x => x.Trend).Take(3);
+            foreach (var op in highTrend)
+            {
+                report.SavingOpportunities.Add(new SavingOpportunity {
+                    Title = $"optimize {op.Name}",
+                    Advice = $"spending is up {op.Trend:N0}%. reducing this could save you up to {op.Amount * 0.2:N0} per period."
+                });
+            }
+
+            if (type == "month")
+            {
+                int count = report.SavingOpportunities.Count;
+                SavingOpportunitiesSummary = count > 0 ? $"{count} saving opportunities found" : "no opportunities found";
+            }
+
+            report.WaterfallData.Clear();
+            double totalWater = Math.Max(report.FlowIn, report.FlowOut);
+            report.WaterfallData.Add(new WaterfallItem { Label = "income", Amount = report.FlowIn, Color = new SolidColorBrush(Color.FromArgb(255, 46, 204, 113)), Percentage = totalWater > 0 ? report.FlowIn / totalWater : 0 });
+            report.WaterfallData.Add(new WaterfallItem { Label = "expense", Amount = report.FlowOut, Color = new SolidColorBrush(Color.FromArgb(255, 231, 76, 60)), Percentage = totalWater > 0 ? report.FlowOut / totalWater : 0 });
         }
 
         private Color ColorFromHsl(double h, double s, double l)

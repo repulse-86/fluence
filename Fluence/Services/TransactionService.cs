@@ -82,6 +82,45 @@ namespace Fluence.Services
             return result.FirstOrDefault()?.CategoryId ?? 0;
         }
 
+        public class WeekdaySummary
+        {
+            public int DayOfWeek { get; set; }
+            public double TotalAmount { get; set; }
+        }
+
+        public async Task<List<WeekdaySummary>> GetWeekdaySpendingAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            string sql = "SELECT (Date / 864000000000 + 1) % 7 as DayOfWeek, SUM(Amount) as TotalAmount FROM [Transaction] WHERE Type = 'Expense' AND Date >= ? AND Date < ? GROUP BY DayOfWeek";
+            return await db.QueryAsync<WeekdaySummary>(sql, start.Ticks, end.Ticks);
+        }
+
+        public async Task<int> GetMostSpentDayOfWeekAsync(DateTime start, DateTime end)
+        {
+            var db = await GetDbAsync();
+            string sql = "SELECT (Date / 864000000000 + 1) % 7 as DayOfWeek FROM [Transaction] WHERE Type = 'Expense' AND Date >= ? AND Date < ? GROUP BY DayOfWeek ORDER BY SUM(Amount) DESC LIMIT 1";
+            var result = await db.QueryAsync<WeekdaySummary>(sql, start.Ticks, end.Ticks);
+            return result.Any() ? result.First().DayOfWeek : -1;
+        }
+
+        public async Task<int> GetMostSpentMonthAsync(DateTime start, DateTime end)
+        {
+            var transactions = await GetTransactionsAsync(start, end);
+            var monthlySums = transactions.Where(t => t.Type == "Expense")
+                .GroupBy(t => t.Date.Month)
+                .Select(g => new { Month = g.Key, Total = g.Sum(t => t.Amount) })
+                .OrderByDescending(x => x.Total)
+                .FirstOrDefault();
+            return monthlySums?.Month ?? -1;
+        }
+
+        public async Task<double> GetTrailing30DayDailyBurnRateAsync()
+        {
+            DateTime now = DateTime.Now;
+            double last30Expense = await GetExpenseSumAsync(now.AddDays(-30), now.AddDays(1));
+            return last30Expense / 30.0;
+        }
+
         public async Task RunMigrationsAsync()
         {
             var db = await GetDbAsync();

@@ -129,6 +129,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Components\ReportWeekdayControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportRunwayControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportOpportunitiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ReportSpendingPatternsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -195,6 +211,18 @@
     </Compile>
     <Compile Include="Views\Components\ReportIntensityControl.xaml.cs">
       <DependentUpon>ReportIntensityControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportWeekdayControl.xaml.cs">
+      <DependentUpon>ReportWeekdayControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportRunwayControl.xaml.cs">
+      <DependentUpon>ReportRunwayControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportOpportunitiesControl.xaml.cs">
+      <DependentUpon>ReportOpportunitiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ReportSpendingPatternsControl.xaml.cs">
+      <DependentUpon>ReportSpendingPatternsControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
