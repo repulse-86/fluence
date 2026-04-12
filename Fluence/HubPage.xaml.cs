@@ -25,7 +25,6 @@ namespace Fluence
         private double _targetX = 0;
         private double _currentX = 0;
         private bool _isRenderingHooked = false;
-        private static bool _isWallpaperFetched = false;
 
         private const string BackgroundFileName = "cached_background.jpg";
         private const string WallpaperUrl = "https://picsum.photos/1920/1080";
@@ -162,7 +161,7 @@ namespace Fluence
                 {
                     if (scrollViewer.ScrollableWidth > 0)
                     {
-                        _targetX = -(scrollViewer.HorizontalOffset / scrollViewer.ScrollableWidth) * 0.3;
+                        _targetX = -scrollViewer.HorizontalOffset * 0.5;
                         System.Diagnostics.Debug.WriteLine($"hub_Loaded: ScrollableWidth={scrollViewer.ScrollableWidth}, Offset={scrollViewer.HorizontalOffset}, TargetX={_targetX}");
                         
                         double sectionWidth = 360;
@@ -176,14 +175,14 @@ namespace Fluence
                     double xDiff = _targetX - _currentX;
                     if (Math.Abs(xDiff) > 0.0001)
                     {
-                        _currentX += xDiff * 0.15;
+                        _currentX += xDiff * 0.3;
                         BackgroundTransform.TranslateX = _currentX;
                     }
 
                     double oDiff = _targetOpacity - _currentOpacity;
                     if (Math.Abs(oDiff) > 0.0001)
                     {
-                        _currentOpacity += oDiff * 0.15;
+                        _currentOpacity += oDiff * 0.3;
                         BackgroundDimmer.Opacity = _currentOpacity;
                     }
                 };
@@ -195,16 +194,21 @@ namespace Fluence
             var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
             System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Starting...");
 
+            var systemVM = new SystemViewModel();
+
             try
             {
+                bool cacheExists = false;
                 try
                 {
                     var cachedFile = await localFolder.GetFileAsync(BackgroundFileName);
+                    var properties = await cachedFile.GetBasicPropertiesAsync();
                     using (var stream = await cachedFile.OpenReadAsync())
                     {
-                        if (stream.Size > 0)
+                        if (properties.Size > 0)
                         {
                             System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Loading from cache...");
+                            cacheExists = true;
                             BitmapImage bitmap = new BitmapImage();
                             await bitmap.SetSourceAsync(stream);
                             if (BackgroundImageBrush != null)
@@ -216,9 +220,31 @@ namespace Fluence
                 }
                 catch (Exception) { }
 
-                if (!_isWallpaperFetched)
+                bool shouldFetch = false;
+                if (systemVM.IsIntervalRefreshEnabled)
                 {
-                    _isWallpaperFetched = true;
+                    double intervalMinutes = 60;
+                    double parsedInterval;
+                    if (double.TryParse(systemVM.RefreshIntervalMinutes, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedInterval))
+                    {
+                        intervalMinutes = parsedInterval;
+                    }
+
+                    if (!cacheExists || DateTime.Now >= systemVM.LastRefreshTime.AddMinutes(intervalMinutes))
+                    {
+                        shouldFetch = true;
+                    }
+                }
+                else
+                {
+                    if (!cacheExists)
+                    {
+                        shouldFetch = true;
+                    }
+                }
+
+                if (shouldFetch)
+                {
                     try
                     {
                         string currentUrl = WallpaperUrl;
@@ -275,7 +301,6 @@ namespace Fluence
                                 if (response == null || !response.IsSuccessStatusCode)
                                 {
                                     System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Fetch failed. Status: {(response != null ? (int)response.StatusCode : 0)}");
-                                    _isWallpaperFetched = false;
                                     return;
                                 }
 
@@ -315,13 +340,14 @@ namespace Fluence
                                     await stream.FlushAsync();
                                 }
                                 System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Cache updated");
+                                
+                                systemVM.LastRefreshTime = DateTime.Now;
                             }
                         }
                     }
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fetch error: " + ex.Message);
-                        _isWallpaperFetched = false;
                     }
                 }
             }

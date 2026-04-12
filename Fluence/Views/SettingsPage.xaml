@@ -111,15 +111,26 @@
             </PivotItem>
 
             <PivotItem x:Name="SystemPivotItem" Header="system">
-                <StackPanel Margin="0,20,0,0">
-                    <TextBlock Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,20,0,0">
+                        <TextBlock Text="background management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" />
+                        
+                        <ToggleSwitch Header="auto refresh wallpaper" IsOn="{Binding SystemVM.IsIntervalRefreshEnabled, Mode=TwoWay}" Margin="0,0,0,10" />
+                        
+                        <StackPanel Visibility="{Binding SystemVM.IntervalInputVisibility}">
+                            <TextBlock Text="refresh interval (minutes)" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" />
+                            <TextBox Text="{Binding SystemVM.RefreshIntervalMinutes, Mode=TwoWay}" InputScope="Number" Margin="0,0,0,20" />
+                        </StackPanel>
 
-                    <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
-                    <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" />
+                        <TextBlock Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,20,0,20" />
 
-                    <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
-                    <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" />
-                </StackPanel>
+                        <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
+                        <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" />
+
+                        <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
+                        <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6" FontSize="14" TextWrapping="Wrap" />
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
         </Pivot>
     </Grid>

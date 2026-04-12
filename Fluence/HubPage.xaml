@@ -27,11 +27,9 @@
                 <ImageBrush x:Name="BackgroundImageBrush" 
                     Stretch="UniformToFill" 
                     AlignmentX="Left">
-                    <ImageBrush.RelativeTransform>
-                        <CompositeTransform x:Name="BackgroundTransform" 
-                                    ScaleX="1.5" ScaleY="1.5" 
-                                    CenterX="0.5" CenterY="0.5" />
-                    </ImageBrush.RelativeTransform>
+                    <ImageBrush.Transform>
+                        <CompositeTransform x:Name="BackgroundTransform" />
+                    </ImageBrush.Transform>
                 </ImageBrush>
             </Rectangle.Fill>
         </Rectangle>

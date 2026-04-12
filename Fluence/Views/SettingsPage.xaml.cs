@@ -18,16 +18,19 @@ namespace Fluence.Views
     {
         private CategoryViewModel _categoryViewModel;
         private ProfileViewModel _profileViewModel;
+        private SystemViewModel _systemViewModel;
         private readonly NavigationHelper navigationHelper;
 
         public CategoryViewModel CategoryVM => _categoryViewModel;
         public ProfileViewModel ProfileVM => _profileViewModel;
+        public SystemViewModel SystemVM => _systemViewModel;
 
         public SettingsPage()
         {
             this.InitializeComponent();
             _categoryViewModel = new CategoryViewModel();
             _profileViewModel = new ProfileViewModel();
+            _systemViewModel = new SystemViewModel();
             this.DataContext = this;
 
             this.navigationHelper = new NavigationHelper(this);
@@ -79,8 +82,21 @@ namespace Fluence.Views
 
         private void UpdateAppBar()
         {
-            PrimaryAppBarButton.Label = (SettingsPivot.SelectedItem == CategoryPivotItem) ? _categoryViewModel.SaveButtonLabel : _profileViewModel.SaveButtonLabel;
-            PrimaryAppBarButton.Icon = new SymbolIcon((SettingsPivot.SelectedItem == CategoryPivotItem) ? _categoryViewModel.SaveButtonSymbol : _profileViewModel.SaveButtonSymbol);
+            if (SettingsPivot.SelectedItem == CategoryPivotItem)
+            {
+                PrimaryAppBarButton.Label = _categoryViewModel.SaveButtonLabel;
+                PrimaryAppBarButton.Icon = new SymbolIcon(_categoryViewModel.SaveButtonSymbol);
+            }
+            else if (SettingsPivot.SelectedItem == ProfilePivotItem)
+            {
+                PrimaryAppBarButton.Label = _profileViewModel.SaveButtonLabel;
+                PrimaryAppBarButton.Icon = new SymbolIcon(_profileViewModel.SaveButtonSymbol);
+            }
+            else if (SettingsPivot.SelectedItem == SystemPivotItem)
+            {
+                PrimaryAppBarButton.Label = "save";
+                PrimaryAppBarButton.Icon = new SymbolIcon(Symbol.Save);
+            }
             
             SecondaryAppBarButton.Visibility = Visibility.Visible;
             SecondaryAppBarButton.Label = "cancel";
@@ -122,6 +138,11 @@ namespace Fluence.Views
                     }
                 }
                 UpdateAppBar();
+            }
+            else if (SettingsPivot.SelectedItem == SystemPivotItem)
+            {
+                _systemViewModel.SaveSettings();
+                await new Windows.UI.Popups.MessageDialog("system settings saved successfully.", "success").ShowAsync();
             }
         }
 
