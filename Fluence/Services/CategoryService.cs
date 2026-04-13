@@ -64,11 +64,21 @@ namespace Fluence.Services
             {
                 List<Category> systemCategories = new List<Category>
                 {
-                    new Category { Name = "food", IsSystem = true },
+                    new Category { Name = "salary", IsSystem = true },
+                    new Category { Name = "food & dining", IsSystem = true },
                     new Category { Name = "transportation", IsSystem = true },
-                    new Category { Name = "bills", IsSystem = true },
-                    new Category { Name = "income", IsSystem = true },
-                    new Category { Name = "expense", IsSystem = true },
+                    new Category { Name = "housing & rent", IsSystem = true },
+                    
+                    new Category { Name = "utilities", IsSystem = true },
+                    new Category { Name = "subscriptions", IsSystem = true },
+
+                    new Category { Name = "shopping", IsSystem = true },
+                    new Category { Name = "entertainment", IsSystem = true },
+                    new Category { Name = "health & fitness", IsSystem = true },
+
+                    new Category { Name = "savings & investment", IsSystem = true },
+                    new Category { Name = "debt repayment", IsSystem = true },
+                    new Category { Name = "others", IsSystem = true },
                 };
 
                 await db.InsertAllAsync(systemCategories);

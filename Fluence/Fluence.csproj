@@ -158,6 +158,7 @@
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\WidthConverter.cs" />
+    <Compile Include="Converters\RunwayConverter.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="HubPage.xaml.cs">
       <DependentUpon>HubPage.xaml</DependentUpon>

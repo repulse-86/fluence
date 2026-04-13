@@ -369,11 +369,15 @@ namespace Fluence.ViewModels
             CurrentBalance = profile.InitialBalance + totalIncome - totalExpense;
 
             DateTime now = DateTime.Now;
+            var cycle = AppHelper.GetCycleDates(now, profile.Payday.Day);
+            DaysUntilPayday = (cycle.End - now.Date).Days;
+            int daysRemaining = Math.Max(1, DaysUntilPayday + 1);
+
             if (profile.MonthlyLimit > 0)
             {
-                double monthlySpent = await _transactionService.GetMonthlyExpenseAsync(now.Year, now.Month);
-                BudgetPercent = Math.Min(100, (monthlySpent / profile.MonthlyLimit) * 100);
-                DailyAllowance = AppHelper.CalculateDailyAllowance(profile.MonthlyLimit, monthlySpent, now);
+                double cycleSpent = await _transactionService.GetExpenseSumAsync(cycle.Start, cycle.End);
+                BudgetPercent = Math.Min(100, (cycleSpent / profile.MonthlyLimit) * 100);
+                DailyAllowance = AppHelper.CalculateDailyAllowance(profile.MonthlyLimit, cycleSpent, daysRemaining);
             }
 
             DateTime today = now.Date;
@@ -394,11 +398,6 @@ namespace Fluence.ViewModels
                 var cat = await _categoryService.GetCategoryByIdAsync(topCatId);
                 TopCategory = cat?.Name ?? "unknown";
             }
-
-            int paydayDay = profile.Payday.Day;
-            DateTime nextPayday = new DateTime(now.Year, now.Month, paydayDay);
-            if (now.Day > paydayDay) nextPayday = nextPayday.AddMonths(1);
-            DaysUntilPayday = (nextPayday - now.Date).Days;
 
             double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
             RunwayDays = AppHelper.CalculateRunwayDays(CurrentBalance, dailyBurn);

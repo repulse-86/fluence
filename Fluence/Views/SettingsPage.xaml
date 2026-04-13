@@ -121,6 +121,8 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
                             <TextBox Grid.Row="1" x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />

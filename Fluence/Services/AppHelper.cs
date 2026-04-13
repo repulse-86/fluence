@@ -3,16 +3,54 @@ using Windows.UI;
 
 namespace Fluence.Services
 {
+    public class CycleDates
+    {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+    }
+
     public static class AppHelper
     {
-        public static double CalculateDailyAllowance(double monthlyLimit, double monthlySpent, DateTime now)
+        public static double CalculateDailyAllowance(double monthlyLimit, double monthlySpent, int daysRemaining)
         {
-            if (monthlyLimit <= 0) return 0;
-
-            int daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
-            int daysRemaining = daysInMonth - now.Day + 1;
-
+            if (monthlyLimit <= 0 || daysRemaining <= 0) return 0;
             return Math.Round(Math.Max(0, (monthlyLimit - monthlySpent) / daysRemaining), 2);
+        }
+
+        public static CycleDates GetCycleDates(DateTime now, int paydayDay)
+        {
+            DateTime nextPayday;
+            try
+            {
+                int daysInThisMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                int day = Math.Min(paydayDay, daysInThisMonth);
+                nextPayday = new DateTime(now.Year, now.Month, day);
+                
+                if (now.Day >= day)
+                {
+                    DateTime nextMonth = now.AddMonths(1);
+                    int daysInNextMonth = DateTime.DaysInMonth(nextMonth.Year, nextMonth.Month);
+                    nextPayday = new DateTime(nextMonth.Year, nextMonth.Month, Math.Min(paydayDay, daysInNextMonth));
+                }
+            }
+            catch
+            {
+                nextPayday = now.AddDays(30);
+            }
+
+            DateTime lastPayday;
+            try
+            {
+                DateTime lastMonth = nextPayday.AddMonths(-1);
+                int daysInLastMonth = DateTime.DaysInMonth(lastMonth.Year, lastMonth.Month);
+                lastPayday = new DateTime(lastMonth.Year, lastMonth.Month, Math.Min(paydayDay, daysInLastMonth));
+            }
+            catch
+            {
+                lastPayday = nextPayday.AddDays(-30);
+            }
+
+            return new CycleDates { Start = lastPayday.Date, End = nextPayday.Date };
         }
 
         public static int CalculateRunwayDays(double currentBalance, double dailyBurnRate)

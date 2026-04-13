@@ -7,7 +7,7 @@ namespace Fluence.Services
         public const double BudgetHealthThresholdSafe = 50.0;
         public const double BudgetHealthThresholdWarning = 80.0;
 
-        public const int MaxRunwayDays = 999;
+        public const int MaxRunwayDays = -1;
         public const int TrailingDaysForRunway = 30;
 
         public static readonly Color IncomeColor = Color.FromArgb(255, 46, 204, 113); // #2ECC71
