@@ -44,6 +44,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+
                         <TextBlock Grid.Row="0" Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
                         <components:ReportDistributionControl Grid.Row="1" DataContext="{Binding Distribution}" />
                         <components:ReportBurnersControl Grid.Row="2" DataContext="{Binding BudgetBurners}" />
@@ -70,16 +71,17 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="activity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
-                        <components:ReportWeekdayControl Grid.Row="1" Header="weekday" DataContext="{Binding WeekdaySpending}" />
-                        <components:ReportIntensityControl Grid.Row="2" Header="intensity" DataContext="{Binding IntensityMap}" IsYearly="False" />
 
-                        <Rectangle Grid.Row="3" Height="1" Fill="Gray" Margin="0,0,0,40" IsHitTestVisible="False" />
+                        <TextBlock Grid.Row="0" Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
+                        <components:ReportDistributionControl Grid.Row="1" DataContext="{Binding Distribution}" />
+                        <components:ReportBurnersControl Grid.Row="2" DataContext="{Binding BudgetBurners}" />
+                        <components:ReportBreakdownControl Grid.Row="3" DataContext="{Binding Distribution}" />
 
-                        <TextBlock Grid.Row="4" Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
-                        <components:ReportDistributionControl Grid.Row="5" DataContext="{Binding Distribution}" />
-                        <components:ReportBurnersControl Grid.Row="6" DataContext="{Binding BudgetBurners}" />
-                        <components:ReportBreakdownControl Grid.Row="7" DataContext="{Binding Distribution}" />
+                        <Rectangle Grid.Row="4" Height="1" Fill="Gray" Margin="0,0,0,40" IsHitTestVisible="False" />
+
+                        <TextBlock Grid.Row="5" Text="activity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
+                        <components:ReportWeekdayControl Grid.Row="6" Header="weekday" DataContext="{Binding WeekdaySpending}" />
+                        <components:ReportIntensityControl Grid.Row="7" Header="intensity" DataContext="{Binding IntensityMap}" IsYearly="False" />
 
                         <components:ReportComparisonControl Grid.Row="8" Header="comparison"
                              TrendText="vs last month" ShowProjections="True" AverageLabel="daily average" ProjectedLabel="projected total" />
@@ -100,15 +102,16 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="activity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
-                        <components:ReportIntensityControl Grid.Row="1" Header="monthly intensity" DataContext="{Binding IntensityMap}" IsYearly="True" />
 
-                        <Rectangle Grid.Row="2" Height="1" Fill="Gray" Margin="0,0,0,40" IsHitTestVisible="False" />
+                        <TextBlock Grid.Row="0" Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
+                        <components:ReportDistributionControl Grid.Row="1" DataContext="{Binding Distribution}" />
+                        <components:ReportBurnersControl Grid.Row="2" DataContext="{Binding BudgetBurners}" />
+                        <components:ReportBreakdownControl Grid.Row="3" DataContext="{Binding Distribution}" />
 
-                        <TextBlock Grid.Row="3" Text="spending" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
-                        <components:ReportDistributionControl Grid.Row="4" DataContext="{Binding Distribution}" />
-                        <components:ReportBurnersControl Grid.Row="5" DataContext="{Binding BudgetBurners}" />
-                        <components:ReportBreakdownControl Grid.Row="6" DataContext="{Binding Distribution}" />
+                        <Rectangle Grid.Row="4" Height="1" Fill="Gray" Margin="0,0,0,40" IsHitTestVisible="False" />
+
+                        <TextBlock Grid.Row="5" Text="activity" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
+                        <components:ReportIntensityControl Grid.Row="6" Header="monthly intensity" DataContext="{Binding IntensityMap}" IsYearly="True" />
 
                         <components:ReportComparisonControl Grid.Row="7" Header="comparison"
                              TrendText="vs last year" ShowProjections="True" AverageLabel="monthly average" ProjectedLabel="projected year" />
