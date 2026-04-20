@@ -26,7 +26,6 @@ namespace Fluence
         private double _currentX = 0;
         private bool _isRenderingHooked = false;
 
-        private const string BackgroundFileName = "cached_background.jpg";
         private const string WallpaperUrl = "https://picsum.photos/1920/1080";
 
         public HubPage()
@@ -189,39 +188,23 @@ namespace Fluence
             }
         }
 
+        private static readonly System.Threading.SemaphoreSlim _backgroundLock = new System.Threading.SemaphoreSlim(1, 1);
+
         private async System.Threading.Tasks.Task InitializeBackgroundAsync()
         {
-            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Starting...");
-
-            var systemVM = new SystemViewModel();
+            if (!await _backgroundLock.WaitAsync(0)) return;
 
             try
             {
-                bool cacheExists = false;
-                try
-                {
-                    var cachedFile = await localFolder.GetFileAsync(BackgroundFileName);
-                    var properties = await cachedFile.GetBasicPropertiesAsync();
-                    using (var stream = await cachedFile.OpenReadAsync())
-                    {
-                        if (properties.Size > 0)
-                        {
-                            System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Loading from cache...");
-                            cacheExists = true;
-                            BitmapImage bitmap = new BitmapImage();
-                            await bitmap.SetSourceAsync(stream);
-                            if (BackgroundImageBrush != null)
-                            {
-                                BackgroundImageBrush.ImageSource = bitmap;
-                            }
-                        }
-                    }
-                }
-                catch (Exception) { }
+                System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Starting...");
+                var systemVM = new SystemViewModel();
 
                 bool shouldFetch = false;
-                if (systemVM.IsIntervalRefreshEnabled)
+                if (BackgroundImageBrush == null || BackgroundImageBrush.ImageSource == null)
+                {
+                    shouldFetch = true;
+                }
+                else if (systemVM.IsIntervalRefreshEnabled)
                 {
                     double intervalMinutes = 60;
                     double parsedInterval;
@@ -230,14 +213,7 @@ namespace Fluence
                         intervalMinutes = parsedInterval;
                     }
 
-                    if (!cacheExists || DateTime.Now >= systemVM.LastRefreshTime.AddMinutes(intervalMinutes))
-                    {
-                        shouldFetch = true;
-                    }
-                }
-                else
-                {
-                    if (!cacheExists)
+                    if (DateTime.Now >= systemVM.LastRefreshTime.AddMinutes(intervalMinutes))
                     {
                         shouldFetch = true;
                     }
@@ -248,112 +224,94 @@ namespace Fluence
                     try
                     {
                         string currentUrl = WallpaperUrl;
-                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fetching random wallpaper from " + currentUrl);
+                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fetching wallpaper into RAM from " + currentUrl);
                         
                         using (var filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter())
                         {
                             filter.CacheControl.ReadBehavior = Windows.Web.Http.Filters.HttpCacheReadBehavior.MostRecent;
-                            filter.AllowAutoRedirect = false; // disable auto-redirect to debug the link
+                            filter.AllowAutoRedirect = false; 
 
                             using (var client = new Windows.Web.Http.HttpClient(filter))
                             {
                                 client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko");
                                 
                                 Windows.Web.Http.HttpResponseMessage response = null;
-                                
                                 try
                                 {
-                                    System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Sending initial request...");
                                     response = await client.GetAsync(new Uri(currentUrl));
                                 }
-                                catch (Exception ex)
+                                catch (Exception ex) when ((uint)ex.HResult == 0x80072EFD)
                                 {
-                                    System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Initial request exception: 0x{ex.HResult:X8} - {ex.Message}");
-                                    if ((uint)ex.HResult == 0x80072EFD)
-                                    {
-                                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: HTTPS connection failed. Retrying with HTTP...");
-                                        currentUrl = currentUrl.Replace("https://", "http://");
-                                        try { response = await client.GetAsync(new Uri(currentUrl)); }
-                                        catch (Exception ex2) { System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: HTTP retry failed: 0x{ex2.HResult:X8}"); }
-                                    }
+                                    System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: HTTPS failed, retrying HTTP...");
+                                    currentUrl = currentUrl.Replace("https://", "http://");
+                                    response = await client.GetAsync(new Uri(currentUrl));
                                 }
 
+                                // Handle redirects manually to be safe with HTTP/HTTPS transitions
                                 if (response != null && ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399))
                                 {
                                     string location = response.Headers.Location.ToString();
-                                    System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Redirect detected ({response.StatusCode}) to: {location}");
-                                    
                                     try 
                                     {
                                         response = await client.GetAsync(new Uri(location));
                                     }
-                                    catch (Exception ex3)
+                                    catch (Exception)
                                     {
-                                        System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Redirect follow failed: 0x{ex3.HResult:X8}");
-                                        if ((uint)ex3.HResult == 0x80072EFD)
-                                        {
-                                            System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Redirect HTTPS failed. Retrying redirect with HTTP...");
-                                            response = await client.GetAsync(new Uri(location.Replace("https://", "http://")));
-                                        }
+                                        response = await client.GetAsync(new Uri(location.Replace("https://", "http://")));
                                     }
                                 }
 
-                                if (response == null || !response.IsSuccessStatusCode)
+                                if (response != null && response.IsSuccessStatusCode)
                                 {
-                                    System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Fetch failed. Status: {(response != null ? (int)response.StatusCode : 0)}");
-                                    return;
-                                }
-
-                                var buffer = await response.Content.ReadAsBufferAsync();
-                                System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: Downloaded {buffer.Length} bytes");
-
-                                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                                {
-                                    try
+                                    var buffer = await response.Content.ReadAsBufferAsync();
+                                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                                     {
-                                        using (var stream = new InMemoryRandomAccessStream())
+                                        try
                                         {
-                                            await stream.WriteAsync(buffer);
-                                            stream.Seek(0);
-                                            
-                                            BitmapImage bitmap = new BitmapImage();
-                                            await bitmap.SetSourceAsync(stream);
-                                            
-                                            if (BackgroundImageBrush != null)
+                                            using (var stream = new InMemoryRandomAccessStream())
                                             {
-                                                BackgroundImageBrush.ImageSource = bitmap;
-                                                System.Diagnostics.Debug.WriteLine($"InitializeBackgroundAsync: New wallpaper applied. {bitmap.PixelWidth}x{bitmap.PixelHeight}");
-                                                hub.UpdateLayout();
+                                                await stream.WriteAsync(buffer);
+                                                stream.Seek(0);
+                                                BitmapImage bitmap = new BitmapImage();
+                                                await bitmap.SetSourceAsync(stream);
+                                                if (BackgroundImageBrush != null)
+                                                {
+                                                    BackgroundImageBrush.ImageSource = bitmap;
+                                                    hub.UpdateLayout();
+                                                }
                                             }
                                         }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: UI set error: " + ex.Message);
-                                    }
-                                });
-
-                                var newFile = await localFolder.CreateFileAsync(BackgroundFileName, Windows.Storage.CreationCollisionOption.ReplaceExisting);
-                                using (var stream = await newFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite))
-                                {
-                                    await stream.WriteAsync(buffer);
-                                    await stream.FlushAsync();
+                                        catch { }
+                                    });
+                                    systemVM.LastRefreshTime = DateTime.Now;
                                 }
-                                System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Cache updated");
-                                
-                                systemVM.LastRefreshTime = DateTime.Now;
+                                else
+                                {
+                                    throw new Exception("Fetch failed");
+                                }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fetch error: " + ex.Message);
+                        if (BackgroundImageBrush != null)
+                        {
+                            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                            {
+                                BackgroundImageBrush.ImageSource = null;
+                            });
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("InitializeBackgroundAsync: Fatal error: " + ex.Message);
+            }
+            finally
+            {
+                _backgroundLock.Release();
             }
         }
 
