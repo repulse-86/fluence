@@ -305,5 +305,13 @@ namespace Fluence.Views
                 await new Windows.UI.Popups.MessageDialog("all data cleared successfully.", "success").ShowAsync();
             }
         }
+
+        private void AutoRefreshWallpaper_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (_systemViewModel != null)
+            {
+                _systemViewModel.SaveSettings();
+            }
+        }
     }
 }

@@ -161,7 +161,7 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Text="background management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" IsHitTestVisible="False" />
                         
-                        <ToggleSwitch Grid.Row="1" Header="auto refresh wallpaper" IsOn="{Binding SystemVM.IsIntervalRefreshEnabled, Mode=TwoWay}" Margin="0,0,0,10" />
+                        <ToggleSwitch Grid.Row="1" Header="auto refresh wallpaper" IsOn="{Binding SystemVM.IsIntervalRefreshEnabled, Mode=TwoWay}" Margin="0,0,0,10" Toggled="AutoRefreshWallpaper_Toggled" />
                         
                         <Grid Grid.Row="2" Visibility="{Binding SystemVM.IntervalInputVisibility}">
                             <Grid.RowDefinitions>
