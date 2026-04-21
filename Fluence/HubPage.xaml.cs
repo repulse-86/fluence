@@ -118,11 +118,11 @@ namespace Fluence
             }
         }
 
-        private void EditProfileAppBarButton_Click(object sender, RoutedEventArgs e)
+        private void SettingsAppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Frame.Navigate(typeof(SettingsPage), "profile"))
+            if (!Frame.Navigate(typeof(SettingsPage), "system"))
             {
-                throw new Exception("Failed to navigate to profile form.");
+                throw new Exception("Failed to navigate to system settings.");
             }
         }
 
