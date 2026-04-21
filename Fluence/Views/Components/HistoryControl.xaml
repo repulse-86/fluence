@@ -39,7 +39,7 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <Border Background="Transparent" Margin="0,0,0,10">
-                                <TextBlock Text="{Binding DateKey}" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+                                <TextBlock Text="{Binding DateKey}" FontSize="20" Foreground="{ThemeResource SystemColorControlAccentBrush}" />
                             </Border>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
