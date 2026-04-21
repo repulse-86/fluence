@@ -16,6 +16,7 @@ namespace Fluence.Services
 
         public const double DefaultSaturation = 0.65;
         public const double DefaultLuminosity = 0.55;
+        public const double DefaultOpacity = 0.6;
 
         public const string CurrencyFormat = "N2";
         public const string DateKeyFormat = "MMMM d, yyyy";

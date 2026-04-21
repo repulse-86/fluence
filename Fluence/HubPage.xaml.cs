@@ -1,6 +1,7 @@
 using Fluence.Common;
 using Fluence.ViewModels;
 using Fluence.Views;
+using Fluence.Services;
 using System;
 using System.IO;
 using Windows.ApplicationModel.Resources;
@@ -141,8 +142,8 @@ namespace Fluence
             this.navigationHelper.OnNavigatedFrom(e);
         }
 
-        private double _targetOpacity = 0.6;
-        private double _currentOpacity = 0.6;
+        private double _targetOpacity = AppConstants.DefaultOpacity;
+        private double _currentOpacity = AppConstants.DefaultOpacity;
 
         private void hub_Loaded(object sender, RoutedEventArgs e)
         {
@@ -152,9 +153,9 @@ namespace Fluence
             var scrollViewer = GetScrollViewer(hub);
             if (scrollViewer != null)
             {
-                _targetOpacity = 0.6;
-                _currentOpacity = 0.6;
-                BackgroundDimmer.Opacity = 0.6;
+                _targetOpacity = AppConstants.DefaultOpacity;
+                _currentOpacity = AppConstants.DefaultOpacity;
+                BackgroundDimmer.Opacity = AppConstants.DefaultOpacity;
 
                 scrollViewer.ViewChanged += (s, args) =>
                 {
@@ -165,7 +166,7 @@ namespace Fluence
                         
                         double sectionWidth = 360;
                         double progress = Math.Min(1, scrollViewer.HorizontalOffset / sectionWidth);
-                        _targetOpacity = 0.6 + (0.2 * progress);
+                        _targetOpacity = AppConstants.DefaultOpacity + (0.2 * progress);
                     }
                 };
 

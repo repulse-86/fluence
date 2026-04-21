@@ -29,7 +29,8 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="20" TextTrimming="CharacterEllipsis" MaxWidth="200" />
-                            <TextBlock Grid.Column="1" Text="{Binding TransactionCount}" FontSize="16" Margin="10,4,0,0" Opacity="0.6" IsHitTestVisible="False" />
+                            <TextBlock Grid.Column="1" Text="{Binding TransactionCount}" FontSize="16" Margin="10,4,0,0" IsHitTestVisible="False" />
+
                         </Grid>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Amount, ConverterParameter='N2'}" FontSize="24" FontWeight="SemiBold" IsHitTestVisible="False" />
                         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Value="{Binding Percentage}" Foreground="{Binding Color}" Height="4" Margin="0,8,0,0" IsHitTestVisible="False" />

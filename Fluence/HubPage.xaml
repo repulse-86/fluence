@@ -36,7 +36,7 @@
 
         <Rectangle x:Name="BackgroundDimmer" 
                    Fill="Black" 
-                   Opacity="0.6" 
+                   Opacity="{StaticResource DefaultOpacity}" 
                    IsHitTestVisible="False" />
         <Hub x:Name="hub" Header="fluence" Background="Transparent" Loaded="hub_Loaded">
             <Hub.HeaderTemplate>

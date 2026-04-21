@@ -55,7 +55,7 @@
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemColorControlAccentBrush}" 
                            Margin="0,0,0,5" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="5" Text="windows phone 8.1" FontSize="18" Margin="0,0,0,30" Opacity="0.6" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="5" Text="windows phone 8.1" FontSize="18" Margin="0,0,0,30" IsHitTestVisible="False" />
 
                 <TextBlock Grid.Row="6" Text="created by"
                            FontSize="18" 

@@ -7,6 +7,7 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <x:Double x:Key="DefaultOpacity">0.6</x:Double>
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
             <converters:WidthConverter x:Key="WidthConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
