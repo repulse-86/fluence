@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="1b6e0367-37b7-4d33-b4e7-94b54cb9a05b" Publisher="CN=Lenovo" Version="1.1.0.0" />
+  <Identity Name="1b6e0367-37b7-4d33-b4e7-94b54cb9a05b" Publisher="CN=Lenovo" Version="1.2.0.0" />
   <mp:PhoneIdentity PhoneProductId="1b6e0367-37b7-4d33-b4e7-94b54cb9a05b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Fluence</DisplayName>
