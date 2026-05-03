@@ -6,6 +6,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Fluence.Services;
+using System.Threading.Tasks;
 
 namespace Fluence.Views
 {
@@ -38,19 +40,23 @@ namespace Fluence.Views
             }
         }
 
-        private async System.Threading.Tasks.Task LoadTransactionDetailsAsync()
+        private async Task LoadTransactionDetailsAsync()
         {
             var transactionViewModel = new TransactionViewModel();
             var t = await transactionViewModel.GetTransactionByIdAsync(_transactionId);
             if (t != null)
             {
-                var categoryService = new Services.CategoryService();
+                var categoryService = new CategoryService();
                 var cat = await categoryService.GetCategoryByIdAsync(t.CategoryId);
+
+                var walletService = new WalletService();
+                var wallet = await walletService.GetWalletByIdAsync(t.WalletId);
 
                 _displayItem = new TransactionDisplayItem
                 {
                     Id = t.Id,
                     CategoryName = cat?.Name ?? "unknown",
+                    WalletName = wallet?.Name ?? "unknown",
                     Note = t.Note,
                     Type = t.Type,
                     Amount = t.Amount,

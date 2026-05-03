@@ -29,6 +29,10 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="category" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
                 <ComboBox Grid.Row="1" x:Name="CategoryComboBox"
@@ -38,16 +42,16 @@
                           SelectedValue="{Binding CategoryId, Mode=TwoWay}"
                           HorizontalAlignment="Stretch" />
 
-                <TextBlock Grid.Row="2" Text="amount" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
-                <TextBox Grid.Row="3" x:Name="AmountTextBox" Text="{Binding AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                
-                <TextBlock Grid.Row="4" Text="note" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
-                <TextBox Grid.Row="5" x:Name="NoteTextBox"
-                         Text="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                         AcceptsReturn="True" 
-                         TextWrapping="Wrap" 
-                         Height="120" 
-                         VerticalAlignment="Top" />
+                <TextBlock Grid.Row="2" Text="wallet" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
+                <ComboBox Grid.Row="3" x:Name="WalletComboBox"
+                          ItemsSource="{Binding Wallets}" 
+                          DisplayMemberPath="Name" 
+                          SelectedValuePath="Id" 
+                          SelectedValue="{Binding WalletId, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch" />
+
+                <TextBlock Grid.Row="4" Text="amount" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
+                <TextBox Grid.Row="5" x:Name="AmountTextBox" Text="{Binding AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
 
                 <TextBlock Grid.Row="6" Text="type" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
                 <Grid Grid.Row="7">
@@ -59,8 +63,19 @@
                     <RadioButton Grid.Column="1" Content="Income" IsChecked="{Binding Type, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Income, Mode=TwoWay}" GroupName="Type" Margin="20,0,0,0" />
                 </Grid>
 
-                <TextBlock Grid.Row="8" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,20,0,0" TextWrapping="Wrap" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="9" Text="{Binding DebugData}" Foreground="{Binding DebugColor}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center" FontWeight="SemiBold" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="8" Text="date" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
+                <DatePicker Grid.Row="9" x:Name="TransactionDatePicker" Date="{Binding Date, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+
+                <TextBlock Grid.Row="10" Text="note" Style="{StaticResource BodyTextBlockStyle}" Margin="0,20,0,5" IsHitTestVisible="False" />
+                <TextBox Grid.Row="11" x:Name="NoteTextBox"
+                          Text="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                          AcceptsReturn="True" 
+                          TextWrapping="Wrap" 
+                          Height="120" 
+                          VerticalAlignment="Top" />
+
+                <TextBlock Grid.Row="12" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,20,0,0" TextWrapping="Wrap" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="13" Text="{Binding DebugData}" Foreground="{Binding DebugColor}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center" FontWeight="SemiBold" IsHitTestVisible="False" />
             </Grid>
         </ScrollViewer>
     </Grid>
