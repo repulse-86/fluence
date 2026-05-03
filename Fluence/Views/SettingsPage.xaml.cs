@@ -18,11 +18,13 @@ namespace Fluence.Views
     {
         private CategoryViewModel _categoryViewModel;
         private ProfileViewModel _profileViewModel;
+        private WalletViewModel _walletViewModel;
         private SystemViewModel _systemViewModel;
         private readonly NavigationHelper navigationHelper;
 
         public CategoryViewModel CategoryVM => _categoryViewModel;
         public ProfileViewModel ProfileVM => _profileViewModel;
+        public WalletViewModel WalletVM => _walletViewModel;
         public SystemViewModel SystemVM => _systemViewModel;
 
         public SettingsPage()
@@ -30,6 +32,7 @@ namespace Fluence.Views
             this.InitializeComponent();
             _categoryViewModel = new CategoryViewModel();
             _profileViewModel = new ProfileViewModel();
+            _walletViewModel = new WalletViewModel();
             _systemViewModel = new SystemViewModel();
             this.DataContext = this;
 
@@ -66,6 +69,11 @@ namespace Fluence.Views
                 {
                     SettingsPivot.SelectedItem = ProfilePivotItem;
                 }
+                else if (target == "wallet")
+                {
+                    SettingsPivot.SelectedItem = WalletPivotItem;
+                    await _walletViewModel.LoadWalletsAsync();
+                }
             }
             UpdateAppBar();
         }
@@ -91,6 +99,11 @@ namespace Fluence.Views
             {
                 PrimaryAppBarButton.Label = _profileViewModel.SaveButtonLabel;
                 PrimaryAppBarButton.Icon = new SymbolIcon(_profileViewModel.SaveButtonSymbol);
+            }
+            else if (SettingsPivot.SelectedItem == WalletPivotItem)
+            {
+                PrimaryAppBarButton.Label = "save";
+                PrimaryAppBarButton.Icon = new SymbolIcon(Symbol.Save);
             }
             else if (SettingsPivot.SelectedItem == SystemPivotItem)
             {
@@ -139,6 +152,24 @@ namespace Fluence.Views
                 }
                 UpdateAppBar();
             }
+            else if (SettingsPivot.SelectedItem == WalletPivotItem)
+            {
+                if (_walletViewModel.IsBusy) return;
+
+                double balance;
+                double.TryParse(_walletViewModel.WalletBalance, out balance);
+
+                var wallet = _walletViewModel.SelectedWallet ?? new Wallet();
+                wallet.Name = _walletViewModel.WalletName;
+                wallet.Balance = balance;
+
+                await _walletViewModel.SaveWalletAsync(wallet);
+                _walletViewModel.SelectedWallet = null;
+                _walletViewModel.WalletName = string.Empty;
+                _walletViewModel.WalletBalance = string.Empty;
+                HubViewModel.IsOverviewDirty = true;
+                UpdateAppBar();
+            }
             else if (SettingsPivot.SelectedItem == SystemPivotItem)
             {
                 _systemViewModel.SaveSettings();
@@ -154,7 +185,6 @@ namespace Fluence.Views
             }
         }
 
-        // Category Page logic
         private void CategoryBorder_Holding(object sender, HoldingRoutedEventArgs e)
         {
             if (e.HoldingState == HoldingState.Started)
@@ -219,7 +249,56 @@ namespace Fluence.Views
             }
         }
 
-        // Profile Page logic
+        private void WalletBorder_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            if (e.HoldingState == HoldingState.Started)
+            {
+                FrameworkElement element = sender as FrameworkElement;
+                if (element != null)
+                {
+                    FlyoutBase.ShowAttachedFlyout(element);
+                }
+            }
+        }
+
+        private void EditWallet_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuFlyoutItem;
+            Wallet wallet = menuItem.DataContext as Wallet;
+
+            if (wallet != null)
+            {
+                _walletViewModel.SelectedWallet = wallet;
+                _walletViewModel.WalletName = wallet.Name;
+                _walletViewModel.WalletBalance = wallet.Balance.ToString();
+                
+                WalletNameTextBox.Focus(FocusState.Programmatic);
+                WalletNameTextBox.SelectAll();
+            }
+        }
+
+        private async void DeleteWallet_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuFlyoutItem;
+            Wallet wallet = menuItem.DataContext as Wallet;
+
+            if (wallet != null)
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog($"are you sure you want to delete '{wallet.Name}'?", "confirm delete");
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("delete") { Id = 0 });
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
+                dialog.DefaultCommandIndex = 1;
+
+                var result = await dialog.ShowAsync();
+                if ((int)result.Id == 0)
+                {
+                    await _walletViewModel.DeleteWalletAsync(wallet.Id);
+                    await _walletViewModel.LoadWalletsAsync();
+                    HubViewModel.IsOverviewDirty = true;
+                }
+            }
+        }
+
         private void AmountTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             bool isDigit = e.Key >= Windows.System.VirtualKey.Number0 && e.Key <= Windows.System.VirtualKey.Number9;
@@ -250,7 +329,6 @@ namespace Fluence.Views
             }
         }
 
-        // System Page logic
         private async void MockData_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Windows.UI.Popups.MessageDialog("this will PERMANENTLY delete all your current transactions and replace them with 30 days of mock data. proceed?", "confirm mock data");
@@ -264,16 +342,20 @@ namespace Fluence.Views
                 var categoryService = new CategoryService();
                 await categoryService.InitializeDatabaseSync();
 
-                var transactionService = new TransactionService();
-                await transactionService.SeedTransactionsAsync();
-
                 var profileService = new ProfileService();
                 await profileService.SeedProfileAsync();
 
+                var transactionService = new TransactionService();
+                await transactionService.SeedTransactionsAsync();
+
                 HubViewModel.IsDirty = true;
+                HubViewModel.IsOverviewDirty = true;
+                HubViewModel.IsHistoryDirty = true;
+                HubViewModel.IsReportsDirty = true;
 
                 await _categoryViewModel.LoadCategoriesAsync();
                 await _profileViewModel.LoadProfileDetailsAsync();
+                await _walletViewModel.LoadWalletsAsync();
                 UpdateAppBar();
 
                 await new Windows.UI.Popups.MessageDialog("mock data activated successfully.", "success").ShowAsync();

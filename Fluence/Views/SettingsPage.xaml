@@ -76,6 +76,58 @@
                 </Grid>
             </PivotItem>
 
+            <PivotItem x:Name="WalletPivotItem" Header="wallets">
+                <Grid DataContext="{Binding WalletVM}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="wallet name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                        <TextBox Grid.Row="1" x:Name="WalletNameTextBox" Text="{Binding WalletName, Mode=TwoWay}" PlaceholderText="e.g. main bank" />
+                        <TextBlock Grid.Row="2" Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,15,0,5" IsHitTestVisible="False" />
+                        <TextBox Grid.Row="3" x:Name="WalletBalanceTextBox" Text="{Binding WalletBalance, Mode=TwoWay}" InputScope="Number" PlaceholderText="0.00" />
+                        <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" IsHitTestVisible="False" />
+                    </Grid>
+                    <ListView Grid.Row="1" ItemsSource="{Binding Wallets}" HorizontalContentAlignment="Stretch">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="Gray" BorderThickness="0,0,0,0.5" HorizontalAlignment="Stretch" Background="Transparent" Holding="WalletBorder_Holding">
+                                    <FlyoutBase.AttachedFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="edit" Click="EditWallet_Click" />
+                                            <MenuFlyoutItem Text="delete" Click="DeleteWallet_Click" />
+                                        </MenuFlyout>
+                                    </FlyoutBase.AttachedFlyout>
+                                    <Grid Margin="0,14">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" VerticalAlignment="Center" Margin="20,0,0,0" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+
             <PivotItem x:Name="ProfilePivotItem" Header="profile">
                 <ScrollViewer DataContext="{Binding ProfileVM}" VerticalScrollBarVisibility="Auto">
                     <Grid>
@@ -92,8 +144,8 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="{Binding InitialBalanceText, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" TextWrapping="Wrap" IsHitTestVisible="False" />
-                            <TextBlock Grid.Row="1" Text="current balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="0" Text="{Binding CurrentBalanceDisplay, ConverterParameter='N2'}" FontSize="72" FontWeight="Thin" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="1" Text="total balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
 
                             <TextBlock Grid.Row="2" Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="34" TextWrapping="Wrap" IsHitTestVisible="False" />
                             <TextBlock Grid.Row="3" Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
@@ -120,27 +172,21 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
-                            <TextBox Grid.Row="1" x:Name="InitialBalancetextBox" Text="{Binding InitialBalanceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                            <TextBlock Grid.Row="2" Text="{Binding InitialBalanceErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <TextBlock Grid.Row="3" Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
-                            <TextBox Grid.Row="4" x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                            <TextBlock Grid.Row="5" Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="0" Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <TextBox Grid.Row="1" x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Grid.Row="2" Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <TextBlock Grid.Row="6" Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
-                            <TextBox Grid.Row="7" x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
-                            <TextBlock Grid.Row="8" Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="3" Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <TextBox Grid.Row="4" x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                            <TextBlock Grid.Row="5" Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <TextBlock Grid.Row="9" Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
-                            <DatePicker Grid.Row="10" x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
-                            <TextBlock Grid.Row="11" Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBlock Grid.Row="6" Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                            <DatePicker Grid.Row="7" x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
+                            <TextBlock Grid.Row="8" Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
 
-                            <ToggleSwitch Grid.Row="12" Header="start week on monday" IsOn="{Binding IsMondayFirst, Mode=TwoWay}" Margin="0,10,0,0" />
+                            <ToggleSwitch Grid.Row="9" Header="start week on monday" IsOn="{Binding IsMondayFirst, Mode=TwoWay}" Margin="0,10,0,0" />
                         </Grid>
                     </Grid>
                 </ScrollViewer>
