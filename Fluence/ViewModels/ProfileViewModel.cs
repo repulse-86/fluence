@@ -1,10 +1,11 @@
-﻿using Fluence.Services;
+using Fluence.Services;
 using Fluence.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -12,8 +13,7 @@ namespace Fluence.ViewModels
 {
     public class ProfileViewModel : INotifyPropertyChanged
     {
-        private string _initialBalanceText;
-        private string _initialBalanceErrorMessage;
+        private string _currentBalanceDisplay;
 
         private string _monthlyIncomeText;
         private string _monthlyIncomeErrorMessage;
@@ -30,6 +30,7 @@ namespace Fluence.ViewModels
         private bool _isEditing;
 
         private readonly ProfileService _profileService = new ProfileService();
+        private readonly WalletService _walletService = new WalletService();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -69,27 +70,14 @@ namespace Fluence.ViewModels
             }
         }
 
-        public string InitialBalanceText
+        public string CurrentBalanceDisplay
         {
-            get { return _initialBalanceText; }
+            get { return _currentBalanceDisplay; }
             set
             {
-                if (_initialBalanceText != value)
+                if (_currentBalanceDisplay != value)
                 {
-                    _initialBalanceText = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string InitialBalanceErrorMessage
-        {
-            get { return _initialBalanceErrorMessage; }
-            set
-            {
-                if (_initialBalanceErrorMessage != value)
-                {
-                    _initialBalanceErrorMessage = value;
+                    _currentBalanceDisplay = value;
                     OnPropertyChanged();
                 }
             }
@@ -232,9 +220,12 @@ namespace Fluence.ViewModels
             try
             {
                 var data = await _profileService.GetProfileAsync();
+                
+                var wallets = await _walletService.GetWalletsAsync();
+                CurrentBalanceDisplay = wallets.Sum(w => w.Balance).ToString("N2");
+
                 if (data != null)
                 {
-                    InitialBalanceText = data.InitialBalance.ToString("N2");
                     MonthlyIncomeText = data.MonthlyIncome.ToString("N2");
                     MonthlyLimitText = data.MonthlyLimit.ToString("N2");
                     Payday = data.Payday;
@@ -244,7 +235,6 @@ namespace Fluence.ViewModels
                 }
                 else
                 {
-                    InitialBalanceText = "0.00";
                     MonthlyIncomeText = "0.00";
                     MonthlyLimitText = "0.00";
                     Payday = DateTimeOffset.Now;
@@ -265,20 +255,12 @@ namespace Fluence.ViewModels
 
         public async Task<bool> SaveProfileDetailsAsync()
         {
-            InitialBalanceErrorMessage = string.Empty;
             MonthlyIncomeErrorMessage = string.Empty;
             MonthlyLimitErrorMessage = string.Empty;
             PaydayErrorMessage = string.Empty;
             DebugData = string.Empty;
 
             bool hasError = false;
-
-            double initialBalance;
-            if (!double.TryParse(InitialBalanceText, out initialBalance) || initialBalance < 0)
-            {
-                InitialBalanceErrorMessage = "Initial balance must be a positive number.";
-                hasError = true;
-            }
 
             double monthlyIncome;
             if (!double.TryParse(MonthlyIncomeText, out monthlyIncome) || monthlyIncome < 0)
@@ -309,7 +291,7 @@ namespace Fluence.ViewModels
             {
                 var data = new Profile
                 {
-                    InitialBalance = initialBalance,
+                    InitialBalance = 0, 
                     MonthlyIncome = monthlyIncome,
                     MonthlyLimit = monthlyLimit,
                     Payday = this.Payday.DateTime,

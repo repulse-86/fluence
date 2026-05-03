@@ -14,11 +14,13 @@ namespace Fluence.ViewModels
     {
         private readonly TransactionService _transactionService = new TransactionService();
         private readonly CategoryService _categoryService = new CategoryService();
+        private readonly WalletService _walletService = new WalletService();
 
         private bool _isBusy;
         private string _amountText;
         private string _note;
         private int _categoryId;
+        private int _walletId;
         private string _type;
         private string _errorMessage;
         private string _debugData;
@@ -30,6 +32,7 @@ namespace Fluence.ViewModels
 
         public ObservableCollection<Transaction> Transactions { get; set; } = new ObservableCollection<Transaction>();
         public ObservableCollection<Category> Categories { get; set; } = new ObservableCollection<Category>();
+        public ObservableCollection<Wallet> Wallets { get; set; } = new ObservableCollection<Wallet>();
 
         public bool IsBusy
         {
@@ -78,6 +81,19 @@ namespace Fluence.ViewModels
                 if (_categoryId != value)
                 {
                     _categoryId = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public int WalletId
+        {
+            get { return _walletId; }
+            set
+            {
+                if (_walletId != value)
+                {
+                    _walletId = value;
                     OnPropertyChanged();
                 }
             }
@@ -147,6 +163,7 @@ namespace Fluence.ViewModels
                     AmountText = _selectedTransaction.Amount.ToString(AppConstants.CurrencyFormat);
                     Note = _selectedTransaction.Note;
                     CategoryId = _selectedTransaction.CategoryId;
+                    WalletId = _selectedTransaction.WalletId;
                     Type = _selectedTransaction.Type;
                 }
                 else
@@ -155,6 +172,7 @@ namespace Fluence.ViewModels
                     AmountText = string.Empty;
                     Note = string.Empty;
                     CategoryId = 0;
+                    WalletId = Wallets.Count > 0 ? Wallets[0].Id : 0;
                     Type = "Expense";
                 }
                 OnPropertyChanged();
@@ -189,10 +207,21 @@ namespace Fluence.ViewModels
                 {
                     Categories.Add(category);
                 }
+
+                var wallets = await _walletService.GetWalletsAsync();
+                Wallets.Clear();
+                foreach (var wallet in wallets)
+                {
+                    Wallets.Add(wallet);
+                }
+                if (SelectedTransaction == null && Wallets.Count > 0 && WalletId == 0)
+                {
+                    WalletId = Wallets[0].Id;
+                }
             }
             catch (Exception ex)
             {
-                ErrorMessage = "failed to load categories: " + ex.Message.ToLower();
+                ErrorMessage = "failed to load data: " + ex.Message.ToLower();
             }
         }
 
@@ -238,6 +267,12 @@ namespace Fluence.ViewModels
                 return false;
             }
 
+            if (WalletId == 0)
+            {
+                ErrorMessage = "please select a wallet";
+                return false;
+            }
+
             if (string.IsNullOrEmpty(Type))
             {
                 ErrorMessage = "please select a transaction type";
@@ -256,6 +291,7 @@ namespace Fluence.ViewModels
                         Amount = amount,
                         Note = string.IsNullOrEmpty(Note) ? string.Empty : Note.Trim().ToLower(),
                         CategoryId = CategoryId,
+                        WalletId = WalletId,
                         Type = Type,
                         Date = DateTime.Now
                     };
@@ -268,6 +304,7 @@ namespace Fluence.ViewModels
                     SelectedTransaction.Amount = amount;
                     SelectedTransaction.Note = string.IsNullOrEmpty(Note) ? string.Empty : Note.Trim().ToLower();
                     SelectedTransaction.CategoryId = CategoryId;
+                    SelectedTransaction.WalletId = WalletId;
                     SelectedTransaction.Type = Type;
 
                     await _transactionService.UpdateTransactionAsync(SelectedTransaction);

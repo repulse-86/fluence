@@ -18,6 +18,7 @@ namespace Fluence.ViewModels
         private bool _isExpanded;
         public int Id { get; set; }
         public string CategoryName { get; set; }
+        public string WalletName { get; set; }
         public string Note { get; set; }
         public string Type { get; set; }
         public double Amount { get; set; }
@@ -222,6 +223,7 @@ namespace Fluence.ViewModels
         private readonly TransactionService _transactionService = new TransactionService();
         private readonly CategoryService _categoryService = new CategoryService();
         private readonly ProfileService _profileService = new ProfileService();
+        private readonly WalletService _walletService = new WalletService();
 
         public static bool IsDirty { get; set; } = true;
         public static bool IsOverviewDirty { get; set; } = true;
@@ -263,6 +265,13 @@ namespace Fluence.ViewModels
         {
             get { return _groupedTransactions; }
             set { _groupedTransactions = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<Wallet> _wallets = new ObservableCollection<Wallet>();
+        public ObservableCollection<Wallet> Wallets
+        {
+            get { return _wallets; }
+            set { _wallets = value; OnPropertyChanged(); }
         }
         
         private double _currentBalance;
@@ -359,22 +368,54 @@ namespace Fluence.ViewModels
         {
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Starting");
             var profile = await _profileService.GetProfileAsync();
-            if (profile == null) return;
+            
+            try 
+            {
+                var wallets = await _walletService.GetWalletsAsync();
+                Wallets.Clear();
+                if (wallets != null)
+                {
+                    foreach (var wallet in wallets)
+                    {
+                        if (wallet != null) Wallets.Add(wallet);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"HubViewModel: Error loading wallets: {ex.Message}");
+            }
+
+            if (profile == null)
+            {
+                profile = new Profile 
+                { 
+                    MonthlyLimit = 0, 
+                    Payday = DateTime.Now, 
+                    WeekStart = DayOfWeek.Monday 
+                };
+            }
 
             BudgetPercent = 0;
             DailyAllowance = 0;
 
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Income/Expense");
             double totalIncome = await _transactionService.GetTotalIncomeAsync();
             double totalExpense = await _transactionService.GetTotalExpenseAsync();
-            CurrentBalance = profile.InitialBalance + totalIncome - totalExpense;
+            
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Calculating Balance");
+            CurrentBalance = (Wallets != null && Wallets.Count > 0) ? Wallets.Where(w => w != null).Sum(w => w.Balance) : 0;
 
             DateTime now = DateTime.Now;
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Cycle Dates");
             var cycle = AppHelper.GetCycleDates(now, profile.Payday.Day);
+            
             DaysUntilPayday = (cycle.End - now.Date).Days;
             int daysRemaining = Math.Max(1, DaysUntilPayday + 1);
 
             if (profile.MonthlyLimit > 0)
             {
+                System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Cycle Spent");
                 double cycleSpent = await _transactionService.GetExpenseSumAsync(cycle.Start, cycle.End);
                 BudgetPercent = Math.Min(100, (cycleSpent / profile.MonthlyLimit) * 100);
                 DailyAllowance = AppHelper.CalculateDailyAllowance(profile.MonthlyLimit, cycleSpent, daysRemaining);
@@ -382,6 +423,7 @@ namespace Fluence.ViewModels
 
             DateTime today = now.Date;
             DateTime tomorrow = today.AddDays(1);
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Spent Today");
             SpentToday = await _transactionService.GetExpenseSumAsync(today, tomorrow);
 
             DayOfWeek weekStart = profile.WeekStart;
@@ -389,8 +431,10 @@ namespace Fluence.ViewModels
             int diff = (weekStart == DayOfWeek.Monday) ? (dayOfWeek == 0 ? 6 : dayOfWeek - 1) : dayOfWeek;
 
             DateTime startOfWeek = today.AddDays(-diff);
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Weekly Total");
             WeeklyTotal = await _transactionService.GetExpenseSumAsync(startOfWeek, tomorrow);
 
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Top Category");
             int topCatId = await _transactionService.GetTopCategoryIdAsync();
             TopCategory = "none";
             if (topCatId > 0)
@@ -399,11 +443,15 @@ namespace Fluence.ViewModels
                 TopCategory = cat?.Name ?? "unknown";
             }
 
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Daily Burn");
             double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
             RunwayDays = AppHelper.CalculateRunwayDays(CurrentBalance, dailyBurn);
 
+            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Updating Tile");
             TileService.UpdateLiveTile(BudgetPercent, CurrentBalance, DailyAllowance, SpentToday, WeeklyTotal, TopCategory);
-            System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Completed");
+            
+            OnPropertyChanged(string.Empty);
+            System.Diagnostics.Debug.WriteLine($"HubViewModel: LoadOverviewAsync - Completed. Loaded {Wallets.Count} wallets.");
         }
 
         public async Task LoadReportAsync()
@@ -628,13 +676,11 @@ namespace Fluence.ViewModels
         {
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadHistoryAsync - Starting");
 
-            // wait for any concurrent load to finish
             while (_isLoadingHistory) await Task.Delay(50);
 
             _historySkip = 0;
             GroupedTransactions.Clear();
 
-            // initial load of 15 items to ensure the list is scrollable
             for (int i = 0; i < 3; i++)
             {
                 await LoadMoreHistoryAsync();
@@ -650,7 +696,6 @@ namespace Fluence.ViewModels
 
             try
             {
-                // retrieve exactly 5 items regardless of date
                 var transactions = await _transactionService.GetTransactionsAsync(_historySkip, HistoryTake);
                 if (transactions.Count == 0) return;
 
@@ -683,7 +728,6 @@ namespace Fluence.ViewModels
                         GroupedTransactions.Add(group);
                     }
 
-                    // avoid duplicates if reloading
                     if (!group.Any(i => i.Id == displayItem.Id))
                     {
                         group.Add(displayItem);
