@@ -149,6 +149,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Components\CategoryManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\WalletManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\ProfileManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Components\SystemManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -237,7 +253,20 @@
     <Compile Include="Views\Components\ReportSpendingPatternsControl.xaml.cs">
       <DependentUpon>ReportSpendingPatternsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Components\CategoryManagementControl.xaml.cs">
+      <DependentUpon>CategoryManagementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\WalletManagementControl.xaml.cs">
+      <DependentUpon>WalletManagementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\ProfileManagementControl.xaml.cs">
+      <DependentUpon>ProfileManagementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Components\SystemManagementControl.xaml.cs">
+      <DependentUpon>SystemManagementControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
+
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>

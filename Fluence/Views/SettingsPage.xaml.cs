@@ -1,15 +1,10 @@
 using Fluence.Common;
 using Fluence.Models;
 using Fluence.ViewModels;
-using Fluence.Services;
 using System;
-using System.Linq;
 using Windows.UI.Core;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Fluence.Views
@@ -124,11 +119,12 @@ namespace Fluence.Views
 
                 await _categoryViewModel.SaveCategoryAsync();
                 HubViewModel.IsDirty = true;
-                CategoryTextBox.IsEnabled = false;
+                
+                CategoryControl.CategoryNameInput.IsEnabled = false;
                 this.Focus(FocusState.Programmatic);
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    CategoryTextBox.IsEnabled = true;
+                    CategoryControl.CategoryNameInput.IsEnabled = true;
                     Windows.UI.ViewManagement.InputPane.GetForCurrentView().TryHide();
                 });
                 UpdateAppBar();
@@ -185,215 +181,17 @@ namespace Fluence.Views
             }
         }
 
-        private void CategoryBorder_Holding(object sender, HoldingRoutedEventArgs e)
+        private void CategoryControl_EditRequested(object sender, EventArgs e)
         {
-            if (e.HoldingState == HoldingState.Started)
-            {
-                FrameworkElement element = sender as FrameworkElement;
-                if (element != null)
-                {
-                    FlyoutBase.ShowAttachedFlyout(element);
-                }
-            }
+            UpdateAppBar();
         }
 
-        private async void EditCategory_Click(object sender, RoutedEventArgs e)
+        private async void SystemControl_DataChanged(object sender, EventArgs e)
         {
-            var menuItem = sender as MenuFlyoutItem;
-            Category category = menuItem.DataContext as Category;
-
-            if (category != null)
-            {
-                _categoryViewModel.SelectedCategory = category;
-                _categoryViewModel.CategoryName = category.Name;
-
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    CategoryTextBox.Focus(FocusState.Programmatic);
-                    CategoryTextBox.SelectAll();
-                });
-                UpdateAppBar();
-            }
-        }
-
-        private async void DeleteCategory_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuFlyoutItem;
-            Category category = menuItem.DataContext as Category;
-
-            if (category != null)
-            {
-                var dialog = new Windows.UI.Popups.MessageDialog(
-                    $"Are you sure you want to delete '{category.Name}'?", "confirm delete");
-
-                dialog.Commands.Add(new Windows.UI.Popups.UICommand("delete") { Id = 0 });
-                dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
-                dialog.DefaultCommandIndex = 1;
-
-                var result = await dialog.ShowAsync();
-                if ((int)result.Id == 0)
-                {
-                    CategoryTextBox.IsReadOnly = true;
-                    CategoryTextBox.IsEnabled = false;
-
-                    await _categoryViewModel.DeleteCategoryAsync(category);
-                    HubViewModel.IsDirty = true;
-
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        this.Focus(FocusState.Programmatic);
-                        CategoryTextBox.IsEnabled = true;
-                        CategoryTextBox.IsReadOnly = false;
-                    });
-                }
-            }
-        }
-
-        private void WalletBorder_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            if (e.HoldingState == HoldingState.Started)
-            {
-                FrameworkElement element = sender as FrameworkElement;
-                if (element != null)
-                {
-                    FlyoutBase.ShowAttachedFlyout(element);
-                }
-            }
-        }
-
-        private void EditWallet_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuFlyoutItem;
-            Wallet wallet = menuItem.DataContext as Wallet;
-
-            if (wallet != null)
-            {
-                _walletViewModel.SelectedWallet = wallet;
-                _walletViewModel.WalletName = wallet.Name;
-                _walletViewModel.WalletBalance = wallet.Balance.ToString();
-                
-                WalletNameTextBox.Focus(FocusState.Programmatic);
-                WalletNameTextBox.SelectAll();
-            }
-        }
-
-        private async void DeleteWallet_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuFlyoutItem;
-            Wallet wallet = menuItem.DataContext as Wallet;
-
-            if (wallet != null)
-            {
-                var dialog = new Windows.UI.Popups.MessageDialog($"are you sure you want to delete '{wallet.Name}'?", "confirm delete");
-                dialog.Commands.Add(new Windows.UI.Popups.UICommand("delete") { Id = 0 });
-                dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
-                dialog.DefaultCommandIndex = 1;
-
-                var result = await dialog.ShowAsync();
-                if ((int)result.Id == 0)
-                {
-                    await _walletViewModel.DeleteWalletAsync(wallet.Id);
-                    await _walletViewModel.LoadWalletsAsync();
-                    HubViewModel.IsOverviewDirty = true;
-                }
-            }
-        }
-
-        private void AmountTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            bool isDigit = e.Key >= Windows.System.VirtualKey.Number0 && e.Key <= Windows.System.VirtualKey.Number9;
-            bool isPadDigit = e.Key >= Windows.System.VirtualKey.NumberPad0 && e.Key <= Windows.System.VirtualKey.NumberPad9;
-            bool isDecimal = e.Key == Windows.System.VirtualKey.Decimal || (int)e.Key == 190;
-
-            if (!isDigit && !isPadDigit && !isDecimal && e.Key != Windows.System.VirtualKey.Back)
-            {
-                e.Handled = true;
-            }
-
-            if (isDecimal && (sender as TextBox).Text.Contains("."))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void AmountTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox tb = sender as TextBox;
-            string text = tb.Text;
-            string filtered = new string(text.Where(c => char.IsDigit(c) || c == '.').ToArray());
-
-            if (text != filtered)
-            {
-                tb.Text = filtered;
-                tb.SelectionStart = tb.Text.Length;
-            }
-        }
-
-        private async void MockData_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new Windows.UI.Popups.MessageDialog("this will PERMANENTLY delete all your current transactions and replace them with 30 days of mock data. proceed?", "confirm mock data");
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("proceed") { Id = 0 });
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
-            dialog.DefaultCommandIndex = 1;
-
-            var result = await dialog.ShowAsync();
-            if ((int)result.Id == 0)
-            {
-                var categoryService = new CategoryService();
-                await categoryService.InitializeDatabaseSync();
-
-                var profileService = new ProfileService();
-                await profileService.SeedProfileAsync();
-
-                var transactionService = new TransactionService();
-                await transactionService.SeedTransactionsAsync();
-
-                HubViewModel.IsDirty = true;
-                HubViewModel.IsOverviewDirty = true;
-                HubViewModel.IsHistoryDirty = true;
-                HubViewModel.IsReportsDirty = true;
-
-                await _categoryViewModel.LoadCategoriesAsync();
-                await _profileViewModel.LoadProfileDetailsAsync();
-                await _walletViewModel.LoadWalletsAsync();
-                UpdateAppBar();
-
-                await new Windows.UI.Popups.MessageDialog("mock data activated successfully.", "success").ShowAsync();
-            }
-        }
-
-        private async void ClearData_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new Windows.UI.Popups.MessageDialog("this will PERMANENTLY delete ALL-TIME transactions and reset your profile settings. this cannot be undone. proceed?", "DANGER: CLEAR ALL DATA");
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("clear everything") { Id = 0 });
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("cancel") { Id = 1 });
-            dialog.DefaultCommandIndex = 1;
-
-            var result = await dialog.ShowAsync();
-            if ((int)result.Id == 0)
-            {
-                var transactionService = new TransactionService();
-                await transactionService.ClearTransactionsAsync();
-
-                var profileService = new ProfileService();
-                await profileService.ClearProfileAsync();
-
-                HubViewModel.IsDirty = true;
-
-                await _categoryViewModel.LoadCategoriesAsync();
-                await _profileViewModel.LoadProfileDetailsAsync();
-                UpdateAppBar();
-
-                await new Windows.UI.Popups.MessageDialog("all data cleared successfully.", "success").ShowAsync();
-            }
-        }
-
-        private void AutoRefreshWallpaper_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (_systemViewModel != null)
-            {
-                _systemViewModel.SaveSettings();
-            }
+            await _categoryViewModel.LoadCategoriesAsync();
+            await _profileViewModel.LoadProfileDetailsAsync();
+            await _walletViewModel.LoadWalletsAsync();
+            UpdateAppBar();
         }
     }
 }
