@@ -12,6 +12,7 @@
             <converters:WidthConverter x:Key="WidthConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
         </ResourceDictionary>
     </Application.Resources>
 

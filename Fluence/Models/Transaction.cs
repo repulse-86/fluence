@@ -16,6 +16,8 @@ namespace Fluence.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        public int WalletId { get; set; }
+
         public int CategoryId
         {
             get { return _categoryId; }
