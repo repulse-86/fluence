@@ -1,4 +1,4 @@
-﻿using Fluence.Models;
+using Fluence.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +19,14 @@ namespace Fluence.Services
                 settings["InitialBalance"] = profile.InitialBalance;
                 settings["MonthlyIncome"] = profile.MonthlyIncome;
                 settings["MonthlyLimit"] = profile.MonthlyLimit;
-                settings["Payday"] = profile.Payday.ToString("O"); // ISO 8601 format
+                settings["Payday"] = profile.Payday.ToString("O"); 
                 settings["WeekStart"] = (int)profile.WeekStart;
                 await Task.Yield();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error saving profile: {ex.Message}");
-                throw; // Rethrow to let ViewModel handle it
+                throw; 
             }
         }
 
@@ -38,12 +38,16 @@ namespace Fluence.Services
                 await Task.Yield();
                 if (settings.ContainsKey("InitialBalance"))
                 {
-                    var profile = new Profile
-                    {
-                        InitialBalance = (double)settings["InitialBalance"],
-                        MonthlyIncome = (double)settings["MonthlyIncome"],
-                        MonthlyLimit = (double)settings["MonthlyLimit"]
-                    };
+                    var profile = new Profile();
+                    
+                    if (settings["InitialBalance"] is double)
+                        profile.InitialBalance = (double)settings["InitialBalance"];
+                    
+                    if (settings.ContainsKey("MonthlyIncome") && settings["MonthlyIncome"] is double)
+                        profile.MonthlyIncome = (double)settings["MonthlyIncome"];
+                    
+                    if (settings.ContainsKey("MonthlyLimit") && settings["MonthlyLimit"] is double)
+                        profile.MonthlyLimit = (double)settings["MonthlyLimit"];
 
                     if (settings.ContainsKey("Payday"))
                     {

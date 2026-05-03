@@ -179,6 +179,7 @@
     <Compile Include="Services\ProfileService.cs" />
     <Compile Include="Services\TileService.cs" />
     <Compile Include="Services\TransactionService.cs" />
+    <Compile Include="Services\WalletService.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="ViewModels\HubViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />

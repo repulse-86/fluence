@@ -24,6 +24,7 @@ namespace Fluence.Services
 
                 await _db.CreateTableAsync<Category>();
                 await _db.CreateTableAsync<Transaction>();
+                await _db.CreateTableAsync<Wallet>();
             }
             return _db;
         }

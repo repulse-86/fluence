@@ -9,6 +9,9 @@ namespace Fluence.Services
 {
     class TransactionService : BaseDatabaseService
     {
+        private readonly WalletService _walletService = new WalletService();
+        private readonly ProfileService _profileService = new ProfileService();
+
         public async Task<List<Transaction>> GetTransactionsAsync()
         {
             var db = await GetDbAsync();
@@ -69,7 +72,6 @@ namespace Fluence.Services
         public async Task<List<CategorySummary>> GetCategorySummariesAsync(DateTime start, DateTime end, string type = "Expense")
         {
             var db = await GetDbAsync();
-            // SQLite-net-pcl doesn't support complex group by with projections well in LINQ, use raw SQL
             string sql = "SELECT CategoryId, SUM(Amount) as TotalAmount, COUNT(Id) as Count FROM [Transaction] WHERE Type = ? AND Date >= ? AND Date < ? GROUP BY CategoryId";
             return await db.QueryAsync<CategorySummary>(sql, type, start.Ticks, end.Ticks);
         }
@@ -171,6 +173,15 @@ namespace Fluence.Services
                     await db.UpdateAsync(t);
                 }
             }
+
+            var wallets = await _walletService.GetWalletsAsync();
+            var defaultWalletId = wallets.First().Id;
+            var transactionsWithoutWallet = await db.Table<Transaction>().Where(t => t.WalletId == 0).ToListAsync();
+            foreach (var t in transactionsWithoutWallet)
+            {
+                t.WalletId = defaultWalletId;
+                await db.UpdateAsync(t);
+            }
         }
 
         public async Task<List<Transaction>> GetTransactionsAsync(int skip, int take)
@@ -189,16 +200,33 @@ namespace Fluence.Services
             if (transaction.Note != null) transaction.Note = transaction.Note.ToLower();
 
             var db = await GetDbAsync();
+            
+            if (transaction.WalletId <= 0)
+            {
+                var wallets = await _walletService.GetWalletsAsync();
+                transaction.WalletId = wallets.First().Id;
+            }
+
             await db.InsertAsync(transaction);
+            await _walletService.UpdateBalanceAsync(transaction.WalletId, transaction.Amount, transaction.Type, true);
         }
 
         public async Task UpdateTransactionAsync(Transaction transaction)
         {
             if (transaction == null) return;
+
+            var oldTransaction = await GetTransactionByIdAsync(transaction.Id);
+            if (oldTransaction != null)
+            {
+                await _walletService.UpdateBalanceAsync(oldTransaction.WalletId, oldTransaction.Amount, oldTransaction.Type, false);
+            }
+
             if (transaction.Note != null) transaction.Note = transaction.Note.ToLower();
 
             var db = await GetDbAsync();
             await db.UpdateAsync(transaction);
+
+            await _walletService.UpdateBalanceAsync(transaction.WalletId, transaction.Amount, transaction.Type, true);
         }
 
         public async Task<Transaction> GetTransactionByIdAsync(int id)
@@ -222,6 +250,9 @@ namespace Fluence.Services
         {
             if (transaction == null) return;
             var db = await GetDbAsync();
+            
+            await _walletService.UpdateBalanceAsync(transaction.WalletId, transaction.Amount, transaction.Type, false);
+            
             await db.DeleteAsync(transaction);
         }
 
@@ -236,11 +267,19 @@ namespace Fluence.Services
             var db = await GetDbAsync();
             await ClearTransactionsAsync();
             
+            var profile = await _profileService.GetProfileAsync();
+            double initialCash = profile?.InitialBalance ?? 81000;
+
+            await db.ExecuteAsync("DELETE FROM Wallet");
+            var cashWallet = new Wallet { Name = "cash", Balance = initialCash };
+            var savingsWallet = new Wallet { Name = "savings", Balance = 150000 };
+            await db.InsertAsync(cashWallet);
+            await db.InsertAsync(savingsWallet);
+
             var categories = await db.Table<Category>().ToListAsync();
             if (categories.Count == 0) return;
 
             var random = new Random();
-            var transactions = new List<Transaction>();
             var today = DateTime.Now.Date;
             
             for (int d = 0; d < 30; d++)
@@ -249,17 +288,18 @@ namespace Fluence.Services
 
                 if (baseDate.Day == 28)
                 {
-                    transactions.Add(new Transaction
+                    var income = new Transaction
                     {
                         CategoryId = categories.FirstOrDefault(c => c.Name.Contains("income"))?.Id ?? categories[0].Id,
                         Amount = 24000,
                         Type = "Income",
                         Note = "monthly salary",
-                        Date = baseDate.AddHours(9)
-                    });
+                        Date = baseDate.AddHours(9),
+                        WalletId = cashWallet.Id
+                    };
+                    await AddTransactionAsync(income);
                 }
 
-                // 3-5 random expenses daily
                 int expenseCount = random.Next(3, 6);
                 for (int i = 0; i < expenseCount; i++)
                 {
@@ -267,22 +307,22 @@ namespace Fluence.Services
                     if (category.Name.Contains("income")) category = categories[random.Next(categories.Count)];
 
                     double amount = Math.Round(random.NextDouble() * (166.0 / expenseCount * 2), 2);
-                    if (amount < 5) amount = 15.50; // ensure some minimum
+                    if (amount < 5) amount = 15.50;
 
                     var transactionDate = baseDate.AddHours(10 + (i * 2)).AddMinutes(random.Next(0, 60));
 
-                    transactions.Add(new Transaction
+                    var expense = new Transaction
                     {
                         CategoryId = category.Id,
                         Amount = amount,
                         Type = "Expense",
                         Note = ("mock expense " + baseDate.ToString("MMM dd") + " #" + (i + 1)).ToLower(),
-                        Date = transactionDate
-                    });
+                        Date = transactionDate,
+                        WalletId = cashWallet.Id
+                    };
+                    await AddTransactionAsync(expense);
                 }
             }
-
-            await db.InsertAllAsync(transactions);
         }
     }
 }
