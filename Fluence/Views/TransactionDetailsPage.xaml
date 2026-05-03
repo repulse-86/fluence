@@ -36,60 +36,60 @@
 
                 <StackPanel Grid.Column="0" Margin="0,0,5,0" HorizontalAlignment="Right">
                     <Grid Width="179.5" Height="175.5" Margin="0,0,0,10">
-                        <Rectangle Fill="{Binding TypeBrush, FallbackValue=Gray}" Opacity="0.4" />
+                        <Rectangle Fill="{Binding TypeBrush, FallbackValue=Gray}"  />
                         <Grid Margin="15">
                             <TextBlock Text="{Binding DisplayAmount, FallbackValue='0.00'}" FontSize="36" FontWeight="Bold" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-                            <TextBlock Text="amount" FontSize="14" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="amount" FontSize="14"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
 
                     <Grid Width="134.6" Height="134.6" HorizontalAlignment="Right" Margin="0,0,0,10">
-                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}"  />
                         <Grid Margin="12">
                             <TextBlock Text="{Binding CategoryName, FallbackValue='unknown'}" FontSize="22" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Bottom" TextWrapping="Wrap" />
-                            <TextBlock Text="category" FontSize="12" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="category" FontSize="12"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
 
                     <Grid Width="89.8" Height="89.8" HorizontalAlignment="Right" Margin="0,0,0,10">
-                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}"  />
                         <Grid Margin="10">
                             <TextBlock Text="{Binding WalletName, FallbackValue='unknown'}" FontSize="16" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Bottom" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="wallet" FontSize="11" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="wallet" FontSize="11"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Margin="5,0,0,0" HorizontalAlignment="Left">
                     <Grid Width="89.8" Height="89.8" HorizontalAlignment="Left" Margin="0,0,0,10">
-                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}"  />
                         <Grid Margin="10">
                             <TextBlock Text="{Binding DisplayDate, FallbackValue='date'}" FontSize="14" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Bottom" TextWrapping="Wrap" />
-                            <TextBlock Text="date" FontSize="11" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="date" FontSize="11"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
 
                     <Grid Width="134.6" Height="134.6" HorizontalAlignment="Left" Margin="0,0,0,10">
-                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}"  />
                         <Grid Margin="12">
                             <TextBlock Text="{Binding DisplayTime, FallbackValue='time'}" FontSize="24" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Bottom" />
-                            <TextBlock Text="time" FontSize="12" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="time" FontSize="12"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
 
                     <Grid Width="89.8" Height="89.8" HorizontalAlignment="Left" Margin="0,0,0,10">
-                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}"  />
                         <Grid Margin="10">
                             <TextBlock Text="{Binding Type, FallbackValue='type'}" FontSize="16" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Bottom" />
-                            <TextBlock Text="type" FontSize="11" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="type" FontSize="11"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
 
                     <Grid Width="134.6" MinHeight="134.6" HorizontalAlignment="Left" Margin="0,0,0,10" Visibility="{Binding Note, Converter={StaticResource StringToVisibilityConverter}}">
-                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                        <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}"  />
                         <Grid Margin="12">
                             <TextBlock Text="{Binding Note}" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="0,18,0,0" TextWrapping="Wrap" />
-                            <TextBlock Text="notes" FontSize="12" Opacity="0.6" Foreground="White" VerticalAlignment="Top" />
+                            <TextBlock Text="notes" FontSize="12"  Foreground="White" VerticalAlignment="Top" />
                         </Grid>
                     </Grid>
                 </StackPanel>
