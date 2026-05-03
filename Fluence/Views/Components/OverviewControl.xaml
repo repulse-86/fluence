@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <converters:WidthConverter x:Key="WidthConverter" />
         <converters:RunwayConverter x:Key="RunwayConverter" />
+        <converters:CurrencyConverter x:Key="CurrencyConverter" />
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -51,7 +52,6 @@
             </Border>
             <TextBlock Grid.Row="1" Text="monthly budget health" FontSize="20" Margin="0,0,0,20" Foreground="{ThemeResource SystemColorControlAccentBrush}" IsHitTestVisible="False" />
             
-            <!-- Advanced Hybrid Insights -->
             <Grid Grid.Row="2" Margin="0,0,0,20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -65,16 +65,16 @@
                 <TextBlock Grid.Row="3" Text="financial runway" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,0" IsHitTestVisible="False" />
             </Grid>
 
-            <TextBlock Grid.Row="3" Text="{Binding CurrentBalance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="3" Text="{Binding CurrentBalance, Converter={StaticResource CurrencyConverter}}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
             <TextBlock Grid.Row="4" Text="current balance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,20" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="5" Text="{Binding DailyAllowance, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="5" Text="{Binding DailyAllowance, Converter={StaticResource CurrencyConverter}}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
             <TextBlock Grid.Row="6" Text="daily allowance" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="7" Text="{Binding SpentToday, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="7" Text="{Binding SpentToday, Converter={StaticResource CurrencyConverter}}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
             <TextBlock Grid.Row="8" Text="spent today" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="9" Text="{Binding WeeklyTotal, ConverterParameter='N2'}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
+            <TextBlock Grid.Row="9" Text="{Binding WeeklyTotal, Converter={StaticResource CurrencyConverter}}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
             <TextBlock Grid.Row="10" Text="weekly total" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,-2,0,18" IsHitTestVisible="False" />
 
             <TextBlock Grid.Row="11" Text="{Binding TopCategory}" FontSize="36" FontWeight="Bold" TextTrimming="CharacterEllipsis" IsHitTestVisible="False" />

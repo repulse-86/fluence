@@ -52,7 +52,42 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <components:OverviewControl DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" />
+                    <components:OverviewControl DataContext="{Binding DefaultViewModel[HubViewModel], ElementName=pageRoot}" />
+                </DataTemplate>
+            </HubSection>
+
+            <HubSection Width="360" Padding="0">
+                <HubSection.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="wallets" FontSize="56" FontWeight="SemiLight" />
+                    </DataTemplate>
+                </HubSection.HeaderTemplate>
+                <DataTemplate>
+                    <GridView ItemsSource="{Binding DefaultViewModel[HubViewModel].Wallets, ElementName=pageRoot}" SelectionMode="None" Padding="0" Margin="0" Width="360">
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="155" Height="155" Margin="0,0,10,10">
+                                    <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
+                                    <Grid Margin="15">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiLight" VerticalAlignment="Top" TextTrimming="CharacterEllipsis" TextAlignment="Left" Foreground="White" />
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
+                                            <TextBlock Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" FontWeight="SemiBold" TextAlignment="Left" Foreground="White" />
+                                            <TextBlock Text="balance" FontSize="11" Opacity="0.6" Margin="0,-4,0,0" Foreground="White" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
                 </DataTemplate>
             </HubSection>
 
@@ -64,8 +99,8 @@
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
                     <components:HistoryControl
-                        Visibility="{Binding DefaultViewModel.HubViewModel.ContentVisibility, ElementName=pageRoot}"
-                        DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" />
+                        Visibility="{Binding DefaultViewModel[HubViewModel].ContentVisibility, ElementName=pageRoot}"
+                        DataContext="{Binding DefaultViewModel[HubViewModel], ElementName=pageRoot}" />
                 </DataTemplate>
             </HubSection>
 
@@ -77,8 +112,8 @@
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
                     <components:ReportsControl
-                        Visibility="{Binding DefaultViewModel.HubViewModel.ContentVisibility, ElementName=pageRoot}"
-                        DataContext="{Binding DefaultViewModel.HubViewModel, ElementName=pageRoot}" />
+                        Visibility="{Binding DefaultViewModel[HubViewModel].ContentVisibility, ElementName=pageRoot}"
+                        DataContext="{Binding DefaultViewModel[HubViewModel], ElementName=pageRoot}" />
                 </DataTemplate>
             </HubSection>
         </Hub>
@@ -90,6 +125,7 @@
                 Visibility="Visible" 
                 ClosedDisplayMode="Minimal">
             <AppBarButton x:Name="AddCategoryAppBarButton" Label="category" Icon="Bookmarks" Click="AddCategoryAppBarButton_Click" />
+            <AppBarButton x:Name="AddWalletAppBarButton" Label="wallet" Icon="BrowsePhotos" Click="AddWalletAppBarButton_Click" />
             <AppBarButton x:Name="QuickAddAppBarButton" Label="quick add" Icon="Add" Click="QuickAddAppBarButton_Click" />
             <AppBarButton x:Name="SettingsAppBarButton" Label="settings" Icon="Setting" Click="SettingsAppBarButton_Click" />
             <CommandBar.SecondaryCommands>

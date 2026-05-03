@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Input;
+using System.Threading.Tasks;
 
 namespace Fluence
 {
@@ -66,9 +67,10 @@ namespace Fluence
                 HubViewModel.IsDirty = false;
             }
 
-            if (HubViewModel.IsOverviewDirty)
+            if (HubViewModel.IsOverviewDirty || hubViewModel.Wallets == null || hubViewModel.Wallets.Count == 0)
             {
-                await this.hubViewModel.LoadOverviewAsync();
+                System.Diagnostics.Debug.WriteLine("HubPage: NavigationHelper_LoadState - Triggering LoadOverviewAsync");
+                await hubViewModel.LoadOverviewAsync();
                 HubViewModel.IsOverviewDirty = false;
             }
 
@@ -115,6 +117,14 @@ namespace Fluence
             if (!Frame.Navigate(typeof(QuickAddPage)))
             {
                 throw new Exception("Failed to navigate to quick add page.");
+            }
+        }
+
+        private void AddWalletAppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Frame.Navigate(typeof(SettingsPage), "wallet"))
+            {
+                throw new Exception("Failed to navigate to wallet management.");
             }
         }
 
@@ -191,7 +201,7 @@ namespace Fluence
 
         private static readonly System.Threading.SemaphoreSlim _backgroundLock = new System.Threading.SemaphoreSlim(1, 1);
 
-        private async System.Threading.Tasks.Task InitializeBackgroundAsync()
+        private async Task InitializeBackgroundAsync()
         {
             if (!await _backgroundLock.WaitAsync(0)) return;
 
