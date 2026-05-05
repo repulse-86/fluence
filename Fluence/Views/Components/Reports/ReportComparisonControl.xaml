@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="Fluence.Views.Components.ReportComparisonControl"
+    x:Class="Fluence.Views.Components.Reports.ReportComparisonControl"
     x:Name="controlRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

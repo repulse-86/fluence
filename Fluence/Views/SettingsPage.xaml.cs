@@ -7,7 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Fluence.Views
+namespace Fluence.Views.Management
 {
     public sealed partial class SettingsPage : Page
     {

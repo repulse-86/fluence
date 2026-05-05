@@ -2,7 +2,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Fluence.Common;
 
-namespace Fluence.Views
+namespace Fluence.Views.About
 {
     public sealed partial class AboutPage : Page
     {

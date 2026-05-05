@@ -1,5 +1,5 @@
 using Fluence.ViewModels;
-using Fluence.Views;
+using Fluence.Views.Transactions;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

@@ -1,6 +1,8 @@
 using Fluence.Common;
 using Fluence.ViewModels;
-using Fluence.Views;
+using Fluence.Views.About;
+using Fluence.Views.Management;
+using Fluence.Views.Transactions;
 using Fluence.Services;
 using System;
 using System.IO;

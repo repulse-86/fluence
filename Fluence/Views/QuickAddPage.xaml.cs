@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
-namespace Fluence.Views
+namespace Fluence.Views.Transactions
 {
     public sealed partial class QuickAddPage : Page
     {

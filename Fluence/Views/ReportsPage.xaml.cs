@@ -5,7 +5,7 @@ using System.Linq;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Fluence.Views
+namespace Fluence.Views.Reports
 {
     public class ReportsNavigationParameter
     {

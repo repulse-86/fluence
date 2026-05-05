@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Fluence"
     xmlns:components="using:Fluence.Views.Components"
+    xmlns:reports="using:Fluence.Views.Components.Reports"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Fluence.ViewModels"
@@ -111,7 +112,7 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <components:ReportsControl
+                    <reports:ReportsControl
                         Visibility="{Binding DefaultViewModel[HubViewModel].ContentVisibility, ElementName=pageRoot}"
                         DataContext="{Binding DefaultViewModel[HubViewModel], ElementName=pageRoot}" />
                 </DataTemplate>

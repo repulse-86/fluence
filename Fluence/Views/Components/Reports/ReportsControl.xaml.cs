@@ -1,8 +1,9 @@
 using Fluence.ViewModels;
+using Fluence.Views.Reports;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fluence.Views.Components
+namespace Fluence.Views.Components.Reports
 {
     public sealed partial class ReportsControl : UserControl
     {

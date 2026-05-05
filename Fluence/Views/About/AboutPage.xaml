@@ -1,8 +1,8 @@
 <Page
-    x:Class="Fluence.Views.AboutPage"
+    x:Class="Fluence.Views.About.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Fluence.Views"
+    xmlns:local="using:Fluence.Views.About"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -35,7 +35,7 @@
                     Margin="0,0,0,5" 
                     Foreground="{ThemeResource SystemColorControlAccentBrush}" IsHitTestVisible="False" />
                 <TextBlock Grid.Row="1"
-                    Text="1.0.0.0" 
+                    Text="1.2.0.0" 
                     FontSize="18" 
                     Margin="0,0,0,30" IsHitTestVisible="False" />
 

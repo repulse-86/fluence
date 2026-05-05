@@ -5,7 +5,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fluence.Views.Components
+namespace Fluence.Views.Components.Management
 {
     public sealed partial class SystemManagementControl : UserControl
     {

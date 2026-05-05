@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Navigation;
 using Fluence.Services;
 using System.Threading.Tasks;
 
-namespace Fluence.Views
+namespace Fluence.Views.Transactions
 {
     public sealed partial class TransactionDetailsPage : Page
     {

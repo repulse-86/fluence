@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -97,7 +97,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AboutPage.xaml">
+    <Page Include="Views\About\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -109,59 +109,59 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportsControl.xaml">
+    <Page Include="Views\Components\Reports\ReportsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportDistributionControl.xaml">
+    <Page Include="Views\Components\Reports\ReportDistributionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportBurnersControl.xaml">
+    <Page Include="Views\Components\Reports\ReportBurnersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportBreakdownControl.xaml">
+    <Page Include="Views\Components\Reports\ReportBreakdownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportComparisonControl.xaml">
+    <Page Include="Views\Components\Reports\ReportComparisonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportIntensityControl.xaml">
+    <Page Include="Views\Components\Reports\ReportIntensityControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportWeekdayControl.xaml">
+    <Page Include="Views\Components\Reports\ReportWeekdayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportRunwayControl.xaml">
+    <Page Include="Views\Components\Reports\ReportRunwayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportOpportunitiesControl.xaml">
+    <Page Include="Views\Components\Reports\ReportOpportunitiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ReportSpendingPatternsControl.xaml">
+    <Page Include="Views\Components\Reports\ReportSpendingPatternsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\CategoryManagementControl.xaml">
+    <Page Include="Views\Components\Management\CategoryManagementControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\WalletManagementControl.xaml">
+    <Page Include="Views\Components\Management\WalletManagementControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\ProfileManagementControl.xaml">
+    <Page Include="Views\Components\Management\ProfileManagementControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\SystemManagementControl.xaml">
+    <Page Include="Views\Components\Management\SystemManagementControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,7 +214,7 @@
     <Compile Include="Views\QuickAddPage.xaml.cs">
       <DependentUpon>QuickAddPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AboutPage.xaml.cs">
+    <Compile Include="Views\About\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\OverviewControl.xaml.cs">
@@ -223,50 +223,49 @@
     <Compile Include="Views\Components\HistoryControl.xaml.cs">
       <DependentUpon>HistoryControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportsControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportsControl.xaml.cs">
       <DependentUpon>ReportsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportDistributionControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportDistributionControl.xaml.cs">
       <DependentUpon>ReportDistributionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportBurnersControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportBurnersControl.xaml.cs">
       <DependentUpon>ReportBurnersControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportBreakdownControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportBreakdownControl.xaml.cs">
       <DependentUpon>ReportBreakdownControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportComparisonControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportComparisonControl.xaml.cs">
       <DependentUpon>ReportComparisonControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportIntensityControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportIntensityControl.xaml.cs">
       <DependentUpon>ReportIntensityControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportWeekdayControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportWeekdayControl.xaml.cs">
       <DependentUpon>ReportWeekdayControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportRunwayControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportRunwayControl.xaml.cs">
       <DependentUpon>ReportRunwayControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportOpportunitiesControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportOpportunitiesControl.xaml.cs">
       <DependentUpon>ReportOpportunitiesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ReportSpendingPatternsControl.xaml.cs">
+    <Compile Include="Views\Components\Reports\ReportSpendingPatternsControl.xaml.cs">
       <DependentUpon>ReportSpendingPatternsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\CategoryManagementControl.xaml.cs">
+    <Compile Include="Views\Components\Management\CategoryManagementControl.xaml.cs">
       <DependentUpon>CategoryManagementControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\WalletManagementControl.xaml.cs">
+    <Compile Include="Views\Components\Management\WalletManagementControl.xaml.cs">
       <DependentUpon>WalletManagementControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\ProfileManagementControl.xaml.cs">
+    <Compile Include="Views\Components\Management\ProfileManagementControl.xaml.cs">
       <DependentUpon>ProfileManagementControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\SystemManagementControl.xaml.cs">
+    <Compile Include="Views\Components\Management\SystemManagementControl.xaml.cs">
       <DependentUpon>SystemManagementControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
@@ -348,7 +347,11 @@
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Management\" />
+    <Folder Include="Views\Reports\" />
+    <Folder Include="Views\Transactions\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

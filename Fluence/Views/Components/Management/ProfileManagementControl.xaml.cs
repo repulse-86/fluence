@@ -3,7 +3,7 @@ using System.Linq;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Fluence.Views.Components
+namespace Fluence.Views.Components.Management
 {
     public sealed partial class ProfileManagementControl : UserControl
     {

@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="Fluence.Views.Components.ReportSpendingPatternsControl"
+    x:Class="Fluence.Views.Components.Reports.ReportSpendingPatternsControl"
     x:Name="root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

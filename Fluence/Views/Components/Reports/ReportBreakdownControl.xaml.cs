@@ -1,12 +1,12 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Fluence.Views.Components
+namespace Fluence.Views.Components.Reports
 {
-    public sealed partial class ReportWeekdayControl : UserControl
+    public sealed partial class ReportBreakdownControl : UserControl
     {
         public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register("Header", typeof(string), typeof(ReportWeekdayControl), new PropertyMetadata(null));
+            DependencyProperty.Register("Header", typeof(string), typeof(ReportBreakdownControl), new PropertyMetadata(null));
 
         public string Header
         {
@@ -14,7 +14,7 @@ namespace Fluence.Views.Components
             set { SetValue(HeaderProperty, value); }
         }
 
-        public ReportWeekdayControl()
+        public ReportBreakdownControl()
         {
             this.InitializeComponent();
         }
