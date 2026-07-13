@@ -10,7 +10,7 @@ namespace Fluence.Services
     class TransactionService : BaseDatabaseService
     {
         private readonly WalletService _walletService = new WalletService();
-        private readonly ProfileService _profileService = new ProfileService();
+        private readonly LimitsService _limitsService = new LimitsService();
 
         public async Task<List<Transaction>> GetTransactionsAsync()
         {
@@ -175,12 +175,21 @@ namespace Fluence.Services
             }
 
             var wallets = await _walletService.GetWalletsAsync();
-            var defaultWalletId = wallets.First().Id;
-            var transactionsWithoutWallet = await db.Table<Transaction>().Where(t => t.WalletId == 0).ToListAsync();
-            foreach (var t in transactionsWithoutWallet)
+            if (wallets.Count > 0)
             {
-                t.WalletId = defaultWalletId;
-                await db.UpdateAsync(t);
+                var defaultWallet = wallets.FirstOrDefault(w => w.Name == "cash" || w.IsDefault);
+                if (defaultWallet != null && !defaultWallet.IsDefault)
+                {
+                    defaultWallet.IsDefault = true;
+                    await _walletService.UpdateWalletAsync(defaultWallet);
+                }
+
+                var transactionsWithoutWallet = await db.Table<Transaction>().Where(t => t.WalletId == 0).ToListAsync();
+                foreach (var t in transactionsWithoutWallet)
+                {
+                    t.WalletId = defaultWallet.Id;
+                    await db.UpdateAsync(t);
+                }
             }
         }
 
@@ -267,11 +276,10 @@ namespace Fluence.Services
             var db = await GetDbAsync();
             await ClearTransactionsAsync();
             
-            var profile = await _profileService.GetProfileAsync();
-            double initialCash = profile?.InitialBalance ?? 81000;
+            var limits = await _limitsService.GetLimitsAsync();
 
             await db.ExecuteAsync("DELETE FROM Wallet");
-            var cashWallet = new Wallet { Name = "cash", Balance = initialCash };
+            var cashWallet = new Wallet { Name = "cash", Balance = 0, IsDefault = true };
             var savingsWallet = new Wallet { Name = "savings", Balance = 150000 };
             await db.InsertAsync(cashWallet);
             await db.InsertAsync(savingsWallet);

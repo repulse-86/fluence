@@ -16,11 +16,7 @@ namespace Fluence.Services
             
             if (wallets.Count == 0)
             {
-                var profileService = new ProfileService();
-                var profile = await profileService.GetProfileAsync();
-                double initialBalance = profile?.InitialBalance ?? 0;
-
-                var defaultWallet = new Wallet { Name = "cash", Balance = initialBalance };
+                var defaultWallet = new Wallet { Name = "cash", Balance = 0, IsDefault = true };
                 await AddWalletAsync(defaultWallet);
                 wallets = await db.Table<Wallet>().ToListAsync();
             }
@@ -55,7 +51,7 @@ namespace Fluence.Services
         {
             var db = await GetDbAsync();
             var wallet = await GetWalletByIdAsync(id);
-            if (wallet != null && wallet.Name != "cash")
+            if (wallet != null && !wallet.IsDefault)
             {
                 await db.DeleteAsync(wallet);
             }

@@ -38,8 +38,8 @@ namespace Fluence.Views.Components.Management
                 var categoryService = new CategoryService();
                 await categoryService.InitializeDatabaseSync();
 
-                var profileService = new ProfileService();
-                await profileService.SeedProfileAsync();
+                var limitsService = new LimitsService();
+                await limitsService.SeedLimitsAsync();
 
                 var transactionService = new TransactionService();
                 await transactionService.SeedTransactionsAsync();
@@ -57,7 +57,7 @@ namespace Fluence.Views.Components.Management
 
         private async void ClearData_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new MessageDialog("this will PERMANENTLY delete ALL-TIME transactions and reset your profile settings. this cannot be undone. proceed?", "DANGER: CLEAR ALL DATA");
+            var dialog = new MessageDialog("this will PERMANENTLY delete ALL-TIME transactions and reset your limits settings. this cannot be undone. proceed?", "DANGER: CLEAR ALL DATA");
             dialog.Commands.Add(new UICommand("clear everything") { Id = 0 });
             dialog.Commands.Add(new UICommand("cancel") { Id = 1 });
             dialog.DefaultCommandIndex = 1;
@@ -68,8 +68,8 @@ namespace Fluence.Views.Components.Management
                 var transactionService = new TransactionService();
                 await transactionService.ClearTransactionsAsync();
 
-                var profileService = new ProfileService();
-                await profileService.ClearProfileAsync();
+                var limitsService = new LimitsService();
+                await limitsService.ClearLimitsAsync();
 
                 HubViewModel.IsDirty = true;
 

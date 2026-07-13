@@ -222,7 +222,7 @@ namespace Fluence.ViewModels
     {
         private readonly TransactionService _transactionService = new TransactionService();
         private readonly CategoryService _categoryService = new CategoryService();
-        private readonly ProfileService _profileService = new ProfileService();
+        private readonly LimitsService _limitsService = new LimitsService();
         private readonly WalletService _walletService = new WalletService();
 
         public static bool IsDirty { get; set; } = true;
@@ -367,7 +367,7 @@ namespace Fluence.ViewModels
         public async Task LoadOverviewAsync()
         {
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Starting");
-            var profile = await _profileService.GetProfileAsync();
+            var limits = await _limitsService.GetLimitsAsync();
             
             try 
             {
@@ -386,9 +386,9 @@ namespace Fluence.ViewModels
                 System.Diagnostics.Debug.WriteLine($"HubViewModel: Error loading wallets: {ex.Message}");
             }
 
-            if (profile == null)
+            if (limits == null)
             {
-                profile = new Profile 
+                limits = new Limits 
                 { 
                     MonthlyLimit = 0, 
                     Payday = DateTime.Now, 
@@ -408,17 +408,17 @@ namespace Fluence.ViewModels
 
             DateTime now = DateTime.Now;
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Cycle Dates");
-            var cycle = AppHelper.GetCycleDates(now, profile.Payday.Day);
+            var cycle = AppHelper.GetCycleDates(now, limits.Payday.Day);
             
             DaysUntilPayday = (cycle.End - now.Date).Days;
             int daysRemaining = Math.Max(1, DaysUntilPayday + 1);
 
-            if (profile.MonthlyLimit > 0)
+            if (limits.MonthlyLimit > 0)
             {
                 System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Cycle Spent");
                 double cycleSpent = await _transactionService.GetExpenseSumAsync(cycle.Start, cycle.End);
-                BudgetPercent = Math.Min(100, (cycleSpent / profile.MonthlyLimit) * 100);
-                DailyAllowance = AppHelper.CalculateDailyAllowance(profile.MonthlyLimit, cycleSpent, daysRemaining);
+                BudgetPercent = Math.Min(100, (cycleSpent / limits.MonthlyLimit) * 100);
+                DailyAllowance = AppHelper.CalculateDailyAllowance(limits.MonthlyLimit, cycleSpent, daysRemaining);
             }
 
             DateTime today = now.Date;
@@ -426,7 +426,7 @@ namespace Fluence.ViewModels
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Spent Today");
             SpentToday = await _transactionService.GetExpenseSumAsync(today, tomorrow);
 
-            DayOfWeek weekStart = profile.WeekStart;
+            DayOfWeek weekStart = limits.WeekStart;
             int dayOfWeek = (int)today.DayOfWeek;
             int diff = (weekStart == DayOfWeek.Monday) ? (dayOfWeek == 0 ? 6 : dayOfWeek - 1) : dayOfWeek;
 
@@ -631,8 +631,8 @@ namespace Fluence.ViewModels
             var weekdays = await _transactionService.GetWeekdaySpendingAsync(start, end);
             var maxWeekday = weekdays.Any() ? weekdays.Max(x => x.TotalAmount) : 0;
             
-            var profile = await _profileService.GetProfileAsync();
-            DayOfWeek weekStartPreference = profile?.WeekStart ?? DayOfWeek.Sunday;
+            var limits = await _limitsService.GetLimitsAsync();
+            DayOfWeek weekStartPreference = limits?.WeekStart ?? DayOfWeek.Sunday;
             string[] allDays = { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
             
             report.WeekdaySpending.Clear();

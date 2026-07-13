@@ -97,6 +97,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\WalletPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\About\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,7 +161,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Components\Management\ProfileManagementControl.xaml">
+    <Page Include="Views\Components\Management\LimitsManagementControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,7 +188,7 @@
     <Compile Include="HubPage.xaml.cs">
       <DependentUpon>HubPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\Limits.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\Wallet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -192,13 +196,13 @@
     <Compile Include="Services\AppHelper.cs" />
     <Compile Include="Services\BaseDatabaseService.cs" />
     <Compile Include="Services\CategoryService.cs" />
-    <Compile Include="Services\ProfileService.cs" />
+    <Compile Include="Services\LimitsService.cs" />
     <Compile Include="Services\TileService.cs" />
     <Compile Include="Services\TransactionService.cs" />
     <Compile Include="Services\WalletService.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="ViewModels\HubViewModel.cs" />
-    <Compile Include="ViewModels\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\LimitsViewModel.cs" />
     <Compile Include="ViewModels\SystemViewModel.cs" />
     <Compile Include="ViewModels\TransactionViewModel.cs" />
     <Compile Include="ViewModels\WalletViewModel.cs" />
@@ -213,6 +217,9 @@
     </Compile>
     <Compile Include="Views\QuickAddPage.xaml.cs">
       <DependentUpon>QuickAddPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WalletPage.xaml.cs">
+      <DependentUpon>WalletPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\About\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -259,8 +266,8 @@
     <Compile Include="Views\Components\Management\WalletManagementControl.xaml.cs">
       <DependentUpon>WalletManagementControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Components\Management\ProfileManagementControl.xaml.cs">
-      <DependentUpon>ProfileManagementControl.xaml</DependentUpon>
+    <Compile Include="Views\Components\Management\LimitsManagementControl.xaml.cs">
+      <DependentUpon>LimitsManagementControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Components\Management\SystemManagementControl.xaml.cs">
       <DependentUpon>SystemManagementControl.xaml</DependentUpon>

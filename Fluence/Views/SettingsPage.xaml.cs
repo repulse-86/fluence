@@ -1,6 +1,7 @@
 using Fluence.Common;
 using Fluence.Models;
 using Fluence.ViewModels;
+using Fluence.Views;
 using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -12,13 +13,13 @@ namespace Fluence.Views.Management
     public sealed partial class SettingsPage : Page
     {
         private CategoryViewModel _categoryViewModel;
-        private ProfileViewModel _profileViewModel;
+        private LimitsViewModel _limitsViewModel;
         private WalletViewModel _walletViewModel;
         private SystemViewModel _systemViewModel;
         private readonly NavigationHelper navigationHelper;
 
         public CategoryViewModel CategoryVM => _categoryViewModel;
-        public ProfileViewModel ProfileVM => _profileViewModel;
+        public LimitsViewModel LimitsVM => _limitsViewModel;
         public WalletViewModel WalletVM => _walletViewModel;
         public SystemViewModel SystemVM => _systemViewModel;
 
@@ -26,7 +27,7 @@ namespace Fluence.Views.Management
         {
             this.InitializeComponent();
             _categoryViewModel = new CategoryViewModel();
-            _profileViewModel = new ProfileViewModel();
+            _limitsViewModel = new LimitsViewModel();
             _walletViewModel = new WalletViewModel();
             _systemViewModel = new SystemViewModel();
             this.DataContext = this;
@@ -51,7 +52,7 @@ namespace Fluence.Views.Management
             this.navigationHelper.OnNavigatedTo(e);
 
             await _categoryViewModel.LoadCategoriesAsync();
-            await _profileViewModel.LoadProfileDetailsAsync();
+            await _limitsViewModel.LoadLimitsDetailsAsync();
 
             if (e.Parameter != null)
             {
@@ -60,9 +61,9 @@ namespace Fluence.Views.Management
                 {
                     SettingsPivot.SelectedItem = CategoryPivotItem;
                 }
-                else if (target == "profile")
+                else if (target == "limits")
                 {
-                    SettingsPivot.SelectedItem = ProfilePivotItem;
+                    SettingsPivot.SelectedItem = LimitsPivotItem;
                 }
                 else if (target == "wallet")
                 {
@@ -90,15 +91,15 @@ namespace Fluence.Views.Management
                 PrimaryAppBarButton.Label = _categoryViewModel.SaveButtonLabel;
                 PrimaryAppBarButton.Icon = new SymbolIcon(_categoryViewModel.SaveButtonSymbol);
             }
-            else if (SettingsPivot.SelectedItem == ProfilePivotItem)
+            else if (SettingsPivot.SelectedItem == LimitsPivotItem)
             {
-                PrimaryAppBarButton.Label = _profileViewModel.SaveButtonLabel;
-                PrimaryAppBarButton.Icon = new SymbolIcon(_profileViewModel.SaveButtonSymbol);
+                PrimaryAppBarButton.Label = _limitsViewModel.SaveButtonLabel;
+                PrimaryAppBarButton.Icon = new SymbolIcon(_limitsViewModel.SaveButtonSymbol);
             }
             else if (SettingsPivot.SelectedItem == WalletPivotItem)
             {
-                PrimaryAppBarButton.Label = "save";
-                PrimaryAppBarButton.Icon = new SymbolIcon(Symbol.Save);
+                PrimaryAppBarButton.Label = "add";
+                PrimaryAppBarButton.Icon = new SymbolIcon(Symbol.Add);
             }
             else if (SettingsPivot.SelectedItem == SystemPivotItem)
             {
@@ -129,42 +130,28 @@ namespace Fluence.Views.Management
                 });
                 UpdateAppBar();
             }
-            else if (SettingsPivot.SelectedItem == ProfilePivotItem)
+            else if (SettingsPivot.SelectedItem == LimitsPivotItem)
             {
-                if (_profileViewModel.IsBusy) return;
+                if (_limitsViewModel.IsBusy) return;
 
-                if (!_profileViewModel.IsEditing)
+                if (!_limitsViewModel.IsEditing)
                 {
-                    _profileViewModel.IsEditing = true;
+                    _limitsViewModel.IsEditing = true;
                 }
                 else
                 {
-                    bool success = await _profileViewModel.SaveProfileDetailsAsync();
+                    bool success = await _limitsViewModel.SaveLimitsDetailsAsync();
                     if (success)
                     {
                         HubViewModel.IsDirty = true;
-                        _profileViewModel.IsEditing = false;
+                        _limitsViewModel.IsEditing = false;
                     }
                 }
                 UpdateAppBar();
             }
             else if (SettingsPivot.SelectedItem == WalletPivotItem)
             {
-                if (_walletViewModel.IsBusy) return;
-
-                double balance;
-                double.TryParse(_walletViewModel.WalletBalance, out balance);
-
-                var wallet = _walletViewModel.SelectedWallet ?? new Wallet();
-                wallet.Name = _walletViewModel.WalletName;
-                wallet.Balance = balance;
-
-                await _walletViewModel.SaveWalletAsync(wallet);
-                _walletViewModel.SelectedWallet = null;
-                _walletViewModel.WalletName = string.Empty;
-                _walletViewModel.WalletBalance = string.Empty;
-                HubViewModel.IsOverviewDirty = true;
-                UpdateAppBar();
+                Frame.Navigate(typeof(WalletPage));
             }
             else if (SettingsPivot.SelectedItem == SystemPivotItem)
             {
@@ -189,7 +176,7 @@ namespace Fluence.Views.Management
         private async void SystemControl_DataChanged(object sender, EventArgs e)
         {
             await _categoryViewModel.LoadCategoriesAsync();
-            await _profileViewModel.LoadProfileDetailsAsync();
+            await _limitsViewModel.LoadLimitsDetailsAsync();
             await _walletViewModel.LoadWalletsAsync();
             UpdateAppBar();
         }

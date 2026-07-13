@@ -29,8 +29,8 @@
                 <components:WalletManagementControl x:Name="WalletControl" DataContext="{Binding WalletVM}" />
             </PivotItem>
 
-            <PivotItem x:Name="ProfilePivotItem" Header="profile">
-                <components:ProfileManagementControl x:Name="ProfileControl" DataContext="{Binding ProfileVM}" />
+            <PivotItem x:Name="LimitsPivotItem" Header="limits">
+                <components:LimitsManagementControl x:Name="LimitsControl" DataContext="{Binding LimitsVM}" />
             </PivotItem>
 
             <PivotItem x:Name="SystemPivotItem" Header="system">

@@ -1,5 +1,7 @@
 using Fluence.Common;
+using Fluence.Models;
 using Fluence.ViewModels;
+using Fluence.Views;
 using Fluence.Views.About;
 using Fluence.Views.Management;
 using Fluence.Views.Transactions;
@@ -143,6 +145,15 @@ namespace Fluence
             if (!Frame.Navigate(typeof(AboutPage)))
             {
                 throw new Exception("Failed to navigate to about page.");
+            }
+        }
+
+        private void WalletsGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var wallet = e.ClickedItem as Wallet;
+            if (wallet != null)
+            {
+                Frame.Navigate(typeof(WalletPage), wallet.Id);
             }
         }
 

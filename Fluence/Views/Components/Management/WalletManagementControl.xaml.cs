@@ -1,5 +1,6 @@
 using Fluence.Models;
 using Fluence.ViewModels;
+using Fluence.Views;
 using System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -15,9 +16,6 @@ namespace Fluence.Views.Components.Management
         {
             this.InitializeComponent();
         }
-
-        public TextBox WalletNameInput => WalletNameTextBox;
-        public TextBox WalletBalanceInput => WalletBalanceTextBox;
 
         private void WalletBorder_Holding(object sender, HoldingRoutedEventArgs e)
         {
@@ -35,16 +33,14 @@ namespace Fluence.Views.Components.Management
         {
             var menuItem = sender as MenuFlyoutItem;
             Wallet wallet = menuItem.DataContext as Wallet;
-            var viewModel = this.DataContext as WalletViewModel;
 
-            if (wallet != null && viewModel != null)
+            if (wallet != null)
             {
-                viewModel.SelectedWallet = wallet;
-                viewModel.WalletName = wallet.Name;
-                viewModel.WalletBalance = wallet.Balance.ToString();
-                
-                WalletNameTextBox.Focus(FocusState.Programmatic);
-                WalletNameTextBox.SelectAll();
+                var frame = Window.Current.Content as Frame;
+                if (frame != null)
+                {
+                    frame.Navigate(typeof(WalletPage), wallet.Id);
+                }
             }
         }
 

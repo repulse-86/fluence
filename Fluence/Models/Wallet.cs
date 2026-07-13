@@ -8,6 +8,7 @@ namespace Fluence.Models
     {
         private string _name;
         private double _balance;
+        private bool _isDefault;
 
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -34,6 +35,19 @@ namespace Fluence.Models
                 if (_balance != value)
                 {
                     _balance = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsDefault
+        {
+            get { return _isDefault; }
+            set
+            {
+                if (_isDefault != value)
+                {
+                    _isDefault = value;
                     OnPropertyChanged();
                 }
             }

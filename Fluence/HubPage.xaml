@@ -64,7 +64,7 @@
                     </DataTemplate>
                 </HubSection.HeaderTemplate>
                 <DataTemplate>
-                    <GridView ItemsSource="{Binding DefaultViewModel[HubViewModel].Wallets, ElementName=pageRoot}" SelectionMode="None" Padding="0" Margin="0" Width="360">
+                    <GridView ItemsSource="{Binding DefaultViewModel[HubViewModel].Wallets, ElementName=pageRoot}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="WalletsGridView_ItemClick" Padding="0" Margin="0" Width="360">
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsWrapGrid MaximumRowsOrColumns="2" Orientation="Horizontal" />
@@ -72,14 +72,17 @@
                         </GridView.ItemsPanel>
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Width="155" Height="155" Margin="0,0,10,10" IsHitTestVisible="False">
+                                <Grid Width="155" Height="155" Margin="0,0,10,10">
                                     <Rectangle Fill="{ThemeResource SystemColorControlAccentBrush}" Opacity="0.4" />
                                     <Grid Margin="15">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiLight" VerticalAlignment="Top" TextTrimming="CharacterEllipsis" TextAlignment="Left" Foreground="White" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                            <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextAlignment="Left" Foreground="White" />
+                                            <TextBlock Text="*" FontSize="16" Foreground="White" Margin="4,0,0,0" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        </StackPanel>
                                         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
                                             <TextBlock Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" FontWeight="SemiBold" TextAlignment="Left" Foreground="White" />
                                             <TextBlock Text="balance" FontSize="11" Opacity="0.6" Margin="0,-4,0,0" Foreground="White" />
