@@ -1,0 +1,73 @@
+<UserControl
+    x:Class="Fluence.Views.Components.Management.LimitsManagementControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Fluence.Views.Components.Management"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="600"
+    d:DesignWidth="400">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid Visibility="{Binding ViewVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{Binding CurrentBalanceDisplay, ConverterParameter='N2'}" FontSize="24" FontWeight="Thin" TextWrapping="Wrap" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="1" Text="total balance" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+
+                <TextBlock Grid.Row="2" Text="{Binding MonthlyIncomeText, ConverterParameter='N2'}" FontSize="24" TextWrapping="Wrap" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="3" Text="monthly income" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+
+                <TextBlock Grid.Row="4" Text="{Binding MonthlyLimitText, ConverterParameter='N2'}" FontSize="24" TextWrapping="Wrap" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="5" Text="monthly limit" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+
+                <TextBlock Grid.Row="6" Text="{Binding PaydayFormatted}" FontSize="24" TextWrapping="Wrap" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="7" Text="payday" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+
+                <TextBlock Grid.Row="8" Text="{Binding WeekStartFormatted}" FontSize="24" TextWrapping="Wrap" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="9" Text="week start" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" TextWrapping="Wrap" Margin="0,0,0,25" IsHitTestVisible="False" />
+            </Grid>
+
+            <Grid Visibility="{Binding EditVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="monthly income" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                <TextBox Grid.Row="1" x:Name="MonthlyIncome" Text="{Binding MonthlyIncomeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                <TextBlock Grid.Row="2" Text="{Binding MonthlyIncomeErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
+
+                <TextBlock Grid.Row="3" Text="monthly limit" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                <TextBox Grid.Row="4" x:Name="MonthlyLimit" Text="{Binding MonthlyLimitText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputScope="Number" KeyDown="AmountTextBox_KeyDown" TextChanged="AmountTextBox_TextChanged" />
+                <TextBlock Grid.Row="5" Text="{Binding MonthlyLimitErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
+
+                <TextBlock Grid.Row="6" Text="payday of the month" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+                <DatePicker Grid.Row="7" x:Name="Payday" Date="{Binding Payday, Mode=TwoWay}" />
+                <TextBlock Grid.Row="8" Text="{Binding PaydayErrorMessage}" Foreground="Red" Margin="0,5,0,10" TextWrapping="Wrap" IsHitTestVisible="False" />
+
+                <ToggleSwitch Grid.Row="9" Header="start week on monday" IsOn="{Binding IsMondayFirst, Mode=TwoWay}" Margin="0,10,0,0" />
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
