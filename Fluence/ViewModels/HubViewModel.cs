@@ -418,7 +418,13 @@ namespace Fluence.ViewModels
                 System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Cycle Spent");
                 double cycleSpent = await _transactionService.GetExpenseSumAsync(cycle.Start, cycle.End);
                 BudgetPercent = Math.Min(100, (cycleSpent / limits.MonthlyLimit) * 100);
-                DailyAllowance = AppHelper.CalculateDailyAllowance(limits.MonthlyLimit, cycleSpent, daysRemaining);
+            }
+
+            if (limits.MonthlyIncome > 0)
+            {
+                System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Calculating Daily Allowance from Income");
+                double cycleSpent = await _transactionService.GetExpenseSumAsync(cycle.Start, cycle.End);
+                DailyAllowance = AppHelper.CalculateDailyAllowance(limits.MonthlyIncome, cycleSpent, daysRemaining);
             }
 
             DateTime today = now.Date;
@@ -445,7 +451,10 @@ namespace Fluence.ViewModels
 
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Daily Burn");
             double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
-            RunwayDays = AppHelper.CalculateRunwayDays(CurrentBalance, dailyBurn);
+            double daysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+            double expectedIncome = limits.MonthlyIncome * ((double)daysRemaining / daysInMonth);
+            double adjustedBalance = CurrentBalance + expectedIncome;
+            RunwayDays = AppHelper.CalculateRunwayDays(adjustedBalance, dailyBurn);
 
             System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Updating Tile");
             TileService.UpdateLiveTile(BudgetPercent, CurrentBalance, DailyAllowance, SpentToday, WeeklyTotal, TopCategory);
@@ -647,8 +656,14 @@ namespace Fluence.ViewModels
             }
 
             double dailyBurn = await _transactionService.GetTrailing30DayDailyBurnRateAsync();
-            report.RunwayDays = AppHelper.CalculateRunwayDays(CurrentBalance, dailyBurn);
-            report.RunwayExplanation = "based on your average daily spending over the last 30 days.";
+            int cycleDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+            int nextPayday = (limits?.Payday ?? DateTime.Now.AddDays(1)).Day;
+            var cycle = AppHelper.GetCycleDates(DateTime.Now, nextPayday);
+            int daysLeft = Math.Max(1, (cycle.End - DateTime.Now.Date).Days + 1);
+            double expectedIncome = (limits?.MonthlyIncome ?? 0) * ((double)daysLeft / cycleDaysInMonth);
+            double adjustedBalance = CurrentBalance + expectedIncome;
+            report.RunwayDays = AppHelper.CalculateRunwayDays(adjustedBalance, dailyBurn);
+            report.RunwayExplanation = "based on your average daily spending and expected income.";
 
             report.SavingOpportunities.Clear();
             var highTrend = newDistribution.Where(x => x.Trend > 20).OrderByDescending(x => x.Trend).Take(3);

@@ -60,7 +60,8 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="{Binding RunwayDays, Converter={StaticResource RunwayConverter}}" FontSize="36" FontWeight="Bold" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="1" Text="estimated days left until balance reaches zero" FontSize="14" Margin="0,2,0,0" IsHitTestVisible="False" />
+                <TextBlock Grid.Row="1" Text="estimated days of runway"
+                    FontSize="14" Margin="0,2,0,0" IsHitTestVisible="False" />
                 <TextBlock Grid.Row="2" Text="{Binding SavingOpportunitiesSummary}" FontSize="12" Foreground="Gray" Margin="0,5,0,5" IsHitTestVisible="False" />
                 <TextBlock Grid.Row="3" Text="financial runway" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,0" IsHitTestVisible="False" />
             </Grid>

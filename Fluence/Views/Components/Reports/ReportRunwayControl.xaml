@@ -26,9 +26,9 @@
             <TextBlock Grid.Column="1" Text="days left" FontSize="20" Opacity="1.0" VerticalAlignment="Bottom" Margin="0,0,0,10" IsHitTestVisible="False" />
         </Grid>
         <TextBlock Grid.Row="2" FontSize="14" Opacity="1.0" Margin="0,15,0,0" TextWrapping="Wrap" IsHitTestVisible="False">
-            <Run Text="estimated until balance reaches zero. " />
-            <Run Text="the financial runway is calculated by dividing your current balance by your average daily spending over the trailing 30 days. " />
-            <Run Text="formula: balance / (total expenses last 30 days / 30)" FontStyle="Italic" />
+            <Run Text="estimated days until your money runs out, factoring in expected income before your next payday. " />
+            <Run Text="the financial runway is calculated by adding your current balance and expected upcoming income, then dividing by your average daily spending over the trailing 30 days. " />
+            <Run Text="formula: (balance + expected income) / (total expenses last 30 days / 30)" FontStyle="Italic" />
         </TextBlock>
         <TextBlock Grid.Row="3" Text="{Binding SavingOpportunitiesSummary}" FontSize="14" Foreground="White" Margin="0,5,0,0" IsHitTestVisible="False" />
     </Grid>
