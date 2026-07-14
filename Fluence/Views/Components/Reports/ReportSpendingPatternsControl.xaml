@@ -14,6 +14,6 @@
         <TextBlock Grid.Row="1" FontSize="16" TextWrapping="Wrap" Margin="0,5,0,0" IsHitTestVisible="False">
             <Run Text="you spend most on " /><Run Text="{Binding MostSpentDay}" FontWeight="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run Text=" while "/><Run Text="{Binding MostSpentMonth}" FontWeight="SemiBold" Foreground="{ThemeResource SystemColorControlAccentBrush}" /><Run Text=" was your highest spending month" />
         </TextBlock>
-        <TextBlock Grid.Row="2" Text="suggested: try reducing weekend spending to increase runway." FontSize="14" FontStyle="Italic" TextWrapping="Wrap" IsHitTestVisible="False" />
+        <TextBlock Grid.Row="2" Text="{Binding SpendingSuggestion}" FontSize="14" FontStyle="Italic" TextWrapping="Wrap" IsHitTestVisible="False" />
     </Grid>
 </UserControl>

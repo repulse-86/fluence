@@ -180,7 +180,12 @@ namespace Fluence.ViewModels
         public string MostSpentDay
         {
             get { return _mostSpentDay; }
-            set { _mostSpentDay = value; OnPropertyChanged(); }
+            set
+            {
+                _mostSpentDay = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(SpendingSuggestion));
+            }
         }
 
         private string _mostSpentMonth;
@@ -188,6 +193,16 @@ namespace Fluence.ViewModels
         {
             get { return _mostSpentMonth; }
             set { _mostSpentMonth = value; OnPropertyChanged(); }
+        }
+
+        public string SpendingSuggestion
+        {
+            get
+            {
+                string day = _mostSpentDay;
+                if (string.IsNullOrEmpty(day)) return "suggested: review your spending patterns to increase runway.";
+                return $"suggested: try reducing {day} spending to increase runway.";
+            }
         }
 
         private string _runwayExplanation;
@@ -292,8 +307,8 @@ namespace Fluence.ViewModels
         {
             get
             {
-                if (_budgetPercent < AppConstants.BudgetHealthThresholdSafe) return new SolidColorBrush(AppConstants.IncomeColor);
-                if (_budgetPercent < AppConstants.BudgetHealthThresholdWarning) return new SolidColorBrush(AppConstants.WarningColor);
+                if (_budgetPercent > AppConstants.BudgetHealthThresholdSafe) return new SolidColorBrush(AppConstants.IncomeColor);
+                if (_budgetPercent > (100 - AppConstants.BudgetHealthThresholdWarning)) return new SolidColorBrush(AppConstants.WarningColor);
                 return new SolidColorBrush(AppConstants.ExpenseColor);
             }
         }
@@ -417,7 +432,7 @@ namespace Fluence.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine("HubViewModel: LoadOverviewAsync - Fetching Cycle Spent");
                 double cycleSpent = await _transactionService.GetExpenseSumAsync(cycle.Start, cycle.End);
-                BudgetPercent = Math.Min(100, (cycleSpent / limits.MonthlyLimit) * 100);
+                BudgetPercent = Math.Max(0, 100 - Math.Min(100, (cycleSpent / limits.MonthlyLimit) * 100));
             }
 
             if (limits.MonthlyIncome > 0)
@@ -666,7 +681,9 @@ namespace Fluence.ViewModels
             report.RunwayExplanation = "based on your average daily spending and expected income.";
 
             report.SavingOpportunities.Clear();
-            var highTrend = newDistribution.Where(x => x.Trend > 20).OrderByDescending(x => x.Trend).Take(3);
+            var prevSums = await _transactionService.GetCategorySummariesAsync(prevStart, prevEnd);
+            var hasPrevData = prevSums.Any(s => s.TotalAmount > 0);
+            var highTrend = hasPrevData ? newDistribution.Where(x => x.Trend > 20).OrderByDescending(x => x.Trend).Take(3) : Enumerable.Empty<ReportCategoryItem>();
             foreach (var op in highTrend)
             {
                 report.SavingOpportunities.Add(new SavingOpportunity {
