@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Fluence.Models
+{
+    public class Limits
+    {
+        public double MonthlyIncome { get; set; }
+        public double MonthlyLimit { get; set; }
+        public DateTime Payday { get; set; }
+        public DayOfWeek WeekStart { get; set; } = DayOfWeek.Sunday;
+    }
+}
