@@ -27,8 +27,8 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <local:ReportComparisonControl Grid.Row="0" Header="comparison" TrendText="vs yesterday" />
-                        <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" Margin="0,20,0,10" />
-                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="today" />
+                        <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" Margin="0,20,0,0" />
+                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,5,0,5" Click="ShowMore_Click" Tag="today" />
                     </Grid>
                 </ScrollViewer>
             </PivotItem>
@@ -43,7 +43,7 @@
                         </Grid.RowDefinitions>
                         <local:ReportComparisonControl Grid.Row="0" Header="comparison" TrendText="vs last month" />
                         <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" />
-                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="month" />
+                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,5,0,5" Click="ShowMore_Click" Tag="month" />
                     </Grid>
                 </ScrollViewer>
             </PivotItem>
@@ -58,7 +58,7 @@
                         </Grid.RowDefinitions>
                         <local:ReportComparisonControl Grid.Row="0" Header="comparison" TrendText="vs last year" />
                         <local:ReportBurnersControl Grid.Row="1" Header="top budget burners" DataContext="{Binding BudgetBurners}" />
-                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,20,0,20" Click="ShowMore_Click" Tag="year" />
+                        <Button Grid.Row="2" Content="show more" HorizontalAlignment="Stretch" Margin="0,5,0,5" Click="ShowMore_Click" Tag="year" />
                     </Grid>
                 </ScrollViewer>
             </PivotItem>
