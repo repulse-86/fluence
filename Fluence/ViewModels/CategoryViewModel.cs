@@ -17,6 +17,30 @@ namespace Fluence.ViewModels
         private Category _selectedCategory;
         private string _categoryName;
         private string _errorMessage;
+        private bool _isEditing;
+
+        public bool IsEditing
+        {
+            get { return _isEditing; }
+            set
+            {
+                if (_isEditing != value)
+                {
+                    _isEditing = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged("ViewVisibility");
+                    OnPropertyChanged("EditVisibility");
+                    OnPropertyChanged("SaveButtonLabel");
+                    OnPropertyChanged("SaveButtonSymbol");
+                }
+            }
+        }
+
+        public Windows.UI.Xaml.Visibility ViewVisibility => IsEditing ? Windows.UI.Xaml.Visibility.Collapsed : Windows.UI.Xaml.Visibility.Visible;
+        public Windows.UI.Xaml.Visibility EditVisibility => IsEditing ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
+
+        public string SaveButtonLabel => IsEditing ? "save" : "add";
+        public Symbol SaveButtonSymbol => IsEditing ? Symbol.Save : Symbol.Add;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,14 +55,9 @@ namespace Fluence.ViewModels
                 {
                     _selectedCategory = value; 
                     OnPropertyChanged(); 
-                    OnPropertyChanged("SaveButtonLabel"); 
-                    OnPropertyChanged("SaveButtonSymbol");
                 }
             }
         }
-
-        public string SaveButtonLabel => SelectedCategory == null ? "save" : "update";
-        public Symbol SaveButtonSymbol => SelectedCategory == null ? Symbol.Save : Symbol.Edit;
 
         public bool IsBusy
         {
@@ -139,6 +158,7 @@ namespace Fluence.ViewModels
                     SelectedCategory = null;
                 }
                 CategoryName = string.Empty;
+                IsEditing = false;
             }
             catch (Exception ex)
             {
