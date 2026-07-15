@@ -10,12 +10,45 @@
     d:DesignWidth="400">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid Visibility="{Binding ViewVisibility}">
+            <ListView ItemsSource="{Binding Categories}"
+                      HorizontalContentAlignment="Stretch" 
+                      ShowsScrollingPlaceholders="False"
+                      Margin="0,0,0,8">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray"
+                                BorderThickness="0,0,0,0.5"
+                                HorizontalAlignment="Stretch"
+                                Background="Transparent"
+                                Holding="CategoryBorder_Holding">
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="edit" Click="EditCategory_Click" />
+                                    <MenuFlyoutItem Text="delete" Click="DeleteCategory_Click" />
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                            <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" Margin="0,14,0,14" />
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
 
-        <Grid Grid.Row="0">
+        <Grid Visibility="{Binding EditVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -25,41 +58,5 @@
             <TextBox Grid.Row="1" x:Name="CategoryTextBox" Text="{Binding CategoryName, Mode=TwoWay}" PlaceholderText="e.g. transportation" />
             <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" IsHitTestVisible="False" />
         </Grid>
-
-        <ListView Grid.Row="1" 
-                  ItemsSource="{Binding Categories}"
-                  HorizontalContentAlignment="Stretch" 
-                  ShowsScrollingPlaceholders="False">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="Margin" Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="Gray"
-                            BorderThickness="0,0,0,0.5"
-                            HorizontalAlignment="Stretch"
-                            Background="Transparent"
-                            Holding="CategoryBorder_Holding">
-                        <FlyoutBase.AttachedFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="edit" Click="EditCategory_Click" />
-                                <MenuFlyoutItem Text="delete" Click="DeleteCategory_Click" />
-                            </MenuFlyout>
-                        </FlyoutBase.AttachedFlyout>
-                        <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" Margin="0,14,0,14" />
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
     </Grid>
 </UserControl>

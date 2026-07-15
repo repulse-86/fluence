@@ -17,6 +17,7 @@ namespace Fluence.Views.Management
         private WalletViewModel _walletViewModel;
         private SystemViewModel _systemViewModel;
         private readonly NavigationHelper navigationHelper;
+        private int _lastPivotIndex;
 
         public CategoryViewModel CategoryVM => _categoryViewModel;
         public LimitsViewModel LimitsVM => _limitsViewModel;
@@ -53,6 +54,7 @@ namespace Fluence.Views.Management
 
             await _categoryViewModel.LoadCategoriesAsync();
             await _limitsViewModel.LoadLimitsDetailsAsync();
+            await _walletViewModel.LoadWalletsAsync();
 
             if (e.Parameter != null)
             {
@@ -68,7 +70,13 @@ namespace Fluence.Views.Management
                 else if (target == "wallet")
                 {
                     SettingsPivot.SelectedItem = WalletPivotItem;
-                    await _walletViewModel.LoadWalletsAsync();
+                }
+            }
+            else if (e.NavigationMode == NavigationMode.Back)
+            {
+                if (_lastPivotIndex >= 0 && _lastPivotIndex < SettingsPivot.Items.Count)
+                {
+                    SettingsPivot.SelectedIndex = _lastPivotIndex;
                 }
             }
             UpdateAppBar();
@@ -76,6 +84,7 @@ namespace Fluence.Views.Management
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            _lastPivotIndex = SettingsPivot.SelectedIndex;
             this.navigationHelper.OnNavigatedFrom(e);
         }
 
@@ -98,8 +107,8 @@ namespace Fluence.Views.Management
             }
             else if (SettingsPivot.SelectedItem == WalletPivotItem)
             {
-                PrimaryAppBarButton.Label = "add";
-                PrimaryAppBarButton.Icon = new SymbolIcon(Symbol.Add);
+                PrimaryAppBarButton.Label = _walletViewModel.SaveButtonLabel;
+                PrimaryAppBarButton.Icon = new SymbolIcon(_walletViewModel.SaveButtonSymbol);
             }
             else if (SettingsPivot.SelectedItem == SystemPivotItem)
             {
@@ -116,18 +125,17 @@ namespace Fluence.Views.Management
         {
             if (SettingsPivot.SelectedItem == CategoryPivotItem)
             {
-                if (_categoryViewModel.IsBusy) return;
-
-                await _categoryViewModel.SaveCategoryAsync();
-                HubViewModel.IsDirty = true;
-                
-                CategoryControl.CategoryNameInput.IsEnabled = false;
-                this.Focus(FocusState.Programmatic);
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                if (!_categoryViewModel.IsEditing)
                 {
-                    CategoryControl.CategoryNameInput.IsEnabled = true;
-                    Windows.UI.ViewManagement.InputPane.GetForCurrentView().TryHide();
-                });
+                    _categoryViewModel.IsEditing = true;
+                }
+                else
+                {
+                    if (_categoryViewModel.IsBusy) return;
+
+                    await _categoryViewModel.SaveCategoryAsync();
+                    HubViewModel.IsDirty = true;
+                }
                 UpdateAppBar();
             }
             else if (SettingsPivot.SelectedItem == LimitsPivotItem)
@@ -151,7 +159,18 @@ namespace Fluence.Views.Management
             }
             else if (SettingsPivot.SelectedItem == WalletPivotItem)
             {
-                Frame.Navigate(typeof(WalletPage));
+                if (!_walletViewModel.IsEditing)
+                {
+                    _walletViewModel.IsEditing = true;
+                }
+                else
+                {
+                    if (_walletViewModel.IsBusy) return;
+
+                    await _walletViewModel.SaveWalletFromFormAsync();
+                    HubViewModel.IsOverviewDirty = true;
+                }
+                UpdateAppBar();
             }
             else if (SettingsPivot.SelectedItem == SystemPivotItem)
             {
@@ -162,14 +181,14 @@ namespace Fluence.Views.Management
 
         private void SecondaryAppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.Frame != null && this.Frame.CanGoBack)
-            {
-                this.Frame.GoBack();
-            }
-        }
-
-        private void CategoryControl_EditRequested(object sender, EventArgs e)
-        {
+            _categoryViewModel.IsEditing = false;
+            _limitsViewModel.IsEditing = false;
+            _walletViewModel.IsEditing = false;
+            _categoryViewModel.CategoryName = string.Empty;
+            _categoryViewModel.SelectedCategory = null;
+            _walletViewModel.WalletName = string.Empty;
+            _walletViewModel.WalletBalance = string.Empty;
+            _walletViewModel.SelectedWallet = null;
             UpdateAppBar();
         }
 

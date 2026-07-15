@@ -25,6 +25,26 @@ namespace Fluence.Views.Components.Management
             }
         }
 
+        private void IntervalComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            if (comboBox == null) return;
+
+            var selectedItem = comboBox.SelectedItem as ComboBoxItem;
+            if (selectedItem == null) return;
+
+            int minutes;
+            if (int.TryParse(selectedItem.Tag.ToString(), out minutes))
+            {
+                var viewModel = this.DataContext as SystemViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.RefreshIntervalMinutes = minutes.ToString();
+                    viewModel.SaveSettings();
+                }
+            }
+        }
+
         private async void MockData_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new MessageDialog("this will PERMANENTLY delete all your current transactions and replace them with 30 days of mock data. proceed?", "confirm mock data");

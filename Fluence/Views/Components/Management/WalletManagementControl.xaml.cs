@@ -1,6 +1,5 @@
 using Fluence.Models;
 using Fluence.ViewModels;
-using Fluence.Views;
 using System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -33,14 +32,14 @@ namespace Fluence.Views.Components.Management
         {
             var menuItem = sender as MenuFlyoutItem;
             Wallet wallet = menuItem.DataContext as Wallet;
+            var viewModel = this.DataContext as WalletViewModel;
 
-            if (wallet != null)
+            if (wallet != null && viewModel != null)
             {
-                var frame = Window.Current.Content as Frame;
-                if (frame != null)
-                {
-                    frame.Navigate(typeof(WalletPage), wallet.Id);
-                }
+                viewModel.SelectedWallet = wallet;
+                viewModel.WalletName = wallet.Name;
+                viewModel.WalletBalance = wallet.Balance.ToString();
+                viewModel.IsEditing = true;
             }
         }
 

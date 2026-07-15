@@ -1,7 +1,6 @@
 using Fluence.Models;
 using Fluence.ViewModels;
 using System;
-using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,14 +11,10 @@ namespace Fluence.Views.Components.Management
 {
     public sealed partial class CategoryManagementControl : UserControl
     {
-        public event EventHandler EditRequested;
-
         public CategoryManagementControl()
         {
             this.InitializeComponent();
         }
-
-        public TextBox CategoryNameInput => CategoryTextBox;
 
         private void CategoryBorder_Holding(object sender, HoldingRoutedEventArgs e)
         {
@@ -33,7 +28,7 @@ namespace Fluence.Views.Components.Management
             }
         }
 
-        private async void EditCategory_Click(object sender, RoutedEventArgs e)
+        private void EditCategory_Click(object sender, RoutedEventArgs e)
         {
             var menuItem = sender as MenuFlyoutItem;
             Category category = menuItem.DataContext as Category;
@@ -43,14 +38,7 @@ namespace Fluence.Views.Components.Management
             {
                 viewModel.SelectedCategory = category;
                 viewModel.CategoryName = category.Name;
-
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    CategoryTextBox.Focus(FocusState.Programmatic);
-                    CategoryTextBox.SelectAll();
-                });
-
-                EditRequested?.Invoke(this, EventArgs.Empty);
+                viewModel.IsEditing = true;
             }
         }
 
@@ -72,18 +60,8 @@ namespace Fluence.Views.Components.Management
                 var result = await dialog.ShowAsync();
                 if ((int)result.Id == 0)
                 {
-                    CategoryTextBox.IsReadOnly = true;
-                    CategoryTextBox.IsEnabled = false;
-
                     await viewModel.DeleteCategoryAsync(category);
                     HubViewModel.IsDirty = true;
-
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        this.Focus(FocusState.Programmatic);
-                        CategoryTextBox.IsEnabled = true;
-                        CategoryTextBox.IsReadOnly = false;
-                    });
                 }
             }
         }

@@ -10,37 +10,39 @@
     d:DesignWidth="400">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="0,20,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="background management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,20" IsHitTestVisible="False" />
-            
-            <ToggleSwitch Grid.Row="1" Header="auto refresh wallpaper" IsOn="{Binding IsIntervalRefreshEnabled, Mode=TwoWay}" Margin="0,0,0,10" Toggled="AutoRefreshWallpaper_Toggled" />
-            
-            <Grid Grid.Row="2" Visibility="{Binding IntervalInputVisibility}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="refresh interval (minutes)" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
-                <TextBox Grid.Row="1" Text="{Binding RefreshIntervalMinutes, Mode=TwoWay}" InputScope="Number" Margin="0,0,0,20" />
-            </Grid>
+        <StackPanel Margin="0,20,0,0">
+            <TextBlock Text="background" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,15" IsHitTestVisible="False" />
 
-            <TextBlock Grid.Row="3" Text="database management" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,20,0,20" IsHitTestVisible="False" />
+            <StackPanel Margin="0,0,0,25">
+                <TextBlock Text="auto refresh wallpaper" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" IsHitTestVisible="False" />
+                <TextBlock Text="periodically refresh the background wallpaper" Style="{StaticResource BodyTextBlockStyle}" Opacity="0.7" FontSize="12" TextWrapping="Wrap" Margin="0,2,0,10" IsHitTestVisible="False" />
+                <ToggleSwitch IsOn="{Binding IsIntervalRefreshEnabled, Mode=TwoWay}" Toggled="AutoRefreshWallpaper_Toggled" />
+            </StackPanel>
 
-            <Button Grid.Row="4" x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Click="MockData_Click" />
-            <TextBlock Grid.Row="5" Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="1.0" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,30" IsHitTestVisible="False" />
+            <StackPanel Margin="0,0,0,25" Visibility="{Binding IntervalInputVisibility}">
+                <TextBlock Text="refresh interval" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" IsHitTestVisible="False" />
+                <TextBlock Text="time between wallpaper changes" Style="{StaticResource BodyTextBlockStyle}" Opacity="0.7" FontSize="12" TextWrapping="Wrap" Margin="0,2,0,10" IsHitTestVisible="False" />
+                <ComboBox SelectedIndex="0" SelectionChanged="IntervalComboBox_SelectionChanged">
+                    <ComboBoxItem Content="every 15 minutes" Tag="15" />
+                    <ComboBoxItem Content="every 30 minutes" Tag="30" />
+                    <ComboBoxItem Content="every 45 minutes" Tag="45" />
+                    <ComboBoxItem Content="every 60 minutes" Tag="60" />
+                </ComboBox>
+            </StackPanel>
 
-            <Button Grid.Row="6" x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Margin="0,0,0,15" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
-            <TextBlock Grid.Row="7" Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="1.0" FontSize="14" TextWrapping="Wrap" IsHitTestVisible="False" />
-        </Grid>
+            <TextBlock Text="data" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Foreground="{ThemeResource SystemColorControlAccentBrush}" FontSize="20" Margin="0,0,0,15" IsHitTestVisible="False" />
+
+            <StackPanel Margin="0,0,0,25">
+                <TextBlock Text="mock data" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" IsHitTestVisible="False" />
+                <TextBlock Text="this will delete all existing data and generate 30 days of realistic mock transactions to test the reports." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.7" FontSize="12" TextWrapping="Wrap" Margin="0,2,0,10" IsHitTestVisible="False" />
+                <Button x:Name="MockDataButton" Content="activate mock data" HorizontalAlignment="Stretch" Click="MockData_Click" />
+            </StackPanel>
+
+            <StackPanel Margin="0,0,0,25">
+                <TextBlock Text="clear all data" Style="{StaticResource BodyTextBlockStyle}" FontWeight="SemiBold" IsHitTestVisible="False" />
+                <TextBlock Text="danger: this permanently deletes all transactions. this action cannot be undone." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.9" FontSize="12" TextWrapping="Wrap" Margin="0,2,0,10" IsHitTestVisible="False" />
+                <Button x:Name="ClearDataButton" Content="clear all data" HorizontalAlignment="Stretch" Background="#E74C3C" Foreground="White" Click="ClearData_Click" />
+            </StackPanel>
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

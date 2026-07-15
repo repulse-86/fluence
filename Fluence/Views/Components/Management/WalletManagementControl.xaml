@@ -14,36 +14,54 @@
         <converters:CurrencyConverter x:Key="CurrencyConverter" />
     </UserControl.Resources>
 
-    <ListView ItemsSource="{Binding Wallets}" HorizontalContentAlignment="Stretch">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="Margin" Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="Gray" BorderThickness="0,0,0,0.5" HorizontalAlignment="Stretch" Background="Transparent" Holding="WalletBorder_Holding">
-                        <FlyoutBase.AttachedFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="edit" Click="EditWallet_Click" />
-                                <MenuFlyoutItem Text="delete" Click="DeleteWallet_Click" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" />
-                            </MenuFlyout>
-                        </FlyoutBase.AttachedFlyout>
-                        <Grid Margin="0,14">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                <TextBlock Text=" (default)" FontSize="16" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="Gray" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            </StackPanel>
-                            <TextBlock Grid.Column="1" Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" VerticalAlignment="Center" Margin="20,0,0,0" />
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+    <Grid>
+        <Grid Visibility="{Binding ViewVisibility}">
+            <ListView ItemsSource="{Binding Wallets}" HorizontalContentAlignment="Stretch" Margin="0,0,0,8">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="0,0,0,0.5" HorizontalAlignment="Stretch" Background="Transparent" Holding="WalletBorder_Holding">
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="edit" Click="EditWallet_Click" />
+                                    <MenuFlyoutItem Text="delete" Click="DeleteWallet_Click" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" />
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                            <Grid Margin="0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}" FontSize="28" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                    <TextBlock Text=" (default)" FontSize="16" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="Gray" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" VerticalAlignment="Center" Margin="20,0,0,0" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Visibility="{Binding EditVisibility}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="wallet name" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,5" IsHitTestVisible="False" />
+            <TextBox Grid.Row="1" x:Name="WalletNameTextBox" Text="{Binding WalletName, Mode=TwoWay}" PlaceholderText="e.g. checking account" />
+            <TextBlock Grid.Row="2" Text="initial balance" Style="{StaticResource BodyTextBlockStyle}" Margin="0,10,0,5" IsHitTestVisible="False" />
+            <TextBox Grid.Row="3" x:Name="WalletBalanceTextBox" Text="{Binding WalletBalance, Mode=TwoWay}" PlaceholderText="0.00" InputScope="Number" />
+            <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap" IsHitTestVisible="False" />
+        </Grid>
+    </Grid>
 </UserControl>

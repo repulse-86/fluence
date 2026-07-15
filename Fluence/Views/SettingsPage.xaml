@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    xmlns:components="using:Fluence.Views.Components.Management">
+    xmlns:components="using:Fluence.Views.Components.Management"
+    NavigationCacheMode="Required">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -22,7 +23,7 @@
 
         <Pivot x:Name="SettingsPivot" Grid.Row="1" Margin="0,-36,0,0" SelectionChanged="SettingsPivot_SelectionChanged">
             <PivotItem x:Name="CategoryPivotItem" Header="categories">
-                <components:CategoryManagementControl x:Name="CategoryControl" DataContext="{Binding CategoryVM}" EditRequested="CategoryControl_EditRequested" />
+                <components:CategoryManagementControl x:Name="CategoryControl" DataContext="{Binding CategoryVM}" />
             </PivotItem>
 
             <PivotItem x:Name="WalletPivotItem" Header="wallets">
