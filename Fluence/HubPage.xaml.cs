@@ -108,14 +108,6 @@ namespace Fluence
         
         private void NavigationHelper_SaveState(object sender, SaveStateEventArgs e) { }
 
-        private void AddCategoryAppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!Frame.Navigate(typeof(SettingsPage), "category"))
-            {
-                throw new Exception("Failed to navigate to category form.");
-            }
-        }
-
         private void QuickAddAppBarButton_Click(object sender, RoutedEventArgs e)
         {
             if (!Frame.Navigate(typeof(QuickAddPage)))
@@ -124,17 +116,9 @@ namespace Fluence
             }
         }
 
-        private void AddWalletAppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!Frame.Navigate(typeof(SettingsPage), "wallet"))
-            {
-                throw new Exception("Failed to navigate to wallet management.");
-            }
-        }
-
         private void SettingsAppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Frame.Navigate(typeof(SettingsPage), "system"))
+            if (!Frame.Navigate(typeof(SettingsPage), "category"))
             {
                 throw new Exception("Failed to navigate to system settings.");
             }

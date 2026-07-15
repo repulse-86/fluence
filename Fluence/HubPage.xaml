@@ -83,10 +83,7 @@
                                             <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextAlignment="Left" Foreground="White" />
                                             <TextBlock Text="*" FontSize="16" Foreground="White" Margin="4,0,0,0" Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         </StackPanel>
-                                        <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-                                            <TextBlock Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" FontWeight="SemiBold" TextAlignment="Left" Foreground="White" />
-                                            <TextBlock Text="balance" FontSize="11" Opacity="0.6" Margin="0,-4,0,0" Foreground="White" />
-                                        </StackPanel>
+                                        <TextBlock Grid.Row="1" Text="{Binding Balance, Converter={StaticResource CurrencyConverter}}" FontSize="28" FontWeight="SemiBold" TextAlignment="Left" Foreground="White" VerticalAlignment="Bottom" />
                                     </Grid>
                                 </Grid>
                             </DataTemplate>
@@ -128,13 +125,9 @@
                 Background="#AA000000" 
                 Visibility="Visible" 
                 ClosedDisplayMode="Minimal">
-            <AppBarButton x:Name="AddCategoryAppBarButton" Label="category" Icon="Bookmarks" Click="AddCategoryAppBarButton_Click" />
-            <AppBarButton x:Name="AddWalletAppBarButton" Label="wallet" Icon="BrowsePhotos" Click="AddWalletAppBarButton_Click" />
             <AppBarButton x:Name="QuickAddAppBarButton" Label="quick add" Icon="Add" Click="QuickAddAppBarButton_Click" />
             <AppBarButton x:Name="SettingsAppBarButton" Label="settings" Icon="Setting" Click="SettingsAppBarButton_Click" />
-            <CommandBar.SecondaryCommands>
-                <AppBarButton x:Name="AboutAppBarButton" Label="about" Click="AboutAppBarButton_Click" />
-            </CommandBar.SecondaryCommands>
+            <AppBarButton x:Name="AboutAppBarButton" Label="about" Icon="Help" Click="AboutAppBarButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
