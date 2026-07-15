@@ -6,64 +6,107 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Margin="0,2,0,0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="fluence" Style="{ThemeResource HeaderTextBlockStyle}" FontSize="80" FontWeight="Bold" Margin="19,0,-100,26" TextWrapping="NoWrap" />
+        <TextBlock Text="ABOUT"
+                   Style="{ThemeResource BodyTextBlockStyle}"
+                   Margin="19,10,0,0"
+                   FontSize="16" />
 
-        <ScrollViewer Grid.Row="1">
-            <Grid Margin="19,0,19,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0"
-                    Text="version" 
-                    FontSize="18" 
-                    FontWeight="SemiBold"
-                    Margin="0,0,0,5" 
-                    Foreground="{ThemeResource SystemColorControlAccentBrush}" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="1"
-                    Text="1.3.0.0" 
-                    FontSize="18" 
-                    Margin="0,0,0,30" IsHitTestVisible="False" />
+        <Pivot x:Name="AboutPivot" Grid.Row="1" Margin="0,-36,0,0">
+            <PivotItem x:Name="HowItWorksPivotItem" Header="how it works">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
 
-                <TextBlock Grid.Row="2" Text="description"
-                           FontSize="18" 
-                           FontWeight="SemiBold" 
-                           Foreground="{ThemeResource SystemColorControlAccentBrush}" 
-                           Margin="0,0,0,5" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="3" Text="fluence is a lightweight personal finance tracker designed for simplicity and speed. manage your daily expenses and monitor your budget health with ease."
-                           FontSize="18" 
-                           TextWrapping="Wrap" 
-                           Margin="0,0,0,30" 
-                           Opacity="0.8" IsHitTestVisible="False" />
+                        <TextBlock Text="what is fluence"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Fluence is a personal finance tracker that helps you understand where your money goes and how long it will last. It tracks your spending across multiple wallets, shows your budget health, and estimates your financial runway."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,20"/>
 
-                <TextBlock Grid.Row="4" Text="platform"
-                           FontSize="18" 
-                           FontWeight="SemiBold" 
-                           Foreground="{ThemeResource SystemColorControlAccentBrush}" 
-                           Margin="0,0,0,5" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="5" Text="windows phone 8.1" FontSize="18" Margin="0,0,0,30" IsHitTestVisible="False" />
+                        <TextBlock Text="dashboard"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="The home screen gives you a quick snapshot: your current balance, how much you can spend today, your budget health bar, and how many days until your next payday. Everything you need to know at a glance."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,20"/>
 
-                <TextBlock Grid.Row="6" Text="created by"
-                           FontSize="18" 
-                           FontWeight="SemiBold" 
-                           Foreground="{ThemeResource SystemColorControlAccentBrush}" 
-                           Margin="0,0,0,5" IsHitTestVisible="False" />
-                <TextBlock Grid.Row="7" Text="repulse" FontSize="24" Margin="0,0,0,10" IsHitTestVisible="False" />
-            </Grid>
-        </ScrollViewer>
+                        <TextBlock Text="wallets"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Create wallets for your bank accounts, cash, savings, or any other way you hold money. Fluence keeps track of each wallet's balance and updates it automatically when you add transactions."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="tracking spending"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Log expenses and income with Quick Add. Choose a category, amount, wallet, and date. Fluence groups your transactions by date so you can easily see where your money went."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="reports"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="View spending breakdowns by category, see which days you spend the most, and compare your spending to previous periods. Reports are available for today, this month, and this year."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="how income helps"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Most finance apps ignore your expected income when calculating how much you can spend. Fluence factors in your next paycheck so your daily allowance and runway estimates are more realistic."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,12"/>
+                        <TextBlock Text="Runway answers: 'at my current spending rate, how long until I run out?' If you have $500 left but know you will get paid in 10 days, Fluence accounts for that instead of giving you a pessimistic estimate."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,12"/>
+                        <TextBlock Text="Daily allowance answers: 'what can I actually afford to spend today?' Instead of just dividing your remaining budget, it looks at your real income to tell you what is safe to spend."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,12"/>
+                        <TextBlock Text="Keep in mind: if your income is irregular, these estimates may be overly optimistic."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.5" FontStyle="Italic" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="budget cycle"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="All calculations follow your personal pay cycle, not generic calendar months. Set your payday and Fluence tracks your budget from one paycheck to the next."
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap" Opacity="0.8" Margin="0,0,0,20"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+
+            <PivotItem x:Name="AboutPivotItem" Header="about">
+                <StackPanel>
+                    <TextBlock x:Name="VersionTextBlock" Text="Version"
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               Margin="0,0,0,10" Opacity="0.6"/>
+                    <TextBlock Text="Fluence is a lightweight personal finance tracker designed for simplicity and speed. Manage your daily expenses and monitor your budget health with ease."
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               TextWrapping="Wrap" Margin="0,0,0,20"/>
+                    <TextBlock Text="support the project"
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <TextBlock Text="If you find this app useful, consider supporting development on Ko-fi:"
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               TextWrapping="Wrap" Margin="0,0,0,15"/>
+                    <Button Content="Support on Ko-fi" HorizontalAlignment="Stretch" Click="SupportButton_Click" Height="60" FontSize="16"/>
+                    <TextBlock Text="Opens ko-fi.com/nextcall in your browser."
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               FontSize="12" Margin="0,10,0,0" Opacity="0.6"/>
+                </StackPanel>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

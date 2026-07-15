@@ -1,6 +1,9 @@
+using Fluence.Common;
+using System;
+using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Fluence.Common;
 
 namespace Fluence.Views.About
 {
@@ -12,6 +15,14 @@ namespace Fluence.Views.About
         {
             this.InitializeComponent();
             this.navigationHelper = new NavigationHelper(this);
+            SetVersion();
+        }
+
+        private void SetVersion()
+        {
+            var package = Windows.ApplicationModel.Package.Current;
+            var version = package.Id.Version;
+            VersionTextBlock.Text = $"Version {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
         }
 
         public NavigationHelper NavigationHelper
@@ -27,6 +38,12 @@ namespace Fluence.Views.About
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+        }
+
+        private async void SupportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var uri = new Uri("https://ko-fi.com/nextcall");
+            await Launcher.LaunchUriAsync(uri);
         }
     }
 }
